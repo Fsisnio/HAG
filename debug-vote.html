@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Vote - HAG</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .candidate-card {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px 0;
+            background: #f8f9fa;
+        }
+        .candidate-card.voted {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+        .candidate-card.voting {
+            border-color: #ffc107;
+            background: #fff3cd;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        button:disabled { 
+            background: #6c757d; 
+            cursor: not-allowed; 
+        }
+        .voted-btn {
+            background: #28a745;
+        }
+        .voting-btn {
+            background: #ffc107;
+            color: #000;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐛 Debug Vote - Test des Associations Candidat/Bouton</h1>
+        
+        <div class="log" id="log">
+            <div>🚀 Debug Vote démarré</div>
+        </div>
+        
+        <button onclick="clearLog()">🗑️ Effacer les logs</button>
+        <button onclick="testCandidates()">🧪 Créer des candidats de test</button>
+        <button onclick="clearAllData()">🗑️ Effacer toutes les données</button>
+        
+        <div id="candidates-container">
+            <!-- Les candidats de test seront ajoutés ici -->
+        </div>
+    </div>
+
+    <script>
+        let candidates = [];
+        let votingInProgress = new Set();
+
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '<div>🚀 Log effacé</div>';
+        }
+
+        function testCandidates() {
+            log('🧪 Création de candidats de test...');
+            
+            candidates = [
+                { id: 1, name: "Hôtel Test 1", votes: 0, isVoted: false },
+                { id: 2, name: "Restaurant Test 1", votes: 0, isVoted: false },
+                { id: 3, name: "Guide Test 1", votes: 0, isVoted: false }
+            ];
+            
+            renderCandidates();
+            log(`✅ ${candidates.length} candidats créés`);
+        }
+
+        function renderCandidates() {
+            const container = document.getElementById('candidates-container');
+            container.innerHTML = '';
+            
+            candidates.forEach(candidate => {
+                log(`🎨 Rendu du candidat: ID=${candidate.id}, Name=${candidate.name}, isVoted=${candidate.isVoted}`);
+                
+                const card = document.createElement('div');
+                card.className = `candidate-card ${candidate.isVoted ? 'voted' : ''} ${votingInProgress.has(candidate.id) ? 'voting' : ''}`;
+                card.innerHTML = `
+                    <h3>Candidat ID: ${candidate.id}</h3>
+                    <p><strong>Nom:</strong> ${candidate.name}</p>
+                    <p><strong>Votes:</strong> ${candidate.votes}</p>
+                    <p><strong>Statut:</strong> ${candidate.isVoted ? 'VOTÉ' : 'Non voté'}</p>
+                    <button 
+                        id="vote-btn-${candidate.id}"
+                        onclick="handleVote(${candidate.id})"
+                        ${candidate.isVoted || votingInProgress.has(candidate.id) ? 'disabled' : ''}
+                        class="${candidate.isVoted ? 'voted-btn' : votingInProgress.has(candidate.id) ? 'voting-btn' : ''}"
+                    >
+                        ${candidate.isVoted ? '✅ Voté' : votingInProgress.has(candidate.id) ? '⏳ En cours...' : '🗳️ Voter'}
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function handleVote(candidateId) {
+            log(`🔄 Tentative de vote pour le candidat ID: ${candidateId}`);
+            log(`📊 Candidats actuels: ${JSON.stringify(candidates.map(c => ({ id: c.id, name: c.name, isVoted: c.isVoted })))}`);
+            
+            const candidate = candidates.find(c => c.id === candidateId);
+            if (!candidate) {
+                log(`❌ Candidat non trouvé avec ID: ${candidateId}`);
+                return;
+            }
+            
+            if (candidate.isVoted) {
+                log(`⚠️ Candidat déjà voté: ${candidate.name}`);
+                return;
+            }
+            
+            if (votingInProgress.has(candidateId)) {
+                log(`⚠️ Vote déjà en cours pour: ${candidate.name}`);
+                return;
+            }
+
+            log(`✅ Vote autorisé pour: ${candidate.name}`);
+            
+            // Marquer le vote comme en cours
+            votingInProgress.add(candidateId);
+            renderCandidates();
+            
+            // Simuler le traitement du vote
+            setTimeout(() => {
+                candidate.votes += 1;
+                candidate.isVoted = true;
+                votingInProgress.delete(candidateId);
+                
+                log(`🎯 Vote enregistré pour: ${candidate.name} (${candidate.votes} votes)`);
+                renderCandidates();
+            }, 1000);
+        }
+
+        function clearAllData() {
+            candidates = [];
+            votingInProgress.clear();
+            renderCandidates();
+            log('🗑️ Toutes les données effacées');
+        }
+
+        // Initialiser
+        log('🚀 Debug Vote initialisé');
+        testCandidates();
+    </script>
+</body>
+</html>

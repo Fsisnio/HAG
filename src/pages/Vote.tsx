@@ -75,45 +75,34 @@ const VotePage: React.FC = () => {
       // Charger les candidats officiels
       const officialCandidates = getAllOfficialCandidates();
       
-      // Convertir au format attendu
-      const formattedCandidates = officialCandidates.map(candidate => ({
-        id: candidate.id,
-        name: candidate.name,
-        organization: candidate.name,
-        category: candidate.category,
-        description: candidate.description || 'Candidat officiel des Hospitality Awards Guinée',
-        image: '/placeholder-hotel.jpg',
-        votes: candidate.votes || 0,
-        isVoted: candidate.isVoted || false,
-        rating: candidate.rating || 4.0,
-        totalRatings: candidate.totalRatings || 0,
-        userRating: candidate.userRating
-      }));
-
-      setCandidates(formattedCandidates);
-
       // Charger les notes et votes sauvegardés
       const savedRatings = localStorage.getItem('hag_candidates_ratings');
       const savedVotes = localStorage.getItem('hag_candidates_votes');
       
-      if (savedRatings || savedVotes) {
-        const ratingsData = savedRatings ? JSON.parse(savedRatings) : [];
-        const votesData = savedVotes ? JSON.parse(savedVotes) : [];
+      const ratingsData = savedRatings ? JSON.parse(savedRatings) : [];
+      const votesData = savedVotes ? JSON.parse(savedVotes) : [];
+      
+      // Convertir au format attendu et fusionner avec les données sauvegardées
+      const formattedCandidates = officialCandidates.map(candidate => {
+        const savedRating = ratingsData.find((c: any) => c.id === candidate.id);
+        const savedVote = votesData.find((c: any) => c.id === candidate.id);
         
-        setCandidates(prev => prev.map(candidate => {
-          const savedRating = ratingsData.find((c: any) => c.id === candidate.id);
-          const savedVote = votesData.find((c: any) => c.id === candidate.id);
-          
-          return {
-            ...candidate,
-            rating: savedRating?.rating || candidate.rating,
-            totalRatings: savedRating?.totalRatings || candidate.totalRatings,
-            userRating: savedRating?.userRating,
-            votes: savedVote?.votes || candidate.votes,
-            isVoted: savedVote?.isVoted || candidate.isVoted
-          };
-        }));
-      }
+        return {
+          id: candidate.id,
+          name: candidate.name,
+          organization: candidate.name,
+          category: candidate.category,
+          description: candidate.description || 'Candidat officiel des Hospitality Awards Guinée',
+          image: '/placeholder-hotel.jpg',
+          votes: savedVote?.votes || candidate.votes || 0,
+          isVoted: savedVote?.isVoted || candidate.isVoted || false,
+          rating: savedRating?.rating || candidate.rating || 4.0,
+          totalRatings: savedRating?.totalRatings || candidate.totalRatings || 0,
+          userRating: savedRating?.userRating || candidate.userRating
+        };
+      });
+
+      setCandidates(formattedCandidates);
     } catch (error) {
       console.error('Erreur lors du chargement des candidats:', error);
     }
@@ -129,78 +118,103 @@ const VotePage: React.FC = () => {
     candidateName: string;
     candidateCategory: string;
   } | null>(null);
+  const [votingInProgress, setVotingInProgress] = useState<Set<number>>(new Set());
 
   const categories = ['Toutes', ...getCategoriesWithCandidates()];
 
-  const handleVote = (candidateId: number) => {
-    setCandidates(prev => prev.map(candidate => {
-      if (candidate.id === candidateId) {
-        return {
-          ...candidate,
-          votes: candidate.votes + 1,
-          isVoted: true
-        };
-      }
-      return candidate;
-    }));
-
+  const handleVote = async (candidateId: number) => {
+    console.log('🔄 Tentative de vote pour le candidat ID:', candidateId);
+    console.log('📊 Candidats actuels:', candidates.map(c => ({ id: c.id, name: c.name, isVoted: c.isVoted })));
+    
+    // Vérifier si le candidat a déjà été voté ou si un vote est en cours
     const candidate = candidates.find(c => c.id === candidateId);
-    if (candidate) {
+    if (!candidate) {
+      console.error('❌ Candidat non trouvé avec ID:', candidateId);
+      return;
+    }
+    
+    if (candidate.isVoted) {
+      console.warn('⚠️ Candidat déjà voté:', candidate.name);
+      return;
+    }
+    
+    if (votingInProgress.has(candidateId)) {
+      console.warn('⚠️ Vote déjà en cours pour:', candidate.name);
+      return;
+    }
+
+    console.log('✅ Vote autorisé pour:', candidate.name);
+    
+    // Marquer le vote comme en cours
+    setVotingInProgress(prev => new Set(prev).add(candidateId));
+
+    try {
+      // Mettre à jour l'état avec la nouvelle valeur
+      setCandidates(prev => {
+        const updatedCandidates = prev.map(c => {
+          if (c.id === candidateId) {
+            console.log('🎯 Mise à jour du candidat:', c.name, 'votes:', c.votes + 1);
+            return {
+              ...c,
+              votes: c.votes + 1,
+              isVoted: true
+            };
+          }
+          return c;
+        });
+
+        // Sauvegarder dans localStorage avec les données mises à jour
+        localStorage.setItem('hag_candidates_votes', JSON.stringify(updatedCandidates));
+        console.log('💾 Données sauvegardées dans localStorage');
+        
+        return updatedCandidates;
+      });
+
+      // Afficher le message de succès
       setVotedCandidate(candidate.name);
       setShowVoteSuccess(true);
-      
-      // Sauvegarder les votes dans localStorage
-      const updatedCandidates = candidates.map(c => {
-        if (c.id === candidateId) {
-          return {
-            ...c,
-            votes: c.votes + 1,
-            isVoted: true
-          };
-        }
-        return c;
-      });
-      localStorage.setItem('hag_candidates_votes', JSON.stringify(updatedCandidates));
       
       // Masquer le message de succès après 3 secondes
       setTimeout(() => {
         setShowVoteSuccess(false);
       }, 3000);
+    } finally {
+      // Retirer le vote en cours après un délai
+      setTimeout(() => {
+        setVotingInProgress(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(candidateId);
+          return newSet;
+        });
+      }, 1000);
     }
   };
 
   // Gérer la notation avec des étoiles
   const handleRating = (candidateId: number, rating: number) => {
-    setCandidates(prev => prev.map(candidate => {
-      if (candidate.id === candidateId) {
-        const newTotalRatings = candidate.totalRatings + 1;
-        const newRating = candidate.userRating 
-          ? ((candidate.rating * candidate.totalRatings - candidate.userRating + rating) / candidate.totalRatings)
-          : ((candidate.rating * candidate.totalRatings + rating) / newTotalRatings);
-        
-        return {
-          ...candidate,
-          rating: Math.round(newRating * 10) / 10, // Arrondir à 1 décimale
-          totalRatings: newTotalRatings,
-          userRating: rating
-        };
-      }
-      return candidate;
-    }));
+    setCandidates(prev => {
+      const updatedCandidates = prev.map(candidate => {
+        if (candidate.id === candidateId) {
+          const newTotalRatings = candidate.userRating ? candidate.totalRatings : candidate.totalRatings + 1;
+          const newRating = candidate.userRating 
+            ? ((candidate.rating * candidate.totalRatings - candidate.userRating + rating) / candidate.totalRatings)
+            : ((candidate.rating * candidate.totalRatings + rating) / newTotalRatings);
+          
+          return {
+            ...candidate,
+            rating: Math.round(newRating * 10) / 10, // Arrondir à 1 décimale
+            totalRatings: newTotalRatings,
+            userRating: rating
+          };
+        }
+        return candidate;
+      });
 
-    // Sauvegarder dans localStorage
-    const updatedCandidates = candidates.map(candidate => {
-      if (candidate.id === candidateId) {
-        return {
-          ...candidate,
-          rating: candidate.rating,
-          totalRatings: candidate.totalRatings,
-          userRating: rating
-        };
-      }
-      return candidate;
+      // Sauvegarder dans localStorage avec les données mises à jour
+      localStorage.setItem('hag_candidates_ratings', JSON.stringify(updatedCandidates));
+      
+      return updatedCandidates;
     });
-    localStorage.setItem('hag_candidates_ratings', JSON.stringify(updatedCandidates));
   };
 
   const handlePremiumVote = (type: 'bronze' | 'silver' | 'gold', candidateName: string, candidateCategory: string) => {
@@ -315,7 +329,9 @@ const VotePage: React.FC = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sortedCandidates.map((candidate) => (
+            {sortedCandidates.map((candidate) => {
+              console.log('🎨 Rendu du candidat:', { id: candidate.id, name: candidate.name, isVoted: candidate.isVoted });
+              return (
               <div key={candidate.id} className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow">
                 {/* Image du candidat */}
                 <div className="h-48 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
@@ -371,10 +387,12 @@ const VotePage: React.FC = () => {
                      <div className="space-y-3">
                        <button
                          onClick={() => handleVote(candidate.id)}
-                         disabled={candidate.isVoted}
+                         disabled={candidate.isVoted || votingInProgress.has(candidate.id)}
                       className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
                            candidate.isVoted
                           ? 'bg-green-100 text-green-800 cursor-not-allowed'
+                          : votingInProgress.has(candidate.id)
+                          ? 'bg-yellow-100 text-yellow-800 cursor-not-allowed'
                           : 'bg-blue-600 text-white hover:bg-blue-700'
                          }`}
                        >
@@ -382,6 +400,11 @@ const VotePage: React.FC = () => {
                         <span className="flex items-center justify-center space-x-2">
                           <CheckCircle className="w-4 h-4" />
                           <span>Voté</span>
+                        </span>
+                      ) : votingInProgress.has(candidate.id) ? (
+                        <span className="flex items-center justify-center space-x-2">
+                          <div className="w-4 h-4 border-2 border-yellow-800 border-t-transparent rounded-full animate-spin"></div>
+                          <span>En cours...</span>
                         </span>
                       ) : (
                         <span className="flex items-center justify-center space-x-2">
@@ -414,7 +437,8 @@ const VotePage: React.FC = () => {
                   </div>
                 </div>
               </div>
-            ))}
+              );
+            })}
             </div>
           )}
 
