@@ -1,8 +1,7 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
-const path = require('path');
 
-console.log('🚀 Démarrage du build de production...');
+console.log('🚀 Build pour Render - Démarrage...');
 
 // Nettoyer le dossier build
 if (fs.existsSync('build')) {
@@ -10,13 +9,19 @@ if (fs.existsSync('build')) {
     fs.rmSync('build', { recursive: true, force: true });
 }
 
-// Build de production
-console.log('📦 Build de production en cours...');
-execSync('npx react-scripts build', { stdio: 'inherit' });
+// Build React directement
+console.log('📦 Build React en cours...');
+try {
+    execSync('npx react-scripts build', { stdio: 'inherit' });
+    console.log('✅ Build React terminé');
+} catch (error) {
+    console.error('❌ Erreur lors du build React:', error.message);
+    process.exit(1);
+}
 
 // Vérifier que le build a réussi
 if (!fs.existsSync('build/index.html')) {
-    console.error('❌ Erreur: Le build a échoué');
+    console.error('❌ Erreur: Le fichier index.html n\'a pas été créé');
     process.exit(1);
 }
 
@@ -27,6 +32,9 @@ console.log('📋 Configuration du routage SPA...');
 if (fs.existsSync('public/_redirects')) {
     fs.copyFileSync('public/_redirects', 'build/_redirects');
     console.log('✅ Fichier _redirects copié');
+} else if (fs.existsSync('_redirects')) {
+    fs.copyFileSync('_redirects', 'build/_redirects');
+    console.log('✅ Fichier _redirects copié depuis la racine');
 }
 
 // Créer un fichier .htaccess pour Apache (au cas où)
@@ -48,5 +56,5 @@ Header always set X-XSS-Protection "1; mode=block"
 fs.writeFileSync('build/.htaccess', htaccessContent);
 console.log('✅ Fichier .htaccess créé');
 
-console.log('✅ Build terminé avec succès!');
+console.log('🎉 Build pour Render terminé avec succès!');
 console.log('📁 Dossier build prêt pour le déploiement');
