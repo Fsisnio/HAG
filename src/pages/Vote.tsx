@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Vote as VoteIcon, Heart, Users, Award, Star, CheckCircle, XCircle } from 'lucide-react';
 import VoteStats from '../components/VoteStats';
+import VoteButton from '../components/VoteButton';
 import PremiumVoteModal from '../components/PremiumVoteModal';
 import { officialCategories } from '../data/categories';
 import { getAllOfficialCandidates, getCandidatesByCategory, getCategoriesWithCandidates } from '../data/officialCandidates';
@@ -126,7 +127,14 @@ const VotePage: React.FC = () => {
     console.log('🔄 Tentative de vote pour le candidat ID:', candidateId, 'Nom:', candidateName);
     console.log('📊 Candidats actuels:', candidates.map(c => ({ id: c.id, name: c.name, isVoted: c.isVoted })));
     
-    // Vérifier si le candidat a déjà été voté ou si un vote est en cours
+    // Vérification stricte de l'ID du candidat
+    if (!candidateId || typeof candidateId !== 'number') {
+      console.error('❌ ID de candidat invalide:', candidateId);
+      alert('Erreur: ID de candidat invalide');
+      return;
+    }
+    
+    // Vérifier si le candidat existe
     const candidate = candidates.find(c => c.id === candidateId);
     if (!candidate) {
       console.error('❌ Candidat non trouvé avec ID:', candidateId);
@@ -134,7 +142,7 @@ const VotePage: React.FC = () => {
       return;
     }
     
-    // Vérification supplémentaire par nom si fourni
+    // Vérification stricte de cohérence ID/Nom
     if (candidateName && candidate.name !== candidateName) {
       console.error('❌ Incohérence détectée:', { 
         expectedName: candidateName, 
@@ -145,12 +153,14 @@ const VotePage: React.FC = () => {
       return;
     }
     
+    // Vérifier si le candidat a déjà été voté
     if (candidate.isVoted) {
       console.warn('⚠️ Candidat déjà voté:', candidate.name);
       alert(`Vous avez déjà voté pour ${candidate.name}`);
       return;
     }
     
+    // Vérifier si un vote est déjà en cours pour ce candidat spécifique
     if (votingInProgress.has(candidateId)) {
       console.warn('⚠️ Vote déjà en cours pour:', candidate.name);
       alert(`Un vote est déjà en cours pour ${candidate.name}`);
@@ -159,14 +169,15 @@ const VotePage: React.FC = () => {
 
     console.log('✅ Vote autorisé pour:', candidate.name, '(ID:', candidateId, ')');
     
-    // Marquer le vote comme en cours
+    // Marquer le vote comme en cours pour ce candidat spécifique uniquement
     setVotingInProgress(prev => new Set(prev).add(candidateId));
 
     try {
-      // Mettre à jour l'état avec la nouvelle valeur
+      // Mettre à jour UNIQUEMENT le candidat spécifique
       setCandidates(prev => {
         const updatedCandidates = prev.map(c => {
-          if (c.id === candidateId) {
+          // Vérification stricte de l'ID avant mise à jour
+          if (c.id === candidateId && c.name === candidate.name) {
             console.log('🎯 Mise à jour du candidat:', c.name, 'votes:', c.votes + 1);
             return {
               ...c,
@@ -177,6 +188,12 @@ const VotePage: React.FC = () => {
           return c;
         });
 
+        // Vérifier que la mise à jour a bien eu lieu
+        const updatedCandidate = updatedCandidates.find(c => c.id === candidateId);
+        if (!updatedCandidate || !updatedCandidate.isVoted) {
+          throw new Error('Échec de la mise à jour du candidat');
+        }
+
         // Sauvegarder dans localStorage avec les données mises à jour
         localStorage.setItem('hag_candidates_votes', JSON.stringify(updatedCandidates));
         console.log('💾 Données sauvegardées dans localStorage');
@@ -184,7 +201,7 @@ const VotePage: React.FC = () => {
         return updatedCandidates;
       });
 
-      // Afficher le message de succès
+      // Afficher le message de succès avec le nom exact du candidat
       setVotedCandidate(candidate.name);
       setShowVoteSuccess(true);
       
@@ -194,7 +211,7 @@ const VotePage: React.FC = () => {
       }, 3000);
     } catch (error) {
       console.error('❌ Erreur lors du vote:', error);
-      alert('Erreur lors de l\'enregistrement du vote');
+      alert(`Erreur lors de l'enregistrement du vote pour ${candidate.name}`);
     } finally {
       // Retirer le vote en cours après un délai
       setTimeout(() => {
@@ -355,7 +372,7 @@ const VotePage: React.FC = () => {
                   <div className="text-white text-center">
                     <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-3 overflow-hidden">
                       <img 
-                        src="/Logo HAG.png" 
+                        src="./Logo HAG.png" 
                         alt="Logo HAG" 
                         className="w-full h-full object-contain"
                         onError={(e) => {
@@ -402,40 +419,14 @@ const VotePage: React.FC = () => {
                     
                   {/* Actions */}
                      <div className="space-y-3">
-                       <button
-                         id={`vote-button-${candidate.id}`}
-                         data-candidate-id={candidate.id}
-                         data-candidate-name={candidate.name}
-                         onClick={() => {
-                           console.log('🖱️ Clic sur le bouton de vote pour:', candidate.name, 'ID:', candidate.id);
-                           handleVote(candidate.id, candidate.name);
-                         }}
-                         disabled={candidate.isVoted || votingInProgress.has(candidate.id)}
-                      className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
-                           candidate.isVoted
-                          ? 'bg-green-100 text-green-800 cursor-not-allowed'
-                          : votingInProgress.has(candidate.id)
-                          ? 'bg-yellow-100 text-yellow-800 cursor-not-allowed'
-                          : 'bg-blue-600 text-white hover:bg-blue-700'
-                         }`}
-                       >
-                         {candidate.isVoted ? (
-                        <span className="flex items-center justify-center space-x-2">
-                          <CheckCircle className="w-4 h-4" />
-                          <span>Voté</span>
-                        </span>
-                      ) : votingInProgress.has(candidate.id) ? (
-                        <span className="flex items-center justify-center space-x-2">
-                          <div className="w-4 h-4 border-2 border-yellow-800 border-t-transparent rounded-full animate-spin"></div>
-                          <span>En cours...</span>
-                        </span>
-                      ) : (
-                        <span className="flex items-center justify-center space-x-2">
-                          <VoteIcon className="w-4 h-4" />
-                          <span>Voter</span>
-                        </span>
-                         )}
-                       </button>
+                       <VoteButton
+                         candidateId={candidate.id}
+                         candidateName={candidate.name}
+                         isVoted={candidate.isVoted}
+                         isVoting={votingInProgress.has(candidate.id)}
+                         onVote={handleVote}
+                         disabled={false}
+                       />
 
                     <div className="grid grid-cols-3 gap-2">
                            <button
