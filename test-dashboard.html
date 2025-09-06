@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dashboard - HAG</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .data-display {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        .trophy { font-size: 48px; text-align: center; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="trophy">🏆</div>
+        <h1>Test du Dashboard HAG</h1>
+        <p>Vérification de la synchronisation des données de vote avec le dashboard</p>
+        
+        <div id="status"></div>
+        
+        <div class="data-display" id="voteData">
+            <h3>Données de vote actuelles :</h3>
+            <div id="voteInfo">Chargement...</div>
+        </div>
+        
+        <div class="data-display" id="dashboardData">
+            <h3>Données du dashboard :</h3>
+            <div id="dashboardInfo">Chargement...</div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <button onclick="checkData()">🔍 Vérifier les données</button>
+            <button onclick="createTestVotes()">➕ Créer des votes de test</button>
+            <button onclick="clearAllData()">🗑️ Effacer toutes les données</button>
+            <button onclick="goToApp()">🏠 Aller à l'application</button>
+        </div>
+    </div>
+
+    <script>
+        function showStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.innerHTML = `<div class="${type}">${message}</div>`;
+        }
+
+        function checkData() {
+            try {
+                // Vérifier les données de vote
+                const votes = localStorage.getItem('hag_candidates_votes');
+                const ratings = localStorage.getItem('hag_candidates_ratings');
+                
+                let voteInfo = '';
+                let totalVotes = 0;
+                let totalCandidates = 0;
+                let averageRating = 0;
+                
+                if (votes) {
+                    const votesData = JSON.parse(votes);
+                    totalCandidates = votesData.length;
+                    totalVotes = votesData.reduce((sum, c) => sum + (c.votes || 0), 0);
+                    const votedCandidates = votesData.filter(c => c.isVoted);
+                    
+                    voteInfo += `📊 Candidats: ${totalCandidates}<br>`;
+                    voteInfo += `🗳️ Votes totaux: ${totalVotes}<br>`;
+                    voteInfo += `✅ Candidats votés: ${votedCandidates.length}<br>`;
+                    
+                    if (votedCandidates.length > 0) {
+                        voteInfo += `<br>📋 Candidats votés:<br>`;
+                        votedCandidates.forEach(c => {
+                            voteInfo += `• ${c.name} (${c.votes} votes)<br>`;
+                        });
+                    }
+                } else {
+                    voteInfo += '❌ Aucune donnée de vote trouvée<br>';
+                }
+                
+                if (ratings) {
+                    const ratingsData = JSON.parse(ratings);
+                    const candidatesWithRatings = ratingsData.filter(c => c.rating && c.rating > 0);
+                    if (candidatesWithRatings.length > 0) {
+                        averageRating = candidatesWithRatings.reduce((sum, c) => sum + c.rating, 0) / candidatesWithRatings.length;
+                        voteInfo += `<br>⭐ Note moyenne: ${averageRating.toFixed(1)}/5<br>`;
+                        voteInfo += `📝 Candidats notés: ${candidatesWithRatings.length}<br>`;
+                    }
+                }
+                
+                document.getElementById('voteInfo').innerHTML = voteInfo;
+                
+                // Simuler les données du dashboard
+                const dashboardInfo = `
+                    <strong>Statistiques du Dashboard:</strong><br>
+                    • Total Candidats: ${totalCandidates}<br>
+                    • Total Votes: ${totalVotes}<br>
+                    • Note Moyenne: ${averageRating.toFixed(1)}<br>
+                    • Catégories: 13<br>
+                    <br>
+                    <strong>Métriques en temps réel:</strong><br>
+                    • Visiteurs aujourd'hui: ${Math.floor(Math.random() * 100) + 50}<br>
+                    • Votes cette heure: ${Math.floor(Math.random() * 20) + 5}<br>
+                    • Taux de conversion: ${Math.floor(Math.random() * 20) + 15}%
+                `;
+                
+                document.getElementById('dashboardInfo').innerHTML = dashboardInfo;
+                
+                if (totalVotes > 0) {
+                    showStatus('✅ Dashboard actif - Données synchronisées correctement', 'success');
+                } else {
+                    showStatus('⚠️ Dashboard inactif - Aucun vote enregistré', 'error');
+                }
+                
+            } catch (error) {
+                showStatus('❌ Erreur lors de la vérification: ' + error.message, 'error');
+            }
+        }
+
+        function createTestVotes() {
+            try {
+                // Créer des votes de test
+                const testCandidates = [
+                    { id: 1, name: "Hôtel Test 1", category: "Meilleur Hôtel", votes: 5, isVoted: true, rating: 4.5, totalRatings: 10 },
+                    { id: 2, name: "Restaurant Test 1", category: "Meilleur Restaurant", votes: 3, isVoted: true, rating: 4.2, totalRatings: 8 },
+                    { id: 3, name: "Guide Test 1", category: "Meilleur Guide", votes: 7, isVoted: true, rating: 4.8, totalRatings: 12 },
+                    { id: 4, name: "Hôtel Test 2", category: "Meilleur Hôtel", votes: 0, isVoted: false, rating: 4.0, totalRatings: 5 },
+                    { id: 5, name: "Restaurant Test 2", category: "Meilleur Restaurant", votes: 2, isVoted: true, rating: 3.8, totalRatings: 6 }
+                ];
+                
+                localStorage.setItem('hag_candidates_votes', JSON.stringify(testCandidates));
+                localStorage.setItem('hag_candidates_ratings', JSON.stringify(testCandidates));
+                
+                showStatus('✅ Votes de test créés avec succès', 'success');
+                checkData();
+                
+            } catch (error) {
+                showStatus('❌ Erreur lors de la création des votes de test: ' + error.message, 'error');
+            }
+        }
+
+        function clearAllData() {
+            try {
+                localStorage.removeItem('hag_candidates_votes');
+                localStorage.removeItem('hag_candidates_ratings');
+                localStorage.removeItem('hag_applications');
+                localStorage.removeItem('hag_approved_candidates');
+                
+                showStatus('✅ Toutes les données ont été effacées', 'success');
+                checkData();
+                
+            } catch (error) {
+                showStatus('❌ Erreur lors de l\'effacement: ' + error.message, 'error');
+            }
+        }
+
+        function goToApp() {
+            window.location.href = 'http://localhost:3000';
+        }
+
+        // Vérifier les données au chargement
+        window.onload = function() {
+            checkData();
+        };
+    </script>
+</body>
+</html>

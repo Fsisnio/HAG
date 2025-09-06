@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Tailles Logo HAG</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .logo-test {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            background: #f9f9f9;
+        }
+        .logo-container {
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            margin: 10px;
+            position: relative;
+        }
+        .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .logo-container.gold-bg {
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+        }
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .trophy { font-size: 48px; text-align: center; margin-bottom: 20px; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .size-info {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #666;
+            white-space: nowrap;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin: 30px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #D4AF37;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="trophy">🏆</div>
+        <h1>Test des Nouvelles Tailles de Logo HAG</h1>
+        <p>Vérification des logos en double taille et dans le cadrant jaune</p>
+        
+        <div id="status"></div>
+        
+        <div class="section-title">📏 Tailles Originales (Avant)</div>
+        <div class="logo-test">
+            <h4>Logo 24x24 (Header)</h4>
+            <div class="logo-container" style="width: 24px; height: 24px;">
+                <img src="/Logo HAG.png" alt="Logo HAG 24x24" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div style="display: none; width: 100%; height: 100%; background: #ffd700; border-radius: 50%; align-items: center; justify-content: center; font-size: 12px;">🏆</div>
+                <div class="size-info">24x24px</div>
+            </div>
+        </div>
+        
+        <div class="logo-test">
+            <h4>Logo 48x48 (Footer)</h4>
+            <div class="logo-container" style="width: 48px; height: 48px;">
+                <img src="/Logo HAG.png" alt="Logo HAG 48x48" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div style="display: none; width: 100%; height: 100%; background: #ffd700; border-radius: 50%; align-items: center; justify-content: center; font-size: 24px;">🏆</div>
+                <div class="size-info">48x48px</div>
+            </div>
+        </div>
+        
+        <div class="logo-test">
+            <h4>Logo 96x96 (Home - Ancien)</h4>
+            <div class="logo-container" style="width: 96px; height: 96px;">
+                <img src="/Logo HAG.png" alt="Logo HAG 96x96" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div style="display: none; width: 100%; height: 100%; background: #ffd700; border-radius: 50%; align-items: center; justify-content: center; font-size: 48px;">🏆</div>
+                <div class="size-info">96x96px (Ancien)</div>
+            </div>
+        </div>
+        
+        <div class="section-title">🚀 Nouvelles Tailles (Après)</div>
+        <div class="logo-test">
+            <h4>Logo 192x192 (Home - Doublé)</h4>
+            <div class="logo-container" style="width: 192px; height: 192px;">
+                <img src="/Logo HAG.png" alt="Logo HAG 192x192" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div style="display: none; width: 100%; height: 100%; background: #ffd700; border-radius: 50%; align-items: center; justify-content: center; font-size: 96px;">🏆</div>
+                <div class="size-info">192x192px (Doublé)</div>
+            </div>
+        </div>
+        
+        <div class="logo-test">
+            <h4>Logo 192x192 (Cadrant Jaune)</h4>
+            <div class="logo-container gold-bg" style="width: 192px; height: 192px;">
+                <img src="/Logo HAG.png" alt="Logo HAG Cadrant Jaune" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; font-size: 96px;">⭐</div>
+                <div class="size-info">192x192px (Cadrant Jaune)</div>
+            </div>
+        </div>
+        
+        <div class="section-title">📊 Comparaison des Tailles</div>
+        <div class="logo-test">
+            <h4>Comparaison Côte à Côte</h4>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <div style="text-align: center;">
+                    <div class="logo-container" style="width: 96px; height: 96px;">
+                        <img src="/Logo HAG.png" alt="Ancien" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div style="display: none; width: 100%; height: 100%; background: #ffd700; border-radius: 50%; align-items: center; justify-content: center; font-size: 48px;">🏆</div>
+                    </div>
+                    <div style="font-size: 12px; color: #666; margin-top: 5px;">Ancien (96px)</div>
+                </div>
+                <div style="font-size: 24px; color: #D4AF37;">→</div>
+                <div style="text-align: center;">
+                    <div class="logo-container" style="width: 192px; height: 192px;">
+                        <img src="/Logo HAG.png" alt="Nouveau" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div style="display: none; width: 100%; height: 100%; background: #ffd700; border-radius: 50%; align-items: center; justify-content: center; font-size: 96px;">🏆</div>
+                    </div>
+                    <div style="font-size: 12px; color: #666; margin-top: 5px;">Nouveau (192px)</div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <button onclick="checkLogo()">🔍 Vérifier le logo</button>
+            <button onclick="goToApp()">🏠 Aller à l'application</button>
+        </div>
+    </div>
+
+    <script>
+        function showStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.innerHTML = `<div class="${type}">${message}</div>`;
+        }
+
+        function checkLogo() {
+            const logo = new Image();
+            logo.onload = function() {
+                showStatus('✅ Logo HAG chargé avec succès ! Dimensions: ' + this.naturalWidth + 'x' + this.naturalHeight + 'px. Les nouvelles tailles sont prêtes !', 'success');
+            };
+            logo.onerror = function() {
+                showStatus('❌ Erreur lors du chargement du logo HAG. Vérifiez que le fichier "Logo HAG.png" est bien dans le dossier public/', 'error');
+            };
+            logo.src = '/Logo HAG.png';
+        }
+
+        function goToApp() {
+            window.location.href = 'http://localhost:3000';
+        }
+
+        // Vérifier le logo au chargement
+        window.onload = function() {
+            checkLogo();
+        };
+    </script>
+</body>
+</html>
+

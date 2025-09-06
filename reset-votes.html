@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Votes - HAG</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #f5c6cb;
+        }
+        button {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #bee5eb;
+        }
+        .trophy {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="trophy">🏆</div>
+        <h1>Réinitialisation des Votes</h1>
+        <p>Hospitality Awards Guinée - HAG</p>
+        
+        <div class="info">
+            <strong>Attention :</strong> Cette action va supprimer tous les votes et notes enregistrés. 
+            Cette action est irréversible.
+        </div>
+        
+        <div id="status"></div>
+        
+        <button onclick="resetAllVotes()">
+            🗑️ Réinitialiser tous les votes
+        </button>
+        
+        <button onclick="checkVotes()">
+            📊 Vérifier l'état actuel
+        </button>
+        
+        <button onclick="goToApp()">
+            🏠 Retour à l'application
+        </button>
+    </div>
+
+    <script>
+        function showStatus(message, isError = false) {
+            const status = document.getElementById('status');
+            status.innerHTML = `<div class="${isError ? 'error' : 'success'}">${message}</div>`;
+        }
+
+        function resetAllVotes() {
+            try {
+                // Supprimer toutes les données de vote
+                localStorage.removeItem('hag_candidates_votes');
+                localStorage.removeItem('hag_candidates_ratings');
+                
+                showStatus('✅ Tous les votes ont été réinitialisés avec succès !<br>Les candidats sont maintenant dans leur état initial.');
+                
+                console.log('Votes réinitialisés - localStorage nettoyé');
+            } catch (error) {
+                showStatus('❌ Erreur lors de la réinitialisation : ' + error.message, true);
+                console.error('Erreur lors de la réinitialisation:', error);
+            }
+        }
+
+        function checkVotes() {
+            try {
+                const votes = localStorage.getItem('hag_candidates_votes');
+                const ratings = localStorage.getItem('hag_candidates_ratings');
+                
+                if (!votes && !ratings) {
+                    showStatus('✅ Aucun vote enregistré - Système propre');
+                } else {
+                    let message = '📊 État actuel des votes :<br>';
+                    
+                    if (votes) {
+                        const votesData = JSON.parse(votes);
+                        const votedCandidates = votesData.filter(c => c.isVoted);
+                        message += `• ${votedCandidates.length} candidat(s) voté(s)<br>`;
+                        message += `• Total des votes : ${votesData.reduce((sum, c) => sum + c.votes, 0)}<br>`;
+                    }
+                    
+                    if (ratings) {
+                        const ratingsData = JSON.parse(ratings);
+                        const ratedCandidates = ratingsData.filter(c => c.userRating);
+                        message += `• ${ratedCandidates.length} candidat(s) noté(s)`;
+                    }
+                    
+                    showStatus(message);
+                }
+            } catch (error) {
+                showStatus('❌ Erreur lors de la vérification : ' + error.message, true);
+            }
+        }
+
+        function goToApp() {
+            window.location.href = 'http://localhost:3000';
+        }
+
+        // Vérifier l'état au chargement
+        window.onload = function() {
+            checkVotes();
+        };
+    </script>
+</body>
+</html>
+
