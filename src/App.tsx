@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import AdminAuth from './components/AdminAuth';
 import Home from './pages/Home';
 import About from './pages/About';
 import Categories from './pages/Categories';
@@ -34,9 +35,17 @@ const App: React.FC = () => {
           <Route path="/candidater" element={<ApplicationForm />} />
           <Route path="/voter" element={<VotePage />} />
           
-          {/* Routes d'administration */}
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/profile" element={<AdminProfile />} />
+          {/* Routes d'administration - Protégées par authentification */}
+          <Route path="/admin" element={
+            <AdminAuth>
+              <AdminDashboard />
+            </AdminAuth>
+          } />
+          <Route path="/admin/profile" element={
+            <AdminAuth>
+              <AdminProfile />
+            </AdminAuth>
+          } />
         </Routes>
       </main>
       <Footer />
