@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test des Routes - HAG</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            background: #2563eb;
+        }
+        .btn-danger {
+            background: #ef4444;
+        }
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        .log {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+        .warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #f59e0b;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test des Routes - HAG</h1>
+    
+    <div class="container">
+        <h2>Problème Identifié</h2>
+        <p>Erreur "Not Found" (404) lors de l'accès à <code>/admin</code> sur Render.</p>
+        <p><strong>Cause :</strong> Render ne redirige pas correctement les routes SPA vers <code>index.html</code>.</p>
+    </div>
+
+    <div class="container">
+        <h2>Routes à Tester</h2>
+        <p>Testez ces URLs sur votre déploiement Render :</p>
+        
+        <h3>Routes Publiques :</h3>
+        <a href="https://hag-ostu.onrender.com/" class="btn" target="_blank">🏠 Accueil</a>
+        <a href="https://hag-ostu.onrender.com/voter" class="btn" target="_blank">🗳️ Voter</a>
+        <a href="https://hag-ostu.onrender.com/categories" class="btn" target="_blank">📋 Catégories</a>
+        <a href="https://hag-ostu.onrender.com/a-propos" class="btn" target="_blank">ℹ️ À Propos</a>
+        
+        <h3>Routes Admin :</h3>
+        <a href="https://hag-ostu.onrender.com/admin" class="btn btn-danger" target="_blank">🔐 Admin Dashboard</a>
+        <a href="https://hag-ostu.onrender.com/admin/profile" class="btn btn-danger" target="_blank">👤 Admin Profile</a>
+    </div>
+
+    <div class="container">
+        <h2>Solutions Appliquées</h2>
+        <ol>
+            <li><strong>Fichier _redirects :</strong> Redirige toutes les routes vers index.html</li>
+            <li><strong>Fichier 404.html :</strong> Redirection automatique vers l'accueil</li>
+            <li><strong>Script de build :</strong> Configuration optimisée pour le déploiement</li>
+            <li><strong>render.yaml :</strong> Configuration spécifique pour Render</li>
+        </ol>
+    </div>
+
+    <div class="container">
+        <h2>Instructions de Déploiement</h2>
+        <ol>
+            <li><strong>Commit et push :</strong> Envoyez tous les changements sur votre repository</li>
+            <li><strong>Redéploiement :</strong> Render redéploiera automatiquement</li>
+            <li><strong>Test :</strong> Vérifiez que <code>/admin</code> fonctionne</li>
+            <li><strong>Mot de passe :</strong> Utilisez <code>HAG2024Admin!</code> pour vous connecter</li>
+        </ol>
+    </div>
+
+    <div class="container">
+        <h2>Logs de Test</h2>
+        <div id="log" class="log"></div>
+        <button onclick="testRoutes()" class="btn">🧪 Tester les Routes</button>
+        <button onclick="clearLog()" class="btn">🗑️ Effacer les Logs</button>
+    </div>
+
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        async function testRoutes() {
+            log('🧪 Début du test des routes...');
+            
+            const routes = [
+                { url: 'https://hag-ostu.onrender.com/', name: 'Accueil' },
+                { url: 'https://hag-ostu.onrender.com/voter', name: 'Voter' },
+                { url: 'https://hag-ostu.onrender.com/categories', name: 'Catégories' },
+                { url: 'https://hag-ostu.onrender.com/admin', name: 'Admin Dashboard' }
+            ];
+            
+            for (const route of routes) {
+                try {
+                    log(`🔍 Test de ${route.name}: ${route.url}`);
+                    const response = await fetch(route.url, { method: 'HEAD' });
+                    
+                    if (response.ok) {
+                        log(`✅ ${route.name}: OK (${response.status})`);
+                    } else {
+                        log(`❌ ${route.name}: Erreur ${response.status}`);
+                    }
+                } catch (error) {
+                    log(`❌ ${route.name}: Erreur réseau - ${error.message}`);
+                }
+                
+                // Attendre 1 seconde entre les tests
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+            
+            log('🏁 Test terminé');
+        }
+
+        // Test automatique au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 Page de test initialisée');
+            log('💡 Cliquez sur "Tester les Routes" pour commencer');
+        });
+    </script>
+</body>
+</html>

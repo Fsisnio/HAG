@@ -4,15 +4,17 @@ import { Vote as VoteIcon, CheckCircle, Loader2 } from 'lucide-react';
 interface VoteButtonProps {
   candidateId: number;
   candidateName: string;
+  candidateCategory: string;
   isVoted: boolean;
   isVoting: boolean;
-  onVote: (candidateId: number, candidateName: string) => void;
+  onVote: (candidateId: number, candidateName: string, candidateCategory: string) => void;
   disabled?: boolean;
 }
 
 const VoteButton: React.FC<VoteButtonProps> = ({
   candidateId,
   candidateName,
+  candidateCategory,
   isVoted,
   isVoting,
   onVote,
@@ -21,13 +23,13 @@ const VoteButton: React.FC<VoteButtonProps> = ({
   // Fonction de gestion du clic simplifiée
   const handleVoteClick = () => {
     // Validation basique
-    if (!candidateId || !candidateName) {
-      console.error('VoteButton: Données manquantes', { candidateId, candidateName });
+    if (!candidateId || !candidateName || !candidateCategory) {
+      console.error('VoteButton: Données manquantes', { candidateId, candidateName, candidateCategory });
       return;
     }
 
-    // Appeler la fonction de vote
-    onVote(candidateId, candidateName);
+    // Appeler la fonction de vote avec la catégorie
+    onVote(candidateId, candidateName, candidateCategory);
   };
 
   // Déterminer l'état du bouton
@@ -84,9 +86,11 @@ const VoteButton: React.FC<VoteButtonProps> = ({
       onClick={handleVoteClick}
       disabled={isButtonDisabled}
       className={getButtonStyles()}
-      aria-label={isVoted ? `Voté pour ${candidateName}` : `Voter pour ${candidateName}`}
+      aria-label={isVoted ? `Voté pour ${candidateName} (${candidateCategory})` : `Voter pour ${candidateName} (${candidateCategory})`}
       data-candidate-id={candidateId}
       data-candidate-name={candidateName}
+      data-candidate-category={candidateCategory}
+      id={`vote-btn-${candidateId}-${candidateCategory.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`}
     >
       {getButtonContent()}
     </button>

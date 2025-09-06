@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Unicité des Votes par Candidat et Catégorie</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .candidate-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f9f9f9;
+        }
+        .vote-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .vote-btn:hover {
+            background: #2563eb;
+        }
+        .vote-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        .voted {
+            background: #10b981;
+        }
+        .log {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+        .warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #f59e0b;
+        }
+        .candidate-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .category-badge {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test - Unicité des Votes par Candidat et Catégorie</h1>
+    
+    <div class="test-container">
+        <h2>Objectif du Test</h2>
+        <p>Vérifier que chaque bouton "Voter" est associé à un candidat unique dans une catégorie spécifique, avec des identifiants uniques et une validation appropriée.</p>
+    </div>
+
+    <div class="test-container">
+        <h2>Contrôles de Test</h2>
+        <button onclick="runAllTests()" class="vote-btn">Lancer Tous les Tests</button>
+        <button onclick="clearLog()" class="vote-btn">Effacer les Logs</button>
+        <button onclick="resetVotes()" class="vote-btn">Réinitialiser les Votes</button>
+    </div>
+
+    <div class="test-container">
+        <h2>Logs de Test</h2>
+        <div id="log" class="log"></div>
+    </div>
+
+    <div class="test-container">
+        <h2>Candidats de Test</h2>
+        <div id="candidates-container"></div>
+    </div>
+
+    <script>
+        // Données de test avec candidats de différentes catégories
+        const testCandidates = [
+            {
+                id: 1,
+                name: "Fouta Tourisme",
+                category: "Meilleur Guide Touristique de l'année",
+                votes: 0,
+                isVoted: false
+            },
+            {
+                id: 2,
+                name: "Tibou Bah",
+                category: "Meilleur Guide Touristique de l'année",
+                votes: 0,
+                isVoted: false
+            },
+            {
+                id: 4,
+                name: "Hôtel Onomo",
+                category: "Meilleure Équipe en Housekeeping de l'année",
+                votes: 0,
+                isVoted: false
+            },
+            {
+                id: 8,
+                name: "Noom Hôtel",
+                category: "Meilleure Brigade de Cuisine de l'année",
+                votes: 0,
+                isVoted: false
+            }
+        ];
+
+        let candidates = [...testCandidates];
+        let votingInProgress = new Set();
+
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function showStatus(message, type) {
+            const statusDiv = document.createElement('div');
+            statusDiv.className = `status ${type}`;
+            statusDiv.textContent = message;
+            document.body.insertBefore(statusDiv, document.querySelector('.test-container'));
+            setTimeout(() => statusDiv.remove(), 3000);
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        function resetVotes() {
+            candidates = [...testCandidates];
+            votingInProgress.clear();
+            renderCandidates();
+            log('🔄 Votes réinitialisés');
+            showStatus('Votes réinitialisés', 'success');
+        }
+
+        function renderCandidates() {
+            const container = document.getElementById('candidates-container');
+            container.innerHTML = '';
+
+            candidates.forEach(candidate => {
+                const card = document.createElement('div');
+                card.className = 'candidate-card';
+                card.innerHTML = `
+                    <div class="candidate-info">
+                        <div>
+                            <h3>${candidate.name} (ID: ${candidate.id})</h3>
+                            <span class="category-badge">${candidate.category}</span>
+                        </div>
+                        <div>
+                            <span>Votes: ${candidate.votes}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <button 
+                            id="vote-btn-${candidate.id}-${candidate.category.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}"
+                            data-candidate-id="${candidate.id}"
+                            data-candidate-name="${candidate.name}"
+                            data-candidate-category="${candidate.category}"
+                            onclick="testVote(${candidate.id}, '${candidate.name}', '${candidate.category}')"
+                            ${candidate.isVoted || votingInProgress.has(candidate.id) ? 'disabled' : ''}
+                            class="vote-btn ${candidate.isVoted ? 'voted' : votingInProgress.has(candidate.id) ? 'voting' : ''}"
+                        >
+                            ${candidate.isVoted ? '✅ Voté' : votingInProgress.has(candidate.id) ? '⏳ En cours...' : '🗳️ Voter'}
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function testVote(candidateId, candidateName, candidateCategory) {
+            log(`🖱️ Clic sur le bouton de vote pour candidat ID: ${candidateId}, Nom: ${candidateName}, Catégorie: ${candidateCategory}`);
+            
+            // Validation basique
+            if (!candidateId || !candidateName || !candidateCategory) {
+                log(`❌ Données manquantes: ID=${candidateId}, Nom=${candidateName}, Catégorie=${candidateCategory}`);
+                showStatus('Erreur: Données manquantes', 'error');
+                return;
+            }
+            
+            // Trouver le candidat
+            const candidate = candidates.find(c => c.id === candidateId);
+            if (!candidate) {
+                log(`❌ Candidat non trouvé avec ID: ${candidateId}`);
+                showStatus('Erreur: Candidat non trouvé', 'error');
+                return;
+            }
+            
+            // Vérifier la correspondance candidat-catégorie
+            if (candidate.category !== candidateCategory) {
+                log(`❌ Correspondance candidat-catégorie incorrecte:`);
+                log(`   Candidat ID: ${candidateId}`);
+                log(`   Candidat Nom: ${candidate.name}`);
+                log(`   Candidat Catégorie: ${candidate.category}`);
+                log(`   Catégorie Vote: ${candidateCategory}`);
+                showStatus('Erreur: Correspondance candidat-catégorie incorrecte', 'error');
+                return;
+            }
+            
+            // Vérifier si déjà voté
+            if (candidate.isVoted) {
+                log(`⚠️ Candidat déjà voté: ${candidate.name}`);
+                showStatus('Vous avez déjà voté pour ce candidat', 'warning');
+                return;
+            }
+            
+            // Vérifier si vote en cours
+            if (votingInProgress.has(candidateId)) {
+                log(`⚠️ Vote déjà en cours pour: ${candidate.name}`);
+                showStatus('Un vote est déjà en cours pour ce candidat', 'warning');
+                return;
+            }
+
+            log(`✅ Vote autorisé pour: ${candidate.name} (${candidate.category})`);
+            
+            // Marquer comme en cours
+            votingInProgress.add(candidateId);
+            renderCandidates();
+            
+            // Simuler un délai de traitement
+            setTimeout(() => {
+                // Mettre à jour le candidat
+                const candidateIndex = candidates.findIndex(c => c.id === candidateId);
+                if (candidateIndex !== -1) {
+                    candidates[candidateIndex].votes += 1;
+                    candidates[candidateIndex].isVoted = true;
+                }
+                
+                // Retirer du processus en cours
+                votingInProgress.delete(candidateId);
+                
+                // Sauvegarder dans localStorage
+                localStorage.setItem('hag_test_votes', JSON.stringify(candidates));
+                
+                log(`✅ Vote enregistré pour: ${candidate.name} (${candidate.category}) - Total votes: ${candidates[candidateIndex].votes}`);
+                showStatus(`Vote enregistré pour ${candidate.name}`, 'success');
+                
+                renderCandidates();
+            }, 1000);
+        }
+
+        function runAllTests() {
+            log('🧪 Début des tests d\'unicité des votes...');
+            
+            // Test 1: Vérifier les identifiants uniques
+            log('Test 1: Vérification des identifiants uniques des boutons');
+            const buttons = document.querySelectorAll('[id^="vote-btn-"]');
+            const buttonIds = Array.from(buttons).map(btn => btn.id);
+            const uniqueIds = new Set(buttonIds);
+            
+            if (buttonIds.length === uniqueIds.size) {
+                log('✅ Tous les boutons ont des identifiants uniques');
+            } else {
+                log('❌ Des identifiants de boutons sont dupliqués');
+            }
+            
+            // Test 2: Vérifier la correspondance candidat-catégorie
+            log('Test 2: Vérification de la correspondance candidat-catégorie');
+            let allMatches = true;
+            candidates.forEach(candidate => {
+                const button = document.querySelector(`[data-candidate-id="${candidate.id}"]`);
+                if (button) {
+                    const buttonCategory = button.getAttribute('data-candidate-category');
+                    if (candidate.category === buttonCategory) {
+                        log(`✅ Correspondance OK: ${candidate.name} - ${candidate.category}`);
+                    } else {
+                        log(`❌ Correspondance KO: ${candidate.name} - Attendu: ${candidate.category}, Reçu: ${buttonCategory}`);
+                        allMatches = false;
+                    }
+                }
+            });
+            
+            if (allMatches) {
+                log('✅ Toutes les correspondances candidat-catégorie sont correctes');
+            } else {
+                log('❌ Certaines correspondances candidat-catégorie sont incorrectes');
+            }
+            
+            // Test 3: Vérifier l'unicité des candidats par catégorie
+            log('Test 3: Vérification de l\'unicité des candidats par catégorie');
+            const candidatesByCategory = {};
+            candidates.forEach(candidate => {
+                if (!candidatesByCategory[candidate.category]) {
+                    candidatesByCategory[candidate.category] = [];
+                }
+                candidatesByCategory[candidate.category].push(candidate);
+            });
+            
+            let uniqueCandidates = true;
+            Object.keys(candidatesByCategory).forEach(category => {
+                const categoryCandidates = candidatesByCategory[category];
+                const candidateIds = categoryCandidates.map(c => c.id);
+                const uniqueIds = new Set(candidateIds);
+                
+                if (candidateIds.length === uniqueIds.size) {
+                    log(`✅ Catégorie "${category}": ${categoryCandidates.length} candidats uniques`);
+                } else {
+                    log(`❌ Catégorie "${category}": candidats dupliqués détectés`);
+                    uniqueCandidates = false;
+                }
+            });
+            
+            if (uniqueCandidates) {
+                log('✅ Tous les candidats sont uniques dans leurs catégories respectives');
+            } else {
+                log('❌ Des candidats dupliqués ont été détectés');
+            }
+            
+            log('🧪 Tests terminés');
+            showStatus('Tests terminés - Vérifiez les logs', 'success');
+        }
+
+        // Charger les votes sauvegardés au démarrage
+        function loadSavedVotes() {
+            const savedVotes = localStorage.getItem('hag_test_votes');
+            if (savedVotes) {
+                try {
+                    candidates = JSON.parse(savedVotes);
+                    log('📁 Votes sauvegardés chargés');
+                } catch (error) {
+                    log('❌ Erreur lors du chargement des votes sauvegardés');
+                }
+            }
+        }
+
+        // Initialiser la page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSavedVotes();
+            renderCandidates();
+            log('🚀 Page de test initialisée');
+        });
+    </script>
+</body>
+</html>

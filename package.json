@@ -28,7 +28,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "node build-script.js",
     "build:prod": "set GENERATE_SOURCEMAP=false && set NODE_ENV=production && react-scripts build",
     "build:unix": "GENERATE_SOURCEMAP=false NODE_ENV=production react-scripts build",
     "test": "react-scripts test",

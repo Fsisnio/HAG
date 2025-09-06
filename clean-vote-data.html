@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nettoyage des Données de Vote</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #2563eb;
+        }
+        .btn-danger {
+            background: #ef4444;
+        }
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        .log {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+        .warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #f59e0b;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧹 Nettoyage des Données de Vote</h1>
+    
+    <div class="container">
+        <h2>Problème</h2>
+        <p>Les données de vote peuvent être corrompues, causant des votes multiples inattendus.</p>
+        <p>Ce script nettoie et réinitialise toutes les données de vote.</p>
+    </div>
+
+    <div class="container">
+        <h2>Actions Disponibles</h2>
+        <button onclick="analyzeData()" class="btn">🔍 Analyser les Données</button>
+        <button onclick="cleanVoteData()" class="btn">🧹 Nettoyer les Votes</button>
+        <button onclick="cleanRatingData()" class="btn">⭐ Nettoyer les Notes</button>
+        <button onclick="cleanAllData()" class="btn btn-danger">💥 Tout Nettoyer</button>
+        <button onclick="clearLog()" class="btn">🗑️ Effacer les Logs</button>
+    </div>
+
+    <div class="container">
+        <h2>Logs</h2>
+        <div id="log" class="log"></div>
+    </div>
+
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function showStatus(message, type) {
+            const statusDiv = document.createElement('div');
+            statusDiv.className = `status ${type}`;
+            statusDiv.textContent = message;
+            document.body.insertBefore(statusDiv, document.querySelector('.container'));
+            setTimeout(() => statusDiv.remove(), 5000);
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        function analyzeData() {
+            log('🔍 Analyse des données de vote...');
+            
+            // Analyser les votes
+            const voteData = localStorage.getItem('hag_candidates_votes');
+            if (voteData) {
+                try {
+                    const votes = JSON.parse(voteData);
+                    log(`📊 Données de vote trouvées: ${votes.length} entrées`);
+                    
+                    let totalVotes = 0;
+                    let votedCandidates = 0;
+                    
+                    votes.forEach(vote => {
+                        if (vote.votes > 0) totalVotes += vote.votes;
+                        if (vote.isVoted) votedCandidates++;
+                        
+                        log(`   ID ${vote.id}: ${vote.votes} votes, voté: ${vote.isVoted}`);
+                    });
+                    
+                    log(`📈 Total votes: ${totalVotes}`);
+                    log(`✅ Candidats votés: ${votedCandidates}`);
+                    
+                    // Vérifier la cohérence
+                    if (votedCandidates > 0 && totalVotes === 0) {
+                        log('⚠️ Incohérence détectée: candidats marqués comme votés mais 0 votes');
+                    }
+                    
+                } catch (error) {
+                    log(`❌ Erreur lors de l'analyse des votes: ${error.message}`);
+                }
+            } else {
+                log('ℹ️ Aucune donnée de vote trouvée');
+            }
+            
+            // Analyser les notes
+            const ratingData = localStorage.getItem('hag_candidates_ratings');
+            if (ratingData) {
+                try {
+                    const ratings = JSON.parse(ratingData);
+                    log(`⭐ Données de notes trouvées: ${ratings.length} entrées`);
+                } catch (error) {
+                    log(`❌ Erreur lors de l'analyse des notes: ${error.message}`);
+                }
+            } else {
+                log('ℹ️ Aucune donnée de note trouvée');
+            }
+            
+            showStatus('Analyse terminée', 'success');
+        }
+
+        function cleanVoteData() {
+            if (confirm('Êtes-vous sûr de vouloir nettoyer les données de vote ?')) {
+                localStorage.removeItem('hag_candidates_votes');
+                log('🧹 Données de vote nettoyées');
+                showStatus('Données de vote nettoyées', 'success');
+            }
+        }
+
+        function cleanRatingData() {
+            if (confirm('Êtes-vous sûr de vouloir nettoyer les données de notes ?')) {
+                localStorage.removeItem('hag_candidates_ratings');
+                log('⭐ Données de notes nettoyées');
+                showStatus('Données de notes nettoyées', 'success');
+            }
+        }
+
+        function cleanAllData() {
+            if (confirm('Êtes-vous sûr de vouloir nettoyer TOUTES les données ? Cette action est irréversible.')) {
+                localStorage.removeItem('hag_candidates_votes');
+                localStorage.removeItem('hag_candidates_ratings');
+                localStorage.removeItem('hag_approved_candidates');
+                localStorage.removeItem('hag_applications');
+                
+                log('💥 Toutes les données nettoyées');
+                showStatus('Toutes les données nettoyées', 'success');
+            }
+        }
+
+        // Analyser au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 Script de nettoyage initialisé');
+            analyzeData();
+        });
+    </script>
+</body>
+</html>

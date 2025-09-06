@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Correction du Bug de Vote Multiple</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .candidate-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f9f9f9;
+        }
+        .vote-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .vote-btn:hover {
+            background: #2563eb;
+        }
+        .vote-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        .voted {
+            background: #10b981;
+        }
+        .log {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+        .warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #f59e0b;
+        }
+        .candidate-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .category-badge {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .test-scenario {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test - Correction du Bug de Vote Multiple</h1>
+    
+    <div class="test-container">
+        <h2>Problème Identifié</h2>
+        <p>Le bouton voter d'un candidat valide automatiquement pour tous ceux qui le précèdent dans la liste.</p>
+        <p><strong>Cause probable :</strong> Problème dans la logique de sauvegarde/chargement des données de vote.</p>
+    </div>
+
+    <div class="test-container">
+        <h2>Scénario de Test</h2>
+        <div class="test-scenario">
+            <h3>Étapes à suivre :</h3>
+            <ol>
+                <li>Votez pour le <strong>3ème candidat</strong> de la liste</li>
+                <li>Vérifiez que seuls les candidats 1, 2 et 3 sont marqués comme votés</li>
+                <li>Si le problème persiste, cliquez sur "Réinitialiser" et recommencez</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>Contrôles de Test</h2>
+        <button onclick="runBugTest()" class="vote-btn">🧪 Tester le Bug</button>
+        <button onclick="clearLog()" class="vote-btn">🗑️ Effacer les Logs</button>
+        <button onclick="resetVotes()" class="vote-btn">🔄 Réinitialiser</button>
+        <button onclick="checkVoteState()" class="vote-btn">🔍 Vérifier l'État</button>
+    </div>
+
+    <div class="test-container">
+        <h2>Logs de Test</h2>
+        <div id="log" class="log"></div>
+    </div>
+
+    <div class="test-container">
+        <h2>Candidats de Test (Ordre Important)</h2>
+        <div id="candidates-container"></div>
+    </div>
+
+    <script>
+        // Données de test avec candidats dans un ordre spécifique
+        const testCandidates = [
+            {
+                id: 1,
+                name: "Candidat A (1er)",
+                category: "Catégorie Test",
+                votes: 0,
+                isVoted: false
+            },
+            {
+                id: 2,
+                name: "Candidat B (2ème)",
+                category: "Catégorie Test",
+                votes: 0,
+                isVoted: false
+            },
+            {
+                id: 3,
+                name: "Candidat C (3ème)",
+                category: "Catégorie Test",
+                votes: 0,
+                isVoted: false
+            },
+            {
+                id: 4,
+                name: "Candidat D (4ème)",
+                category: "Catégorie Test",
+                votes: 0,
+                isVoted: false
+            },
+            {
+                id: 5,
+                name: "Candidat E (5ème)",
+                category: "Catégorie Test",
+                votes: 0,
+                isVoted: false
+            }
+        ];
+
+        let candidates = [...testCandidates];
+        let votingInProgress = new Set();
+
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function showStatus(message, type) {
+            const statusDiv = document.createElement('div');
+            statusDiv.className = `status ${type}`;
+            statusDiv.textContent = message;
+            document.body.insertBefore(statusDiv, document.querySelector('.test-container'));
+            setTimeout(() => statusDiv.remove(), 5000);
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        function resetVotes() {
+            candidates = [...testCandidates];
+            votingInProgress.clear();
+            localStorage.removeItem('hag_test_votes');
+            renderCandidates();
+            log('🔄 Votes réinitialisés');
+            showStatus('Votes réinitialisés', 'success');
+        }
+
+        function renderCandidates() {
+            const container = document.getElementById('candidates-container');
+            container.innerHTML = '';
+
+            candidates.forEach((candidate, index) => {
+                const card = document.createElement('div');
+                card.className = 'candidate-card';
+                card.innerHTML = `
+                    <div class="candidate-info">
+                        <div>
+                            <h3>${candidate.name} (Position: ${index + 1})</h3>
+                            <span class="category-badge">${candidate.category}</span>
+                        </div>
+                        <div>
+                            <span>Votes: ${candidate.votes}</span>
+                            <span style="margin-left: 10px; color: ${candidate.isVoted ? '#10b981' : '#6b7280'};">
+                                ${candidate.isVoted ? '✅ VOTÉ' : '❌ Non voté'}
+                            </span>
+                        </div>
+                    </div>
+                    <div>
+                        <button 
+                            id="vote-btn-${candidate.id}-${candidate.category.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}"
+                            data-candidate-id="${candidate.id}"
+                            data-candidate-name="${candidate.name}"
+                            data-candidate-category="${candidate.category}"
+                            onclick="testVote(${candidate.id}, '${candidate.name}', '${candidate.category}')"
+                            ${candidate.isVoted || votingInProgress.has(candidate.id) ? 'disabled' : ''}
+                            class="vote-btn ${candidate.isVoted ? 'voted' : votingInProgress.has(candidate.id) ? 'voting' : ''}"
+                        >
+                            ${candidate.isVoted ? '✅ Voté' : votingInProgress.has(candidate.id) ? '⏳ En cours...' : '🗳️ Voter'}
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function testVote(candidateId, candidateName, candidateCategory) {
+            log(`🖱️ Clic sur le bouton de vote pour candidat ID: ${candidateId}, Nom: ${candidateName}`);
+            
+            // Validation basique
+            if (!candidateId || !candidateName || !candidateCategory) {
+                log(`❌ Données manquantes: ID=${candidateId}, Nom=${candidateName}, Catégorie=${candidateCategory}`);
+                showStatus('Erreur: Données manquantes', 'error');
+                return;
+            }
+            
+            // Trouver le candidat
+            const candidate = candidates.find(c => c.id === candidateId);
+            if (!candidate) {
+                log(`❌ Candidat non trouvé avec ID: ${candidateId}`);
+                showStatus('Erreur: Candidat non trouvé', 'error');
+                return;
+            }
+            
+            // Vérifier la correspondance candidat-catégorie
+            if (candidate.category !== candidateCategory) {
+                log(`❌ Correspondance candidat-catégorie incorrecte:`);
+                log(`   Candidat ID: ${candidateId}`);
+                log(`   Candidat Nom: ${candidate.name}`);
+                log(`   Candidat Catégorie: ${candidate.category}`);
+                log(`   Catégorie Vote: ${candidateCategory}`);
+                showStatus('Erreur: Correspondance candidat-catégorie incorrecte', 'error');
+                return;
+            }
+            
+            // Vérifier si déjà voté
+            if (candidate.isVoted) {
+                log(`⚠️ Candidat déjà voté: ${candidate.name}`);
+                showStatus('Vous avez déjà voté pour ce candidat', 'warning');
+                return;
+            }
+            
+            // Vérifier si vote en cours
+            if (votingInProgress.has(candidateId)) {
+                log(`⚠️ Vote déjà en cours pour: ${candidate.name}`);
+                showStatus('Un vote est déjà en cours pour ce candidat', 'warning');
+                return;
+            }
+
+            log(`✅ Vote autorisé pour: ${candidate.name}`);
+            
+            // Marquer comme en cours
+            votingInProgress.add(candidateId);
+            renderCandidates();
+            
+            // Simuler un délai de traitement
+            setTimeout(() => {
+                // Mettre à jour SEULEMENT le candidat spécifique
+                const candidateIndex = candidates.findIndex(c => c.id === candidateId);
+                if (candidateIndex !== -1) {
+                    candidates[candidateIndex].votes += 1;
+                    candidates[candidateIndex].isVoted = true;
+                    
+                    log(`✅ Vote enregistré pour: ${candidate.name} (Position: ${candidateIndex + 1})`);
+                }
+                
+                // Retirer du processus en cours
+                votingInProgress.delete(candidateId);
+                
+                // Sauvegarder seulement les données de vote (pas tout l'objet candidat)
+                const voteData = candidates.map(c => ({
+                    id: c.id,
+                    votes: c.votes,
+                    isVoted: c.isVoted
+                }));
+                localStorage.setItem('hag_test_votes', JSON.stringify(voteData));
+                
+                showStatus(`Vote enregistré pour ${candidate.name}`, 'success');
+                
+                renderCandidates();
+                
+                // Vérifier s'il y a des votes inattendus
+                checkVoteState();
+            }, 1000);
+        }
+
+        function checkVoteState() {
+            log('🔍 Vérification de l\'état des votes:');
+            candidates.forEach((candidate, index) => {
+                const status = candidate.isVoted ? 'VOTÉ' : 'Non voté';
+                log(`   Position ${index + 1}: ${candidate.name} - ${status} (${candidate.votes} votes)`);
+            });
+            
+            // Vérifier s'il y a des votes inattendus
+            const votedCandidates = candidates.filter(c => c.isVoted);
+            if (votedCandidates.length > 1) {
+                const votedPositions = votedCandidates.map(c => candidates.indexOf(c) + 1);
+                log(`⚠️ ATTENTION: ${votedCandidates.length} candidats votés aux positions: ${votedPositions.join(', ')}`);
+                
+                // Vérifier si c'est un vote en séquence (normal) ou dispersé (bug)
+                const isSequential = votedPositions.every((pos, index) => 
+                    index === 0 || pos === votedPositions[index - 1] + 1
+                );
+                
+                if (!isSequential) {
+                    log(`❌ BUG DÉTECTÉ: Votes non séquentiels détectés!`);
+                    showStatus('BUG: Votes non séquentiels détectés!', 'error');
+                } else {
+                    log(`✅ Votes séquentiels (normal)`);
+                }
+            }
+        }
+
+        function runBugTest() {
+            log('🧪 Début du test de bug...');
+            log('Instructions: Votez pour le 3ème candidat et observez si les candidats 1 et 2 sont aussi marqués comme votés');
+            
+            // Réinitialiser d'abord
+            resetVotes();
+            
+            showStatus('Test prêt - Votez pour le 3ème candidat', 'success');
+        }
+
+        // Charger les votes sauvegardés au démarrage
+        function loadSavedVotes() {
+            const savedVotes = localStorage.getItem('hag_test_votes');
+            if (savedVotes) {
+                try {
+                    const voteData = JSON.parse(savedVotes);
+                    candidates.forEach(candidate => {
+                        const savedVote = voteData.find(v => v.id === candidate.id);
+                        if (savedVote) {
+                            candidate.votes = savedVote.votes || 0;
+                            candidate.isVoted = savedVote.isVoted || false;
+                        }
+                    });
+                    log('📁 Votes sauvegardés chargés');
+                } catch (error) {
+                    log('❌ Erreur lors du chargement des votes sauvegardés');
+                }
+            }
+        }
+
+        // Initialiser la page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSavedVotes();
+            renderCandidates();
+            log('🚀 Page de test initialisée');
+            log('💡 Cliquez sur "Tester le Bug" pour commencer');
+        });
+    </script>
+</body>
+</html>

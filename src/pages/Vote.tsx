@@ -5,6 +5,7 @@ import VoteButton from '../components/VoteButton';
 import PremiumVoteModal from '../components/PremiumVoteModal';
 import { officialCategories } from '../data/categories';
 import { getAllOfficialCandidates, getCandidatesByCategory, getCategoriesWithCandidates } from '../data/officialCandidates';
+import { validateVote, validateCandidatesUniqueness } from '../utils/voteValidation';
 
 // Composant pour l'affichage des étoiles de notation
 const StarRating: React.FC<{
@@ -88,6 +89,10 @@ const VotePage: React.FC = () => {
         const savedRating = ratingsData.find((c: any) => c.id === candidate.id);
         const savedVote = votesData.find((c: any) => c.id === candidate.id);
         
+        // Validation des données de vote sauvegardées
+        const votes = savedVote?.votes !== undefined ? savedVote.votes : (candidate.votes || 0);
+        const isVoted = savedVote?.isVoted === true ? true : (candidate.isVoted || false);
+        
         return {
           id: candidate.id,
           name: candidate.name,
@@ -95,8 +100,8 @@ const VotePage: React.FC = () => {
           category: candidate.category,
           description: candidate.description || 'Candidat officiel des Hospitality Awards Guinée',
           image: '/placeholder-hotel.jpg',
-          votes: savedVote?.votes || candidate.votes || 0,
-          isVoted: savedVote?.isVoted || candidate.isVoted || false,
+          votes: Math.max(0, votes), // S'assurer que les votes ne sont pas négatifs
+          isVoted: isVoted,
           rating: savedRating?.rating || candidate.rating || 4.0,
           totalRatings: savedRating?.totalRatings || candidate.totalRatings || 0,
           userRating: savedRating?.userRating || candidate.userRating
@@ -104,6 +109,15 @@ const VotePage: React.FC = () => {
       });
 
       setCandidates(formattedCandidates);
+      
+      // Valider l'unicité des candidats
+      const validation = validateCandidatesUniqueness(formattedCandidates);
+      if (!validation.isValid) {
+        console.error('❌ Problèmes de validation des candidats:', validation.errors);
+      }
+      if (validation.warnings.length > 0) {
+        console.warn('⚠️ Avertissements de validation:', validation.warnings);
+      }
     } catch (error) {
       console.error('Erreur lors du chargement des candidats:', error);
     }
@@ -123,13 +137,47 @@ const VotePage: React.FC = () => {
 
   const categories = ['Toutes', ...getCategoriesWithCandidates()];
 
-  const handleVote = (candidateId: number, candidateName: string) => {
-    console.log('🔄 Vote pour:', candidateName, 'ID:', candidateId);
+  // Fonction pour réinitialiser tous les votes
+  const resetAllVotes = () => {
+    if (window.confirm('Êtes-vous sûr de vouloir réinitialiser tous les votes ? Cette action est irréversible.')) {
+      localStorage.removeItem('hag_candidates_votes');
+      localStorage.removeItem('hag_candidates_ratings');
+      
+      // Recharger les candidats
+      const officialCandidates = getAllOfficialCandidates();
+      const formattedCandidates = officialCandidates.map(candidate => ({
+        id: candidate.id,
+        name: candidate.name,
+        organization: candidate.name,
+        category: candidate.category,
+        description: candidate.description || 'Candidat officiel des Hospitality Awards Guinée',
+        image: '/placeholder-hotel.jpg',
+        votes: 0,
+        isVoted: false,
+        rating: candidate.rating || 4.0,
+        totalRatings: candidate.totalRatings || 0,
+        userRating: candidate.userRating
+      }));
+      
+      setCandidates(formattedCandidates);
+      setVotingInProgress(new Set());
+      console.log('🔄 Tous les votes ont été réinitialisés');
+    }
+  };
+
+  const handleVote = (candidateId: number, candidateName: string, candidateCategory: string) => {
+    console.log('🔄 Vote pour:', candidateName, 'ID:', candidateId, 'Catégorie:', candidateCategory);
     
-    // Validation basique
-    if (!candidateId || !candidateName) {
-      console.error('❌ Données manquantes:', { candidateId, candidateName });
+    // Validation complète du vote
+    const validation = validateVote(candidateId, candidateName, candidateCategory, candidates);
+    
+    if (!validation.isValid) {
+      console.error('❌ Validation échouée:', validation.errors);
       return;
+    }
+    
+    if (validation.warnings.length > 0) {
+      console.warn('⚠️ Avertissements:', validation.warnings);
     }
     
     // Trouver le candidat
@@ -164,8 +212,14 @@ const VotePage: React.FC = () => {
             : c
         );
         
-        // Sauvegarder
-        localStorage.setItem('hag_candidates_votes', JSON.stringify(updated));
+        // Sauvegarder seulement les données de vote (pas tout l'objet candidat)
+        const voteData = updated.map(c => ({
+          id: c.id,
+          votes: c.votes,
+          isVoted: c.isVoted
+        }));
+        localStorage.setItem('hag_candidates_votes', JSON.stringify(voteData));
+        
         return updated;
       });
 
@@ -295,9 +349,18 @@ const VotePage: React.FC = () => {
               </div>
             </div>
 
-            <div className="text-sm text-gray-600">
-              {filteredCandidates.length} candidat(s) trouvé(s)
+            <div className="flex items-center space-x-4">
+              <div className="text-sm text-gray-600">
+                {filteredCandidates.length} candidat(s) trouvé(s)
               </div>
+              <button
+                onClick={resetAllVotes}
+                className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
+                title="Réinitialiser tous les votes"
+              >
+                🔄 Réinitialiser
+              </button>
+            </div>
             </div>
           </div>
 
@@ -383,6 +446,7 @@ const VotePage: React.FC = () => {
                        <VoteButton
                          candidateId={candidate.id}
                          candidateName={candidate.name}
+                         candidateCategory={candidate.category}
                          isVoted={candidate.isVoted}
                          isVoting={votingInProgress.has(candidate.id)}
                          onVote={handleVote}
@@ -391,11 +455,12 @@ const VotePage: React.FC = () => {
 
                     <div className="grid grid-cols-3 gap-2">
                            <button
-                             id={`premium-bronze-${candidate.id}`}
+                             id={`premium-bronze-${candidate.id}-${candidate.category.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`}
                              data-candidate-id={candidate.id}
                              data-candidate-name={candidate.name}
+                             data-candidate-category={candidate.category}
                              onClick={() => {
-                               console.log('🖱️ Clic sur vote Bronze pour:', candidate.name, 'ID:', candidate.id);
+                               console.log('🖱️ Clic sur vote Bronze pour:', candidate.name, 'ID:', candidate.id, 'Catégorie:', candidate.category);
                                handlePremiumVote('bronze', candidate.name, candidate.category);
                              }}
                         className="py-2 px-3 text-xs font-medium bg-amber-100 text-amber-800 rounded-lg hover:bg-amber-200 transition-colors"
@@ -403,11 +468,12 @@ const VotePage: React.FC = () => {
                         Bronze
                            </button>
                            <button
-                             id={`premium-silver-${candidate.id}`}
+                             id={`premium-silver-${candidate.id}-${candidate.category.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`}
                              data-candidate-id={candidate.id}
                              data-candidate-name={candidate.name}
+                             data-candidate-category={candidate.category}
                              onClick={() => {
-                               console.log('🖱️ Clic sur vote Argent pour:', candidate.name, 'ID:', candidate.id);
+                               console.log('🖱️ Clic sur vote Argent pour:', candidate.name, 'ID:', candidate.id, 'Catégorie:', candidate.category);
                                handlePremiumVote('silver', candidate.name, candidate.category);
                              }}
                         className="py-2 px-3 text-xs font-medium bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors"
@@ -415,11 +481,12 @@ const VotePage: React.FC = () => {
                         Argent
                            </button>
                            <button
-                             id={`premium-gold-${candidate.id}`}
+                             id={`premium-gold-${candidate.id}-${candidate.category.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`}
                              data-candidate-id={candidate.id}
                              data-candidate-name={candidate.name}
+                             data-candidate-category={candidate.category}
                              onClick={() => {
-                               console.log('🖱️ Clic sur vote Or pour:', candidate.name, 'ID:', candidate.id);
+                               console.log('🖱️ Clic sur vote Or pour:', candidate.name, 'ID:', candidate.id, 'Catégorie:', candidate.category);
                                handlePremiumVote('gold', candidate.name, candidate.category);
                              }}
                         className="py-2 px-3 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-lg hover:bg-yellow-200 transition-colors"
