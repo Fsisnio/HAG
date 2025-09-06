@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Trophy } from 'lucide-react';
+import AdminButton from './AdminButton';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -88,8 +89,9 @@ const Header: React.FC = () => {
             ))}
           </nav>
 
-          {/* Bouton Candidater */}
-          <div className="hidden xl:block flex-shrink-0">
+          {/* Boutons d'action */}
+          <div className="hidden xl:flex items-center space-x-3 flex-shrink-0">
+            <AdminButton />
             <Link
               to="/candidater"
               className="btn btn-primary text-sm px-4 py-2"
@@ -128,8 +130,11 @@ const Header: React.FC = () => {
                 ))}
               </div>
               
-              {/* Bouton Candidater mobile */}
-              <div className="px-4 pt-4">
+              {/* Boutons d'action mobile */}
+              <div className="px-4 pt-4 space-y-2">
+                <div onClick={closeMenu}>
+                  <AdminButton />
+                </div>
                 <Link
                   to="/candidater"
                   className="btn btn-primary w-full text-center text-sm py-2"

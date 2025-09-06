@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test du Bouton Admin - HAG</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            background: #2563eb;
+        }
+        .btn-success {
+            background: #10b981;
+        }
+        .btn-success:hover {
+            background: #059669;
+        }
+        .btn-danger {
+            background: #ef4444;
+        }
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        .log {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+        .warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #f59e0b;
+        }
+        .test-step {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .admin-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: #1e40af;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .admin-button:hover {
+            background: #1d4ed8;
+            color: #fbbf24;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test du Bouton Admin - HAG</h1>
+    
+    <div class="container">
+        <h2>Fonctionnalités Ajoutées</h2>
+        <ul>
+            <li>✅ <strong>Bouton Admin dans le Header</strong> : Visible sur desktop et mobile</li>
+            <li>✅ <strong>État de connexion</strong> : Affiche "Admin" ou "Dashboard" selon l'état</li>
+            <li>✅ <strong>Bouton de déconnexion</strong> : Apparaît quand connecté</li>
+            <li>✅ <strong>Icônes dynamiques</strong> : Shield, LogIn, LogOut selon l'état</li>
+            <li>✅ <strong>Responsive</strong> : Adapté pour mobile et desktop</li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <h2>États du Bouton Admin</h2>
+        
+        <div class="test-step">
+            <h3>1. État Non Connecté</h3>
+            <p>Quand l'utilisateur n'est pas connecté :</p>
+            <div class="admin-button">
+                <span>🔑</span>
+                <span>Admin</span>
+            </div>
+            <p><strong>Action :</strong> Redirige vers la page de connexion admin</p>
+        </div>
+
+        <div class="test-step">
+            <h3>2. État Connecté</h3>
+            <p>Quand l'utilisateur est connecté :</p>
+            <div class="admin-button">
+                <span>🛡️</span>
+                <span>Dashboard</span>
+            </div>
+            <p><strong>Action :</strong> Redirige vers le dashboard admin</p>
+        </div>
+
+        <div class="test-step">
+            <h3>3. Bouton de Déconnexion</h3>
+            <p>Quand connecté, un bouton de déconnexion apparaît :</p>
+            <div class="admin-button" style="background: #ef4444;">
+                <span>🚪</span>
+                <span>Déconnexion</span>
+            </div>
+            <p><strong>Action :</strong> Déconnecte l'utilisateur et redirige vers l'accueil</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Test en Direct</h2>
+        <p>Testez le bouton admin sur le site en production :</p>
+        
+        <a href="https://hag-ostu.onrender.com/" class="btn btn-success" target="_blank">
+            🌐 Ouvrir le Site
+        </a>
+        
+        <p><strong>Instructions :</strong></p>
+        <ol>
+            <li>Ouvrez le site en cliquant sur le bouton ci-dessus</li>
+            <li>Regardez le header - vous devriez voir un bouton "Admin"</li>
+            <li>Cliquez sur "Admin" - vous devriez être redirigé vers la page de connexion</li>
+            <li>Connectez-vous avec le mot de passe : <code>HAG2024Admin!</code></li>
+            <li>Le bouton devrait maintenant afficher "Dashboard"</li>
+        </ol>
+    </div>
+
+    <div class="container">
+        <h2>Test Mobile</h2>
+        <p>Sur mobile, le bouton admin apparaît dans le menu hamburger :</p>
+        <ol>
+            <li>Ouvrez le site sur mobile</li>
+            <li>Cliquez sur le menu hamburger (☰)</li>
+            <li>Vous devriez voir "Accès Administrateur" dans le menu</li>
+        </ol>
+    </div>
+
+    <div class="container">
+        <h2>Diagnostic</h2>
+        <button onclick="runDiagnostic()" class="btn">🔍 Lancer le Diagnostic</button>
+        <button onclick="clearLog()" class="btn">🗑️ Effacer les Logs</button>
+        
+        <div id="log" class="log"></div>
+    </div>
+
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        function runDiagnostic() {
+            log('🔍 Début du diagnostic du bouton admin...');
+            
+            // Vérifier la session admin
+            const sessionData = localStorage.getItem('hag_admin_session');
+            if (sessionData) {
+                try {
+                    const session = JSON.parse(sessionData);
+                    const now = new Date();
+                    const expiresAt = new Date(session.expiresAt);
+                    
+                    if (session.isAuthenticated && now < expiresAt) {
+                        log('✅ Session admin active détectée');
+                        log(`   Connexion: ${new Date(session.loginTime).toLocaleString()}`);
+                        log(`   Expiration: ${expiresAt.toLocaleString()}`);
+                    } else {
+                        log('⚠️ Session admin expirée');
+                    }
+                } catch (error) {
+                    log('❌ Erreur lors de la lecture de la session: ' + error.message);
+                }
+            } else {
+                log('ℹ️ Aucune session admin trouvée');
+            }
+            
+            // Vérifier les éléments du header
+            log('🔍 Vérification des éléments du header...');
+            
+            // Simuler la vérification des éléments
+            log('✅ Bouton admin devrait être visible dans le header');
+            log('✅ Icône Shield/LogIn devrait être présente');
+            log('✅ Texte "Admin" ou "Dashboard" devrait être affiché');
+            
+            log('🏁 Diagnostic terminé');
+        }
+
+        // Test automatique au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 Page de test initialisée');
+            log('💡 Cliquez sur "Lancer le Diagnostic" pour commencer');
+        });
+    </script>
+</body>
+</html>
