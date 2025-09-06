@@ -1,5 +1,5 @@
 import React from 'react';
-import { Vote as VoteIcon, CheckCircle } from 'lucide-react';
+import { Vote as VoteIcon, CheckCircle, Loader2 } from 'lucide-react';
 
 interface VoteButtonProps {
   candidateId: number;
@@ -18,53 +18,77 @@ const VoteButton: React.FC<VoteButtonProps> = ({
   onVote,
   disabled = false
 }) => {
-  const handleClick = () => {
-    console.log('🖱️ Clic sur VoteButton pour:', candidateName, 'ID:', candidateId);
-    
-    // Validation stricte avant d'appeler onVote
+  // Fonction de gestion du clic simplifiée
+  const handleVoteClick = () => {
+    // Validation basique
     if (!candidateId || !candidateName) {
-      console.error('❌ Données de candidat invalides:', { candidateId, candidateName });
-      alert('Erreur: Données de candidat invalides');
+      console.error('VoteButton: Données manquantes', { candidateId, candidateName });
       return;
     }
-    
+
+    // Appeler la fonction de vote
     onVote(candidateId, candidateName);
   };
 
-  const isDisabled = disabled || isVoted || isVoting;
+  // Déterminer l'état du bouton
+  const isButtonDisabled = disabled || isVoted || isVoting;
+
+  // Styles de base
+  const baseStyles = "w-full py-3 px-4 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2";
+  
+  // Styles conditionnels
+  const getButtonStyles = () => {
+    if (isVoted) {
+      return `${baseStyles} bg-green-500 text-white cursor-not-allowed focus:ring-green-500`;
+    }
+    if (isVoting) {
+      return `${baseStyles} bg-yellow-500 text-white cursor-not-allowed focus:ring-yellow-500`;
+    }
+    if (isButtonDisabled) {
+      return `${baseStyles} bg-gray-300 text-gray-500 cursor-not-allowed focus:ring-gray-300`;
+    }
+    return `${baseStyles} bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 active:bg-blue-800`;
+  };
+
+  // Contenu du bouton
+  const getButtonContent = () => {
+    if (isVoted) {
+      return (
+        <span className="flex items-center justify-center space-x-2">
+          <CheckCircle className="w-5 h-5" />
+          <span>Voté</span>
+        </span>
+      );
+    }
+    
+    if (isVoting) {
+      return (
+        <span className="flex items-center justify-center space-x-2">
+          <Loader2 className="w-5 h-5 animate-spin" />
+          <span>Vote en cours...</span>
+        </span>
+      );
+    }
+    
+    return (
+      <span className="flex items-center justify-center space-x-2">
+        <VoteIcon className="w-5 h-5" />
+        <span>Voter</span>
+      </span>
+    );
+  };
 
   return (
     <button
-      id={`vote-button-${candidateId}`}
+      type="button"
+      onClick={handleVoteClick}
+      disabled={isButtonDisabled}
+      className={getButtonStyles()}
+      aria-label={isVoted ? `Voté pour ${candidateName}` : `Voter pour ${candidateName}`}
       data-candidate-id={candidateId}
       data-candidate-name={candidateName}
-      onClick={handleClick}
-      disabled={isDisabled}
-      className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
-        isVoted
-          ? 'bg-green-100 text-green-800 cursor-not-allowed'
-          : isVoting
-          ? 'bg-yellow-100 text-yellow-800 cursor-not-allowed'
-          : 'bg-blue-600 text-white hover:bg-blue-700'
-      }`}
-      aria-label={`Voter pour ${candidateName}`}
     >
-      {isVoted ? (
-        <span className="flex items-center justify-center space-x-2">
-          <CheckCircle className="w-4 h-4" />
-          <span>Voté</span>
-        </span>
-      ) : isVoting ? (
-        <span className="flex items-center justify-center space-x-2">
-          <div className="w-4 h-4 border-2 border-yellow-800 border-t-transparent rounded-full animate-spin"></div>
-          <span>En cours...</span>
-        </span>
-      ) : (
-        <span className="flex items-center justify-center space-x-2">
-          <VoteIcon className="w-4 h-4" />
-          <span>Voter</span>
-        </span>
-      )}
+      {getButtonContent()}
     </button>
   );
 };

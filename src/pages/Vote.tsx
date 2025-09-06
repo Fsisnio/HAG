@@ -123,105 +123,66 @@ const VotePage: React.FC = () => {
 
   const categories = ['Toutes', ...getCategoriesWithCandidates()];
 
-  const handleVote = async (candidateId: number, candidateName?: string) => {
-    console.log('🔄 Tentative de vote pour le candidat ID:', candidateId, 'Nom:', candidateName);
-    console.log('📊 Candidats actuels:', candidates.map(c => ({ id: c.id, name: c.name, isVoted: c.isVoted })));
+  const handleVote = (candidateId: number, candidateName: string) => {
+    console.log('🔄 Vote pour:', candidateName, 'ID:', candidateId);
     
-    // Vérification stricte de l'ID du candidat
-    if (!candidateId || typeof candidateId !== 'number') {
-      console.error('❌ ID de candidat invalide:', candidateId);
-      alert('Erreur: ID de candidat invalide');
+    // Validation basique
+    if (!candidateId || !candidateName) {
+      console.error('❌ Données manquantes:', { candidateId, candidateName });
       return;
     }
     
-    // Vérifier si le candidat existe
+    // Trouver le candidat
     const candidate = candidates.find(c => c.id === candidateId);
     if (!candidate) {
-      console.error('❌ Candidat non trouvé avec ID:', candidateId);
-      alert(`Erreur: Candidat avec ID ${candidateId} non trouvé`);
+      console.error('❌ Candidat non trouvé:', candidateId);
       return;
     }
     
-    // Vérification stricte de cohérence ID/Nom
-    if (candidateName && candidate.name !== candidateName) {
-      console.error('❌ Incohérence détectée:', { 
-        expectedName: candidateName, 
-        actualName: candidate.name, 
-        candidateId 
-      });
-      alert(`Erreur: Incohérence détectée. ID ${candidateId} correspond à "${candidate.name}" mais vous avez cliqué sur "${candidateName}"`);
-      return;
-    }
-    
-    // Vérifier si le candidat a déjà été voté
+    // Vérifier si déjà voté
     if (candidate.isVoted) {
-      console.warn('⚠️ Candidat déjà voté:', candidate.name);
-      alert(`Vous avez déjà voté pour ${candidate.name}`);
+      console.warn('⚠️ Déjà voté pour:', candidate.name);
       return;
     }
     
-    // Vérifier si un vote est déjà en cours pour ce candidat spécifique
+    // Vérifier si vote en cours
     if (votingInProgress.has(candidateId)) {
-      console.warn('⚠️ Vote déjà en cours pour:', candidate.name);
-      alert(`Un vote est déjà en cours pour ${candidate.name}`);
+      console.warn('⚠️ Vote en cours pour:', candidate.name);
       return;
     }
 
-    console.log('✅ Vote autorisé pour:', candidate.name, '(ID:', candidateId, ')');
-    
-    // Marquer le vote comme en cours pour ce candidat spécifique uniquement
+    // Marquer comme en cours
     setVotingInProgress(prev => new Set(prev).add(candidateId));
 
-    try {
-      // Mettre à jour UNIQUEMENT le candidat spécifique
+    // Simuler un délai de traitement
+    setTimeout(() => {
+      // Mettre à jour le candidat
       setCandidates(prev => {
-        const updatedCandidates = prev.map(c => {
-          // Vérification stricte de l'ID avant mise à jour
-          if (c.id === candidateId && c.name === candidate.name) {
-            console.log('🎯 Mise à jour du candidat:', c.name, 'votes:', c.votes + 1);
-            return {
-              ...c,
-              votes: c.votes + 1,
-              isVoted: true
-            };
-          }
-          return c;
-        });
-
-        // Vérifier que la mise à jour a bien eu lieu
-        const updatedCandidate = updatedCandidates.find(c => c.id === candidateId);
-        if (!updatedCandidate || !updatedCandidate.isVoted) {
-          throw new Error('Échec de la mise à jour du candidat');
-        }
-
-        // Sauvegarder dans localStorage avec les données mises à jour
-        localStorage.setItem('hag_candidates_votes', JSON.stringify(updatedCandidates));
-        console.log('💾 Données sauvegardées dans localStorage');
+        const updated = prev.map(c => 
+          c.id === candidateId 
+            ? { ...c, votes: c.votes + 1, isVoted: true }
+            : c
+        );
         
-        return updatedCandidates;
+        // Sauvegarder
+        localStorage.setItem('hag_candidates_votes', JSON.stringify(updated));
+        return updated;
       });
 
-      // Afficher le message de succès avec le nom exact du candidat
+      // Afficher succès
       setVotedCandidate(candidate.name);
       setShowVoteSuccess(true);
       
-      // Masquer le message de succès après 3 secondes
-      setTimeout(() => {
-        setShowVoteSuccess(false);
-      }, 3000);
-    } catch (error) {
-      console.error('❌ Erreur lors du vote:', error);
-      alert(`Erreur lors de l'enregistrement du vote pour ${candidate.name}`);
-    } finally {
-      // Retirer le vote en cours après un délai
-      setTimeout(() => {
-        setVotingInProgress(prev => {
-          const newSet = new Set(prev);
-          newSet.delete(candidateId);
-          return newSet;
-        });
-      }, 1000);
-    }
+      // Masquer le message après 3 secondes
+      setTimeout(() => setShowVoteSuccess(false), 3000);
+      
+      // Retirer du vote en cours
+      setVotingInProgress(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(candidateId);
+        return newSet;
+      });
+    }, 500);
   };
 
   // Gérer la notation avec des étoiles

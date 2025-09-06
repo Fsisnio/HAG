@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réinitialisation des Votes - HAG</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div class="max-w-md mx-auto bg-white rounded-2xl shadow-lg p-8">
+        <h1 class="text-2xl font-bold text-center mb-6 text-gray-900">Réinitialisation des Votes</h1>
+        
+        <div id="status" class="mb-6">
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h3 class="font-semibold text-blue-900 mb-2">État actuel du localStorage :</h3>
+                <div id="current-data" class="text-sm text-blue-700"></div>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <button 
+                onclick="checkLocalStorage()" 
+                class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+                Vérifier les données actuelles
+            </button>
+            
+            <button 
+                onclick="resetVotes()" 
+                class="w-full bg-red-600 text-white py-3 px-4 rounded-lg hover:bg-red-700 transition-colors"
+            >
+                Réinitialiser tous les votes
+            </button>
+            
+            <button 
+                onclick="resetRatings()" 
+                class="w-full bg-yellow-600 text-white py-3 px-4 rounded-lg hover:bg-yellow-700 transition-colors"
+            >
+                Réinitialiser toutes les notes
+            </button>
+            
+            <button 
+                onclick="resetAll()" 
+                class="w-full bg-purple-600 text-white py-3 px-4 rounded-lg hover:bg-purple-700 transition-colors"
+            >
+                Réinitialiser tout (votes + notes)
+            </button>
+        </div>
+
+        <div id="result" class="mt-6 hidden">
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                <h3 class="font-semibold text-green-900 mb-2">Résultat :</h3>
+                <div id="result-text" class="text-sm text-green-700"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function checkLocalStorage() {
+            const votesData = localStorage.getItem('hag_candidates_votes');
+            const ratingsData = localStorage.getItem('hag_candidates_ratings');
+            
+            let html = '';
+            
+            if (votesData) {
+                const votes = JSON.parse(votesData);
+                html += `<div class="mb-3"><strong>Votes (${votes.length} candidats) :</strong><br>`;
+                votes.forEach(candidate => {
+                    html += `• ${candidate.name}: ${candidate.votes} votes ${candidate.isVoted ? '(voté)' : ''}<br>`;
+                });
+                html += '</div>';
+            } else {
+                html += '<div class="mb-3"><strong>Votes :</strong> Aucune donnée</div>';
+            }
+            
+            if (ratingsData) {
+                const ratings = JSON.parse(ratingsData);
+                html += `<div><strong>Notes (${ratings.length} candidats) :</strong><br>`;
+                ratings.forEach(candidate => {
+                    html += `• ${candidate.name}: ${candidate.rating}/5 (${candidate.totalRatings} avis)<br>`;
+                });
+                html += '</div>';
+            } else {
+                html += '<div><strong>Notes :</strong> Aucune donnée</div>';
+            }
+            
+            document.getElementById('current-data').innerHTML = html;
+            document.getElementById('status').classList.remove('hidden');
+        }
+
+        function resetVotes() {
+            localStorage.removeItem('hag_candidates_votes');
+            showResult('Votes réinitialisés avec succès !');
+        }
+
+        function resetRatings() {
+            localStorage.removeItem('hag_candidates_ratings');
+            showResult('Notes réinitialisées avec succès !');
+        }
+
+        function resetAll() {
+            localStorage.removeItem('hag_candidates_votes');
+            localStorage.removeItem('hag_candidates_ratings');
+            showResult('Toutes les données ont été réinitialisées avec succès !');
+        }
+
+        function showResult(message) {
+            document.getElementById('result-text').textContent = message;
+            document.getElementById('result').classList.remove('hidden');
+            
+            // Vérifier les données après réinitialisation
+            setTimeout(() => {
+                checkLocalStorage();
+            }, 1000);
+        }
+
+        // Vérifier automatiquement au chargement
+        window.onload = function() {
+            checkLocalStorage();
+        };
+    </script>
+</body>
+</html>
