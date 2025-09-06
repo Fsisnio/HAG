@@ -200,16 +200,22 @@ const AdminDashboard: React.FC = () => {
 
   // Filtrer les votes
   const filteredVotes = votes.filter(vote => {
-    const matchesSearch = vote.candidate.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         vote.category.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || vote.category === selectedCategory;
+    const candidateName = vote.candidate || '';
+    const categoryName = vote.category || '';
+    const searchLower = searchTerm.toLowerCase();
+    
+    const matchesSearch = candidateName.toLowerCase().includes(searchLower) ||
+                         categoryName.toLowerCase().includes(searchLower);
+    const matchesCategory = selectedCategory === 'all' || categoryName === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
   // Filtrer les catégories
   const filteredCategories = officialCategories.filter(cat => {
     if (selectedCategory !== 'all' && selectedCategory !== cat.title) return false;
-    return cat.title.toLowerCase().includes(searchTerm.toLowerCase());
+    const categoryTitle = cat.title || '';
+    const searchLower = searchTerm.toLowerCase();
+    return categoryTitle.toLowerCase().includes(searchLower);
   });
 
   // Exporter les données
@@ -989,11 +995,16 @@ const AdminDashboard: React.FC = () => {
                       .filter(category => selectedCategory === 'all' || category === selectedCategory)
                       .map(category => {
                         const categoryCandidates = getCandidatesByCategory(category)
-                          .filter(candidate => 
-                            searchTerm === '' || 
-                            candidate.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                            candidate.description?.toLowerCase().includes(searchTerm.toLowerCase())
-                          );
+                          .filter(candidate => {
+                            if (searchTerm === '') return true;
+                            
+                            const candidateName = candidate.name || '';
+                            const candidateDescription = candidate.description || '';
+                            const searchLower = searchTerm.toLowerCase();
+                            
+                            return candidateName.toLowerCase().includes(searchLower) ||
+                                   candidateDescription.toLowerCase().includes(searchLower);
+                          });
 
                         if (categoryCandidates.length === 0) return null;
 

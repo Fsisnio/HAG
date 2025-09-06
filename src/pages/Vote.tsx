@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Vote as VoteIcon, Heart, Users, Award, Star, CheckCircle, XCircle } from 'lucide-react';
+import { Vote as VoteIcon, Heart, Users, Award, Star, CheckCircle } from 'lucide-react';
 import VoteStats from '../components/VoteStats';
 import VoteButton from '../components/VoteButton';
 import PremiumVoteModal from '../components/PremiumVoteModal';
