@@ -122,28 +122,42 @@ const VotePage: React.FC = () => {
 
   const categories = ['Toutes', ...getCategoriesWithCandidates()];
 
-  const handleVote = async (candidateId: number) => {
-    console.log('🔄 Tentative de vote pour le candidat ID:', candidateId);
+  const handleVote = async (candidateId: number, candidateName?: string) => {
+    console.log('🔄 Tentative de vote pour le candidat ID:', candidateId, 'Nom:', candidateName);
     console.log('📊 Candidats actuels:', candidates.map(c => ({ id: c.id, name: c.name, isVoted: c.isVoted })));
     
     // Vérifier si le candidat a déjà été voté ou si un vote est en cours
     const candidate = candidates.find(c => c.id === candidateId);
     if (!candidate) {
       console.error('❌ Candidat non trouvé avec ID:', candidateId);
+      alert(`Erreur: Candidat avec ID ${candidateId} non trouvé`);
+      return;
+    }
+    
+    // Vérification supplémentaire par nom si fourni
+    if (candidateName && candidate.name !== candidateName) {
+      console.error('❌ Incohérence détectée:', { 
+        expectedName: candidateName, 
+        actualName: candidate.name, 
+        candidateId 
+      });
+      alert(`Erreur: Incohérence détectée. ID ${candidateId} correspond à "${candidate.name}" mais vous avez cliqué sur "${candidateName}"`);
       return;
     }
     
     if (candidate.isVoted) {
       console.warn('⚠️ Candidat déjà voté:', candidate.name);
+      alert(`Vous avez déjà voté pour ${candidate.name}`);
       return;
     }
     
     if (votingInProgress.has(candidateId)) {
       console.warn('⚠️ Vote déjà en cours pour:', candidate.name);
+      alert(`Un vote est déjà en cours pour ${candidate.name}`);
       return;
     }
 
-    console.log('✅ Vote autorisé pour:', candidate.name);
+    console.log('✅ Vote autorisé pour:', candidate.name, '(ID:', candidateId, ')');
     
     // Marquer le vote comme en cours
     setVotingInProgress(prev => new Set(prev).add(candidateId));
@@ -178,6 +192,9 @@ const VotePage: React.FC = () => {
       setTimeout(() => {
         setShowVoteSuccess(false);
       }, 3000);
+    } catch (error) {
+      console.error('❌ Erreur lors du vote:', error);
+      alert('Erreur lors de l\'enregistrement du vote');
     } finally {
       // Retirer le vote en cours après un délai
       setTimeout(() => {
@@ -386,7 +403,13 @@ const VotePage: React.FC = () => {
                   {/* Actions */}
                      <div className="space-y-3">
                        <button
-                         onClick={() => handleVote(candidate.id)}
+                         id={`vote-button-${candidate.id}`}
+                         data-candidate-id={candidate.id}
+                         data-candidate-name={candidate.name}
+                         onClick={() => {
+                           console.log('🖱️ Clic sur le bouton de vote pour:', candidate.name, 'ID:', candidate.id);
+                           handleVote(candidate.id, candidate.name);
+                         }}
                          disabled={candidate.isVoted || votingInProgress.has(candidate.id)}
                       className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
                            candidate.isVoted
@@ -416,19 +439,37 @@ const VotePage: React.FC = () => {
 
                     <div className="grid grid-cols-3 gap-2">
                            <button
-                             onClick={() => handlePremiumVote('bronze', candidate.name, candidate.category)}
+                             id={`premium-bronze-${candidate.id}`}
+                             data-candidate-id={candidate.id}
+                             data-candidate-name={candidate.name}
+                             onClick={() => {
+                               console.log('🖱️ Clic sur vote Bronze pour:', candidate.name, 'ID:', candidate.id);
+                               handlePremiumVote('bronze', candidate.name, candidate.category);
+                             }}
                         className="py-2 px-3 text-xs font-medium bg-amber-100 text-amber-800 rounded-lg hover:bg-amber-200 transition-colors"
                            >
                         Bronze
                            </button>
                            <button
-                             onClick={() => handlePremiumVote('silver', candidate.name, candidate.category)}
+                             id={`premium-silver-${candidate.id}`}
+                             data-candidate-id={candidate.id}
+                             data-candidate-name={candidate.name}
+                             onClick={() => {
+                               console.log('🖱️ Clic sur vote Argent pour:', candidate.name, 'ID:', candidate.id);
+                               handlePremiumVote('silver', candidate.name, candidate.category);
+                             }}
                         className="py-2 px-3 text-xs font-medium bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors"
                            >
                         Argent
                            </button>
                            <button
-                             onClick={() => handlePremiumVote('gold', candidate.name, candidate.category)}
+                             id={`premium-gold-${candidate.id}`}
+                             data-candidate-id={candidate.id}
+                             data-candidate-name={candidate.name}
+                             onClick={() => {
+                               console.log('🖱️ Clic sur vote Or pour:', candidate.name, 'ID:', candidate.id);
+                               handlePremiumVote('gold', candidate.name, candidate.category);
+                             }}
                         className="py-2 px-3 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-lg hover:bg-yellow-200 transition-colors"
                            >
                         Or

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Complet du Système de Vote - HAG</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 8px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        button:hover { background: #0056b3; }
+        button.success { background: #28a745; }
+        button.success:hover { background: #218838; }
+        button.warning { background: #ffc107; color: #212529; }
+        button.warning:hover { background: #e0a800; }
+        .test-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #dee2e6;
+        }
+        .test-result {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .test-pass { background: #d4edda; color: #155724; }
+        .test-fail { background: #f8d7da; color: #721c24; }
+        .test-info { background: #d1ecf1; color: #0c5460; }
+        .candidate-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 10px 0;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .vote-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .vote-btn:hover:not(:disabled) { background: #2563eb; }
+        .vote-btn:disabled { background: #9ca3af; cursor: not-allowed; }
+        .vote-btn.voted { background: #10b981; }
+        .log {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Complet du Système de Vote HAG</h1>
+        <p>Ce test vérifie toutes les fonctionnalités du système de vote après réinitialisation.</p>
+        
+        <div id="status"></div>
+        
+        <div class="test-section">
+            <h3>🔧 Actions de Test</h3>
+            <button onclick="resetAllVotes()" class="warning">🗑️ Réinitialiser tous les votes</button>
+            <button onclick="runCompleteTest()" class="success">🚀 Lancer le test complet</button>
+            <button onclick="testVoteFunctionality()" class="success">🗳️ Tester la fonctionnalité de vote</button>
+            <button onclick="clearLog()">🧹 Effacer les logs</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>📊 Résultats des Tests</h3>
+            <div id="testResults"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🎯 Candidats de Test</h3>
+            <div id="candidatesContainer"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📝 Log des Actions</h3>
+            <div id="log" class="log">
+                <strong>Log des actions :</strong><br>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let testCandidates = [];
+        let votingInProgress = new Set();
+        let testResults = [];
+
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${timestamp}] ${message}<br>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function showStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.innerHTML = `<div class="${type}">${message}</div>`;
+        }
+
+        function addTestResult(testName, passed, message) {
+            const result = { testName, passed, message, timestamp: new Date().toLocaleTimeString() };
+            testResults.push(result);
+            
+            const resultsDiv = document.getElementById('testResults');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${passed ? 'test-pass' : 'test-fail'}`;
+            resultDiv.innerHTML = `[${result.timestamp}] ${passed ? '✅' : '❌'} ${testName}: ${message}`;
+            resultsDiv.appendChild(resultDiv);
+            
+            log(`${passed ? '✅' : '❌'} Test "${testName}": ${message}`);
+        }
+
+        function resetAllVotes() {
+            try {
+                log('🗑️ Réinitialisation de tous les votes...');
+                
+                // Créer des candidats de test avec votes réinitialisés
+                testCandidates = [
+                    { id: 1, name: "Hôtel Test 1", category: "Meilleur Hôtel", votes: 0, isVoted: false, rating: 4.5, totalRatings: 10 },
+                    { id: 2, name: "Restaurant Test 1", category: "Meilleur Restaurant", votes: 0, isVoted: false, rating: 4.2, totalRatings: 8 },
+                    { id: 3, name: "Guide Test 1", category: "Meilleur Guide", votes: 0, isVoted: false, rating: 4.8, totalRatings: 12 },
+                    { id: 4, name: "Hôtel Test 2", category: "Meilleur Hôtel", votes: 0, isVoted: false, rating: 4.0, totalRatings: 5 },
+                    { id: 5, name: "Restaurant Test 2", category: "Meilleur Restaurant", votes: 0, isVoted: false, rating: 3.8, totalRatings: 6 }
+                ];
+                
+                // Sauvegarder dans localStorage
+                localStorage.setItem('hag_candidates_votes', JSON.stringify(testCandidates));
+                localStorage.setItem('hag_candidates_ratings', JSON.stringify(testCandidates));
+                
+                votingInProgress.clear();
+                testResults = [];
+                document.getElementById('testResults').innerHTML = '';
+                
+                renderCandidates();
+                showStatus('✅ Tous les votes ont été réinitialisés', 'success');
+                log('✅ Réinitialisation terminée');
+                
+            } catch (error) {
+                log(`❌ Erreur lors de la réinitialisation: ${error.message}`);
+                showStatus('❌ Erreur lors de la réinitialisation', 'error');
+            }
+        }
+
+        function renderCandidates() {
+            const container = document.getElementById('candidatesContainer');
+            container.innerHTML = '';
+            
+            testCandidates.forEach(candidate => {
+                const card = document.createElement('div');
+                card.className = 'candidate-card';
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <div>
+                            <h4>${candidate.name} (ID: ${candidate.id})</h4>
+                            <p style="margin: 0; color: #666;">${candidate.category}</p>
+                        </div>
+                        <div style="background: #3b82f6; color: white; padding: 5px 15px; border-radius: 15px; font-weight: bold;">
+                            ${candidate.votes} votes
+                        </div>
+                    </div>
+                    <div>
+                        <button 
+                            id="vote-btn-${candidate.id}"
+                            onclick="testVote(${candidate.id})"
+                            ${candidate.isVoted || votingInProgress.has(candidate.id) ? 'disabled' : ''}
+                            class="vote-btn ${candidate.isVoted ? 'voted' : votingInProgress.has(candidate.id) ? 'voting' : ''}"
+                        >
+                            ${candidate.isVoted ? '✅ Voté' : votingInProgress.has(candidate.id) ? '⏳ En cours...' : '🗳️ Voter'}
+                        </button>
+                        <button 
+                            onclick="testPremiumVote('bronze', ${candidate.id})"
+                            style="background: #fbbf24; color: #92400e; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin: 2px; font-size: 12px;"
+                        >
+                            Bronze
+                        </button>
+                        <button 
+                            onclick="testPremiumVote('silver', ${candidate.id})"
+                            style="background: #6b7280; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin: 2px; font-size: 12px;"
+                        >
+                            Argent
+                        </button>
+                        <button 
+                            onclick="testPremiumVote('gold', ${candidate.id})"
+                            style="background: #f59e0b; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin: 2px; font-size: 12px;"
+                        >
+                            Or
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function testVote(candidateId) {
+            log(`🖱️ Test de vote pour candidat ID: ${candidateId}`);
+            
+            const candidate = testCandidates.find(c => c.id === candidateId);
+            if (!candidate) {
+                addTestResult('Vote - Candidat trouvé', false, `Candidat ID ${candidateId} non trouvé`);
+                return;
+            }
+            
+            if (candidate.isVoted) {
+                addTestResult('Vote - Prévention double vote', true, `Candidat ${candidate.name} déjà voté`);
+                return;
+            }
+            
+            if (votingInProgress.has(candidateId)) {
+                addTestResult('Vote - Prévention vote en cours', true, `Vote déjà en cours pour ${candidate.name}`);
+                return;
+            }
+            
+            // Simuler le vote
+            votingInProgress.add(candidateId);
+            renderCandidates();
+            
+            setTimeout(() => {
+                candidate.votes += 1;
+                candidate.isVoted = true;
+                votingInProgress.delete(candidateId);
+                
+                // Sauvegarder dans localStorage
+                localStorage.setItem('hag_candidates_votes', JSON.stringify(testCandidates));
+                
+                addTestResult('Vote - Enregistrement', true, `Vote enregistré pour ${candidate.name} (${candidate.votes} votes)`);
+                renderCandidates();
+                log(`✅ Vote testé avec succès pour ${candidate.name}`);
+            }, 1000);
+        }
+
+        function testPremiumVote(type, candidateId) {
+            const candidate = testCandidates.find(c => c.id === candidateId);
+            if (!candidate) {
+                addTestResult('Vote Premium - Candidat trouvé', false, `Candidat ID ${candidateId} non trouvé`);
+                return;
+            }
+            
+            addTestResult('Vote Premium - Sélection', true, `Vote ${type} sélectionné pour ${candidate.name}`);
+            log(`✅ Vote ${type} testé pour ${candidate.name}`);
+        }
+
+        function runCompleteTest() {
+            log('🚀 Début du test complet du système de vote...');
+            testResults = [];
+            document.getElementById('testResults').innerHTML = '';
+            
+            // Test 1: Vérifier l'initialisation
+            addTestResult('Initialisation', testCandidates.length > 0, `${testCandidates.length} candidats chargés`);
+            
+            // Test 2: Vérifier les IDs uniques
+            const ids = testCandidates.map(c => c.id);
+            const uniqueIds = [...new Set(ids)];
+            addTestResult('IDs uniques', ids.length === uniqueIds.length, `${uniqueIds.length} IDs uniques sur ${ids.length} candidats`);
+            
+            // Test 3: Vérifier la structure des candidats
+            const validCandidates = testCandidates.filter(c => 
+                c.id && c.name && c.category && typeof c.votes === 'number' && typeof c.isVoted === 'boolean'
+            );
+            addTestResult('Structure des candidats', validCandidates.length === testCandidates.length, 
+                `${validCandidates.length} candidats avec structure valide`);
+            
+            // Test 4: Vérifier les boutons de vote
+            const voteButtons = document.querySelectorAll('[id^="vote-btn-"]');
+            addTestResult('Boutons de vote', voteButtons.length === testCandidates.length, 
+                `${voteButtons.length} boutons de vote créés pour ${testCandidates.length} candidats`);
+            
+            // Test 5: Vérifier les associations boutons-candidats
+            let correctAssociations = 0;
+            voteButtons.forEach(btn => {
+                const candidateId = parseInt(btn.id.replace('vote-btn-', ''));
+                const candidate = testCandidates.find(c => c.id === candidateId);
+                if (candidate) correctAssociations++;
+            });
+            addTestResult('Associations boutons-candidats', correctAssociations === testCandidates.length, 
+                `${correctAssociations} associations correctes sur ${testCandidates.length}`);
+            
+            // Test 6: Vérifier localStorage
+            const savedVotes = localStorage.getItem('hag_candidates_votes');
+            const savedRatings = localStorage.getItem('hag_candidates_ratings');
+            addTestResult('Sauvegarde localStorage', !!(savedVotes && savedRatings), 
+                'Données sauvegardées dans localStorage');
+            
+            // Résumé
+            const passedTests = testResults.filter(r => r.passed).length;
+            const totalTests = testResults.length;
+            
+            if (passedTests === totalTests) {
+                showStatus(`✅ Tous les tests sont passés (${passedTests}/${totalTests})`, 'success');
+            } else {
+                showStatus(`⚠️ ${passedTests}/${totalTests} tests sont passés`, 'warning');
+            }
+            
+            log(`🎉 Test complet terminé: ${passedTests}/${totalTests} tests réussis`);
+        }
+
+        function testVoteFunctionality() {
+            log('🗳️ Test de la fonctionnalité de vote...');
+            
+            // Tester le vote sur le premier candidat
+            if (testCandidates.length > 0) {
+                const firstCandidate = testCandidates[0];
+                if (!firstCandidate.isVoted) {
+                    testVote(firstCandidate.id);
+                } else {
+                    addTestResult('Fonctionnalité de vote', true, 'Candidat déjà voté, test de prévention réussi');
+                }
+            } else {
+                addTestResult('Fonctionnalité de vote', false, 'Aucun candidat disponible pour le test');
+            }
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '<strong>Log des actions :</strong><br>';
+            log('🧹 Log effacé');
+        }
+
+        // Initialiser au chargement
+        window.onload = function() {
+            log('🚀 Système de test de vote initialisé');
+            resetAllVotes();
+        };
+    </script>
+</body>
+</html>

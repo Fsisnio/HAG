@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Vote Issue - HAG</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .debug-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #dee2e6;
+        }
+        .log {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e9ecef;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐛 Debug Vote Issue - HAG</h1>
+        <p>Cet outil aide à diagnostiquer le problème de vote entre Tibou Bah et Fouta Tourisme.</p>
+        
+        <div id="status"></div>
+        
+        <div class="debug-section">
+            <h3>🔍 Diagnostic du localStorage</h3>
+            <button onclick="checkLocalStorage()">Vérifier localStorage</button>
+            <button onclick="clearLocalStorage()">Effacer localStorage</button>
+            <div id="localStorageInfo" class="log"></div>
+        </div>
+        
+        <div class="debug-section">
+            <h3>📊 Données des candidats</h3>
+            <button onclick="loadCandidates()">Charger les candidats</button>
+            <button onclick="simulateVoteIssue()">Simuler le problème de vote</button>
+            <div id="candidatesInfo" class="log"></div>
+        </div>
+        
+        <div class="debug-section">
+            <h3>🔧 Actions de réparation</h3>
+            <button onclick="fixVoteData()">Réparer les données de vote</button>
+            <button onclick="resetToOfficialData()">Réinitialiser aux données officielles</button>
+            <div id="repairInfo" class="log"></div>
+        </div>
+        
+        <div class="debug-section">
+            <h3>📝 Log des actions</h3>
+            <div id="log" class="log">
+                <strong>Log des actions :</strong><br>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${timestamp}] ${message}<br>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function showStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.innerHTML = `<div class="${type}">${message}</div>`;
+        }
+
+        function checkLocalStorage() {
+            log('🔍 Vérification du localStorage...');
+            
+            const votes = localStorage.getItem('hag_candidates_votes');
+            const ratings = localStorage.getItem('hag_candidates_ratings');
+            
+            let info = '';
+            
+            if (votes) {
+                const votesData = JSON.parse(votes);
+                info += `📊 Votes (${votesData.length} candidats):\n`;
+                votesData.forEach(c => {
+                    info += `  ID ${c.id}: ${c.name} - ${c.votes} votes - ${c.isVoted ? 'VOTÉ' : 'Non voté'}\n`;
+                });
+            } else {
+                info += '❌ Aucune donnée de vote trouvée\n';
+            }
+            
+            if (ratings) {
+                const ratingsData = JSON.parse(ratings);
+                info += `\n⭐ Notes (${ratingsData.length} candidats):\n`;
+                ratingsData.forEach(c => {
+                    info += `  ID ${c.id}: ${c.name} - ${c.rating}/5 (${c.totalRatings} avis)\n`;
+                });
+            } else {
+                info += '\n❌ Aucune donnée de note trouvée\n';
+            }
+            
+            document.getElementById('localStorageInfo').innerHTML = info.replace(/\n/g, '<br>');
+            log('✅ Vérification localStorage terminée');
+        }
+
+        function clearLocalStorage() {
+            if (confirm('Êtes-vous sûr de vouloir effacer toutes les données de vote ?')) {
+                localStorage.removeItem('hag_candidates_votes');
+                localStorage.removeItem('hag_candidates_ratings');
+                localStorage.removeItem('hag_applications');
+                localStorage.removeItem('hag_approved_candidates');
+                
+                log('🗑️ localStorage effacé');
+                showStatus('localStorage effacé', 'success');
+                checkLocalStorage();
+            }
+        }
+
+        function loadCandidates() {
+            log('📊 Chargement des candidats...');
+            
+            // Simuler les données officielles
+            const officialCandidates = [
+                {
+                    id: 1,
+                    name: "Fouta Tourisme",
+                    category: "Meilleur Guide Touristique de l'année",
+                    description: "Guide touristique spécialisé dans la découverte du Fouta Djallon",
+                    votes: 0,
+                    isVoted: false,
+                    rating: 4.2,
+                    totalRatings: 15
+                },
+                {
+                    id: 2,
+                    name: "Tibou Bah",
+                    category: "Meilleur Guide Touristique de l'année",
+                    description: "Guide expérimenté avec une connaissance approfondie de la Guinée",
+                    votes: 0,
+                    isVoted: false,
+                    rating: 4.5,
+                    totalRatings: 23
+                },
+                {
+                    id: 3,
+                    name: "Hassan Bah",
+                    category: "Meilleur Guide Touristique de l'année",
+                    description: "Guide passionné par l'histoire et la culture guinéenne",
+                    votes: 0,
+                    isVoted: false,
+                    rating: 4.0,
+                    totalRatings: 18
+                }
+            ];
+            
+            let info = '📋 Candidats officiels:\n';
+            officialCandidates.forEach(c => {
+                info += `  ID ${c.id}: ${c.name}\n`;
+            });
+            
+            document.getElementById('candidatesInfo').innerHTML = info.replace(/\n/g, '<br>');
+            log(`✅ ${officialCandidates.length} candidats chargés`);
+        }
+
+        function simulateVoteIssue() {
+            log('🎭 Simulation du problème de vote...');
+            
+            // Créer des données corrompues pour simuler le problème
+            const corruptedCandidates = [
+                {
+                    id: 1,
+                    name: "Fouta Tourisme",
+                    category: "Meilleur Guide Touristique de l'année",
+                    votes: 0,
+                    isVoted: false,
+                    rating: 4.2,
+                    totalRatings: 15
+                },
+                {
+                    id: 2,
+                    name: "Tibou Bah",
+                    category: "Meilleur Guide Touristique de l'année",
+                    votes: 0,
+                    isVoted: false,
+                    rating: 4.5,
+                    totalRatings: 23
+                }
+            ];
+            
+            // Simuler un vote sur Tibou Bah qui affecte Fouta Tourisme
+            log('🖱️ Simulation: Clic sur Tibou Bah (ID: 2)');
+            log('❌ Problème: Fouta Tourisme (ID: 1) est activé à la place');
+            
+            // Corriger le problème
+            corruptedCandidates[1].votes = 1;
+            corruptedCandidates[1].isVoted = true;
+            
+            localStorage.setItem('hag_candidates_votes', JSON.stringify(corruptedCandidates));
+            localStorage.setItem('hag_candidates_ratings', JSON.stringify(corruptedCandidates));
+            
+            log('✅ Vote simulé et corrigé');
+            showStatus('Problème simulé et corrigé', 'success');
+            checkLocalStorage();
+        }
+
+        function fixVoteData() {
+            log('🔧 Réparation des données de vote...');
+            
+            const votes = localStorage.getItem('hag_candidates_votes');
+            if (!votes) {
+                log('❌ Aucune donnée de vote à réparer');
+                return;
+            }
+            
+            const votesData = JSON.parse(votes);
+            let fixed = false;
+            
+            // Vérifier et corriger les incohérences
+            votesData.forEach(candidate => {
+                if (candidate.id === 1 && candidate.name !== "Fouta Tourisme") {
+                    log(`🔧 Correction: ID 1 devrait être "Fouta Tourisme", trouvé "${candidate.name}"`);
+                    candidate.name = "Fouta Tourisme";
+                    fixed = true;
+                }
+                if (candidate.id === 2 && candidate.name !== "Tibou Bah") {
+                    log(`🔧 Correction: ID 2 devrait être "Tibou Bah", trouvé "${candidate.name}"`);
+                    candidate.name = "Tibou Bah";
+                    fixed = true;
+                }
+            });
+            
+            if (fixed) {
+                localStorage.setItem('hag_candidates_votes', JSON.stringify(votesData));
+                log('✅ Données réparées');
+                showStatus('Données de vote réparées', 'success');
+            } else {
+                log('✅ Aucune réparation nécessaire');
+                showStatus('Données déjà correctes', 'info');
+            }
+            
+            checkLocalStorage();
+        }
+
+        function resetToOfficialData() {
+            log('🔄 Réinitialisation aux données officielles...');
+            
+            const officialCandidates = [
+                {
+                    id: 1,
+                    name: "Fouta Tourisme",
+                    category: "Meilleur Guide Touristique de l'année",
+                    description: "Guide touristique spécialisé dans la découverte du Fouta Djallon",
+                    votes: 0,
+                    isVoted: false,
+                    rating: 4.2,
+                    totalRatings: 15
+                },
+                {
+                    id: 2,
+                    name: "Tibou Bah",
+                    category: "Meilleur Guide Touristique de l'année",
+                    description: "Guide expérimenté avec une connaissance approfondie de la Guinée",
+                    votes: 0,
+                    isVoted: false,
+                    rating: 4.5,
+                    totalRatings: 23
+                },
+                {
+                    id: 3,
+                    name: "Hassan Bah",
+                    category: "Meilleur Guide Touristique de l'année",
+                    description: "Guide passionné par l'histoire et la culture guinéenne",
+                    votes: 0,
+                    isVoted: false,
+                    rating: 4.0,
+                    totalRatings: 18
+                }
+            ];
+            
+            localStorage.setItem('hag_candidates_votes', JSON.stringify(officialCandidates));
+            localStorage.setItem('hag_candidates_ratings', JSON.stringify(officialCandidates));
+            
+            log('✅ Données réinitialisées aux valeurs officielles');
+            showStatus('Données réinitialisées', 'success');
+            checkLocalStorage();
+        }
+
+        // Initialiser au chargement
+        window.onload = function() {
+            log('🚀 Debug Vote Issue initialisé');
+            checkLocalStorage();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Tibou Bah vs Fouta Tourisme - HAG</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .candidate-card {
+            border: 3px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .candidate-card.voted {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+        .candidate-card.voting {
+            border-color: #f59e0b;
+            background: #fffbeb;
+        }
+        .vote-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .vote-btn:hover:not(:disabled) { background: #2563eb; }
+        .vote-btn:disabled { background: #9ca3af; cursor: not-allowed; }
+        .vote-btn.voted { background: #10b981; }
+        .vote-btn.voting { background: #f59e0b; }
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .log {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e9ecef;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Test Spécifique: Tibou Bah vs Fouta Tourisme</h1>
+        <p>Ce test vérifie spécifiquement le problème où cliquer sur Tibou Bah active Fouta Tourisme.</p>
+        
+        <div class="highlight">
+            <strong>⚠️ Problème signalé:</strong> Cliquer sur le bouton "Voter" de Tibou Bah active Fouta Tourisme à la place.
+        </div>
+        
+        <div id="status"></div>
+        
+        <div id="candidates-container"></div>
+        
+        <div class="log" id="log">
+            <strong>Log des actions :</strong><br>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <button onclick="resetTest()">🔄 Réinitialiser le test</button>
+            <button onclick="runSpecificTest()">🧪 Lancer le test spécifique</button>
+            <button onclick="clearLog()">🧹 Effacer les logs</button>
+        </div>
+    </div>
+
+    <script>
+        let candidates = [];
+        let votingInProgress = new Set();
+
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${timestamp}] ${message}<br>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function showStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.innerHTML = `<div class="${type}">${message}</div>`;
+        }
+
+        function resetTest() {
+            // Créer les candidats spécifiques avec les mêmes IDs que dans l'application
+            candidates = [
+                {
+                    id: 1,
+                    name: "Fouta Tourisme",
+                    category: "Meilleur Guide Touristique de l'année",
+                    description: "Guide touristique spécialisé dans la découverte du Fouta Djallon",
+                    votes: 0,
+                    isVoted: false,
+                    rating: 4.2,
+                    totalRatings: 15
+                },
+                {
+                    id: 2,
+                    name: "Tibou Bah",
+                    category: "Meilleur Guide Touristique de l'année",
+                    description: "Guide expérimenté avec une connaissance approfondie de la Guinée",
+                    votes: 0,
+                    isVoted: false,
+                    rating: 4.5,
+                    totalRatings: 23
+                }
+            ];
+            
+            votingInProgress.clear();
+            renderCandidates();
+            log('🔄 Test réinitialisé avec Fouta Tourisme (ID: 1) et Tibou Bah (ID: 2)');
+            showStatus('Test réinitialisé - Prêt pour les tests', 'info');
+        }
+
+        function renderCandidates() {
+            const container = document.getElementById('candidates-container');
+            container.innerHTML = '';
+            
+            candidates.forEach(candidate => {
+                log(`🎨 Rendu du candidat: ID=${candidate.id}, Name=${candidate.name}, isVoted=${candidate.isVoted}`);
+                
+                const card = document.createElement('div');
+                card.className = `candidate-card ${candidate.isVoted ? 'voted' : ''} ${votingInProgress.has(candidate.id) ? 'voting' : ''}`;
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <div>
+                            <h3 style="margin: 0 0 5px 0; color: #1f2937;">${candidate.name}</h3>
+                            <p style="margin: 0; color: #6b7280; font-size: 14px;">ID: ${candidate.id} | ${candidate.category}</p>
+                            <p style="margin: 5px 0 0 0; color: #6b7280; font-size: 12px;">${candidate.description}</p>
+                        </div>
+                        <div style="background: #3b82f6; color: white; padding: 8px 16px; border-radius: 20px; font-weight: bold;">
+                            ${candidate.votes} votes
+                        </div>
+                    </div>
+                    <div>
+                        <button 
+                            id="vote-btn-${candidate.id}"
+                            data-candidate-id="${candidate.id}"
+                            data-candidate-name="${candidate.name}"
+                            onclick="testVote(${candidate.id}, '${candidate.name}')"
+                            ${candidate.isVoted || votingInProgress.has(candidate.id) ? 'disabled' : ''}
+                            class="vote-btn ${candidate.isVoted ? 'voted' : votingInProgress.has(candidate.id) ? 'voting' : ''}"
+                        >
+                            ${candidate.isVoted ? '✅ Voté' : votingInProgress.has(candidate.id) ? '⏳ En cours...' : '🗳️ Voter'}
+                        </button>
+                        <span style="margin-left: 10px; font-size: 12px; color: #666;">
+                            Bouton ID: vote-btn-${candidate.id}
+                        </span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function testVote(candidateId, candidateName) {
+            log(`🖱️ Clic sur le bouton de vote pour: ${candidateName} (ID: ${candidateId})`);
+            log(`📊 Candidats actuels: ${JSON.stringify(candidates.map(c => ({ id: c.id, name: c.name, isVoted: c.isVoted })))}`);
+            
+            const candidate = candidates.find(c => c.id === candidateId);
+            if (!candidate) {
+                log(`❌ Candidat non trouvé avec ID: ${candidateId}`);
+                showStatus(`Erreur: Candidat avec ID ${candidateId} non trouvé`, 'error');
+                return;
+            }
+            
+            // Vérification de cohérence
+            if (candidate.name !== candidateName) {
+                log(`❌ INCOHÉRENCE DÉTECTÉE: ID ${candidateId} correspond à "${candidate.name}" mais clic sur "${candidateName}"`);
+                showStatus(`❌ BUG DÉTECTÉ: ID ${candidateId} correspond à "${candidate.name}" mais vous avez cliqué sur "${candidateName}"`, 'error');
+                return;
+            }
+            
+            if (candidate.isVoted) {
+                log(`⚠️ Candidat déjà voté: ${candidate.name}`);
+                showStatus(`Vous avez déjà voté pour ${candidate.name}`, 'warning');
+                return;
+            }
+            
+            if (votingInProgress.has(candidateId)) {
+                log(`⚠️ Vote déjà en cours pour: ${candidate.name}`);
+                showStatus(`Un vote est déjà en cours pour ${candidate.name}`, 'warning');
+                return;
+            }
+
+            log(`✅ Vote autorisé pour: ${candidate.name} (ID: ${candidateId})`);
+            
+            // Marquer le vote comme en cours
+            votingInProgress.add(candidateId);
+            renderCandidates();
+            
+            // Simuler le traitement du vote
+            setTimeout(() => {
+                candidate.votes += 1;
+                candidate.isVoted = true;
+                votingInProgress.delete(candidateId);
+                
+                log(`🎯 Vote enregistré pour: ${candidate.name} (${candidate.votes} votes)`);
+                renderCandidates();
+                showStatus(`✅ Vote enregistré pour ${candidate.name} !`, 'success');
+            }, 1000);
+        }
+
+        function runSpecificTest() {
+            log('🧪 Début du test spécifique Tibou Bah vs Fouta Tourisme...');
+            
+            // Test 1: Vérifier les IDs
+            const fouta = candidates.find(c => c.name === "Fouta Tourisme");
+            const tibou = candidates.find(c => c.name === "Tibou Bah");
+            
+            if (fouta && tibou) {
+                log(`✅ Fouta Tourisme: ID ${fouta.id}`);
+                log(`✅ Tibou Bah: ID ${tibou.id}`);
+                
+                if (fouta.id === 1 && tibou.id === 2) {
+                    log('✅ IDs corrects selon les données officielles');
+                } else {
+                    log('❌ IDs incorrects - problème de chargement des données');
+                }
+            } else {
+                log('❌ Candidats non trouvés');
+            }
+            
+            // Test 2: Vérifier les boutons
+            const foutaBtn = document.getElementById('vote-btn-1');
+            const tibouBtn = document.getElementById('vote-btn-2');
+            
+            if (foutaBtn && tibouBtn) {
+                log('✅ Boutons trouvés');
+                log(`Fouta Tourisme bouton: ${foutaBtn.getAttribute('data-candidate-name')}`);
+                log(`Tibou Bah bouton: ${tibouBtn.getAttribute('data-candidate-name')}`);
+            } else {
+                log('❌ Boutons non trouvés');
+            }
+            
+            showStatus('Test spécifique terminé - Vérifiez les logs', 'info');
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '<strong>Log des actions :</strong><br>';
+            log('🧹 Log effacé');
+        }
+
+        // Initialiser au chargement
+        window.onload = function() {
+            log('🚀 Test spécifique Tibou Bah vs Fouta Tourisme initialisé');
+            resetTest();
+        };
+    </script>
+</body>
+</html>
