@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test des Routes Admin - HAG</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            background: #2563eb;
+        }
+        .btn-danger {
+            background: #ef4444;
+        }
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        .log {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+        .warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #f59e0b;
+        }
+        .test-step {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test des Routes Admin - HAG</h1>
+    
+    <div class="container">
+        <h2>Problème Identifié</h2>
+        <p>L'URL <code>/admin</code> redirige vers la page d'accueil au lieu d'afficher le dashboard admin.</p>
+        <p><strong>URL de test :</strong> <a href="https://hag-ostu.onrender.com/admin" target="_blank">https://hag-ostu.onrender.com/admin</a></p>
+    </div>
+
+    <div class="container">
+        <h2>Étapes de Test</h2>
+        
+        <div class="test-step">
+            <h3>1. Test de l'URL Admin</h3>
+            <p>Cliquez sur le bouton ci-dessous pour tester l'accès admin :</p>
+            <a href="https://hag-ostu.onrender.com/admin" class="btn btn-danger" target="_blank">🔐 Tester /admin</a>
+            <p><strong>Résultat attendu :</strong> Page de connexion admin (pas la page d'accueil)</p>
+        </div>
+
+        <div class="test-step">
+            <h3>2. Test de Connexion</h3>
+            <p>Si la page de connexion s'affiche, utilisez ces identifiants :</p>
+            <ul>
+                <li><strong>Mot de passe :</strong> <code>HAG2024Admin!</code></li>
+            </ul>
+            <p><strong>Résultat attendu :</strong> Dashboard admin avec statistiques</p>
+        </div>
+
+        <div class="test-step">
+            <h3>3. Test des Routes Admin</h3>
+            <p>Testez ces URLs après connexion :</p>
+            <a href="https://hag-ostu.onrender.com/admin" class="btn" target="_blank">📊 Dashboard</a>
+            <a href="https://hag-ostu.onrender.com/admin/profile" class="btn" target="_blank">👤 Profil</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Diagnostic Automatique</h2>
+        <button onclick="runDiagnostic()" class="btn">🔍 Lancer le Diagnostic</button>
+        <button onclick="clearLog()" class="btn">🗑️ Effacer les Logs</button>
+        
+        <div id="log" class="log"></div>
+    </div>
+
+    <div class="container">
+        <h2>Solutions Appliquées</h2>
+        <ol>
+            <li><strong>Masquage Header/Footer :</strong> Les pages admin n'affichent plus le header et footer du site public</li>
+            <li><strong>Configuration SPA :</strong> Fichiers _redirects et 404.html pour le routage</li>
+            <li><strong>Script de build :</strong> Correction de la boucle infinie</li>
+            <li><strong>Routes protégées :</strong> Composant AdminAuth pour l'authentification</li>
+        </ol>
+    </div>
+
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        async function runDiagnostic() {
+            log('🔍 Début du diagnostic des routes admin...');
+            
+            const adminUrl = 'https://hag-ostu.onrender.com/admin';
+            
+            try {
+                log(`🔗 Test de l'URL: ${adminUrl}`);
+                
+                // Test avec fetch pour voir la réponse
+                const response = await fetch(adminUrl, { 
+                    method: 'HEAD',
+                    mode: 'no-cors' // Pour éviter les erreurs CORS
+                });
+                
+                log(`✅ URL accessible (status: ${response.status || 'OK'})`);
+                
+                // Test de redirection
+                log('🔄 Test de redirection...');
+                const redirectResponse = await fetch(adminUrl, { 
+                    method: 'GET',
+                    redirect: 'manual'
+                });
+                
+                if (redirectResponse.type === 'opaqueredirect') {
+                    log('⚠️ Redirection détectée - possible problème de routage SPA');
+                } else {
+                    log('✅ Pas de redirection détectée');
+                }
+                
+                // Vérifier le contenu
+                log('📄 Vérification du contenu...');
+                const contentResponse = await fetch(adminUrl);
+                const content = await contentResponse.text();
+                
+                if (content.includes('HAG Admin') || content.includes('Tableau de bord')) {
+                    log('✅ Contenu admin détecté - route fonctionne');
+                } else if (content.includes('Hospitality Awards Guinée') && content.includes('Accueil')) {
+                    log('❌ PROBLÈME: Page d\'accueil affichée au lieu du dashboard admin');
+                } else {
+                    log('⚠️ Contenu inattendu détecté');
+                }
+                
+            } catch (error) {
+                log(`❌ Erreur lors du test: ${error.message}`);
+            }
+            
+            log('🏁 Diagnostic terminé');
+        }
+
+        // Test automatique au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 Page de test initialisée');
+            log('💡 Cliquez sur "Lancer le Diagnostic" pour commencer');
+        });
+    </script>
+</body>
+</html>

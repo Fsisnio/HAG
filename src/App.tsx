@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import AdminAuth from './components/AdminAuth';
@@ -18,9 +18,12 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminProfile from './pages/AdminProfile';
 
 const App: React.FC = () => {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
   return (
     <div className="App">
-      <Header />
+      {!isAdminRoute && <Header />}
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -48,7 +51,7 @@ const App: React.FC = () => {
           } />
         </Routes>
       </main>
-      <Footer />
+      {!isAdminRoute && <Footer />}
     </div>
   );
 };
