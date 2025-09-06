@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Correction des Boutons de Vote</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .candidate-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f9f9f9;
+        }
+        .candidate-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .candidate-category {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        .vote-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .vote-button:hover {
+            background: #0056b3;
+        }
+        .vote-button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .voted {
+            background: #28a745 !important;
+        }
+        .voting {
+            background: #ffc107 !important;
+        }
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Test - Correction des Boutons de Vote</h1>
+        <p>Ce test vérifie que chaque bouton de vote est correctement associé à un candidat unique.</p>
+        
+        <div id="candidates-container"></div>
+        
+        <div id="status"></div>
+        
+        <div class="log" id="log"></div>
+    </div>
+
+    <script>
+        // Données de test avec des candidats uniques
+        const testCandidates = [
+            {
+                id: 1,
+                name: "Fouta Tourisme",
+                category: "Meilleur Guide Touristique de l'année",
+                isVoted: false
+            },
+            {
+                id: 8,
+                name: "Noom Hôtel",
+                category: "Meilleure Brigade de Cuisine de l'année",
+                isVoted: false
+            },
+            {
+                id: 11,
+                name: "Noom Hôtel - Service Salle",
+                category: "Meilleure Équipe de Service en Salle de l'année",
+                isVoted: false
+            },
+            {
+                id: 21,
+                name: "Noom Hôtel - RSE",
+                category: "Meilleure Initiative RSE de l'année",
+                isVoted: false
+            },
+            {
+                id: 87,
+                name: "Hôtel Onomo",
+                category: "Meilleure Équipe en Housekeeping de l'année",
+                isVoted: false
+            },
+            {
+                id: 22,
+                name: "Hôtel Onomo - RSE",
+                category: "Meilleure Initiative RSE de l'année",
+                isVoted: false
+            }
+        ];
+
+        let votingInProgress = new Set();
+
+        function log(message) {
+            const logElement = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.innerHTML += `[${timestamp}] ${message}<br>`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        function showStatus(message, type) {
+            const statusElement = document.getElementById('status');
+            statusElement.innerHTML = `<div class="status ${type}">${message}</div>`;
+            setTimeout(() => {
+                statusElement.innerHTML = '';
+            }, 3000);
+        }
+
+        function handleVote(candidateId) {
+            log(`🖱️ Clic sur le bouton de vote pour candidat ID: ${candidateId}`);
+            
+            const candidate = testCandidates.find(c => c.id === candidateId);
+            if (!candidate) {
+                log(`❌ Candidat non trouvé avec ID: ${candidateId}`);
+                showStatus('Erreur: Candidat non trouvé', 'error');
+                return;
+            }
+            
+            if (candidate.isVoted) {
+                log(`⚠️ Candidat déjà voté: ${candidate.name}`);
+                showStatus('Vous avez déjà voté pour ce candidat', 'error');
+                return;
+            }
+            
+            if (votingInProgress.has(candidateId)) {
+                log(`⚠️ Vote déjà en cours pour: ${candidate.name}`);
+                showStatus('Un vote est déjà en cours pour ce candidat', 'error');
+                return;
+            }
+
+            log(`✅ Vote autorisé pour: ${candidate.name}`);
+            votingInProgress.add(candidateId);
+            
+            // Mettre à jour l'état du candidat
+            candidate.isVoted = true;
+            
+            // Mettre à jour l'affichage
+            updateCandidateDisplay(candidateId);
+            
+            showStatus(`Vote enregistré pour ${candidate.name} !`, 'success');
+            
+            // Retirer du vote en cours
+            setTimeout(() => {
+                votingInProgress.delete(candidateId);
+                log(`✅ Vote terminé pour: ${candidate.name}`);
+            }, 1000);
+        }
+
+        function updateCandidateDisplay(candidateId) {
+            const candidate = testCandidates.find(c => c.id === candidateId);
+            if (candidate) {
+                const button = document.getElementById(`vote-btn-${candidateId}`);
+                if (button) {
+                    button.textContent = '✅ Voté';
+                    button.className = 'vote-button voted';
+                    button.disabled = true;
+                }
+            }
+        }
+
+        function renderCandidates() {
+            const container = document.getElementById('candidates-container');
+            container.innerHTML = '';
+            
+            testCandidates.forEach(candidate => {
+                const card = document.createElement('div');
+                card.className = 'candidate-card';
+                card.innerHTML = `
+                    <div class="candidate-name">${candidate.name}</div>
+                    <div class="candidate-category">${candidate.category}</div>
+                    <div>
+                        <button 
+                            id="vote-btn-${candidate.id}"
+                            onclick="handleVote(${candidate.id})"
+                            class="vote-button ${candidate.isVoted ? 'voted' : ''}"
+                            ${candidate.isVoted ? 'disabled' : ''}
+                        >
+                            ${candidate.isVoted ? '✅ Voté' : '🗳️ Voter'}
+                        </button>
+                        <span>ID: ${candidate.id}</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Initialiser l'affichage
+        renderCandidates();
+        log('🚀 Test initialisé avec ' + testCandidates.length + ' candidats');
+        log('📋 Candidats avec IDs uniques: ' + testCandidates.map(c => `${c.name} (ID: ${c.id})`).join(', '));
+    </script>
+</body>
+</html>

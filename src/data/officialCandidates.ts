@@ -234,7 +234,7 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
   "Meilleure Équipe de Service en Salle de l'année": [
     {
       id: 11,
-      name: "Noom Hôtel",
+      name: "Noom Hôtel - Service Salle",
       category: "Meilleure Équipe de Service en Salle de l'année",
       description: "Service en salle exemplaire et professionnel",
       votes: 0,
@@ -254,7 +254,7 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
     },
     {
       id: 13,
-      name: "Riviera Royal",
+      name: "Riviera Royal - Service Salle",
       category: "Meilleure Équipe de Service en Salle de l'année",
       description: "Excellence dans le service en salle",
       votes: 0,
@@ -277,7 +277,7 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
     },
     {
       id: 15,
-      name: "Hôtel Kaloum",
+      name: "Hôtel Kaloum - Service Client",
       category: "Meilleure Equipe d'accueil et Service Client de l'année",
       description: "Équipe d'accueil professionnelle et souriante",
       votes: 0,
@@ -346,7 +346,7 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
   "Meilleure Initiative RSE de l'année": [
     {
       id: 21,
-      name: "Noom Hôtel",
+      name: "Noom Hôtel - RSE",
       category: "Meilleure Initiative RSE de l'année",
       description: "Engagement social et environnemental exemplaire",
       votes: 0,
@@ -356,7 +356,7 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
     },
     {
       id: 22,
-      name: "Hôtel Onomo",
+      name: "Hôtel Onomo - RSE",
       category: "Meilleure Initiative RSE de l'année",
       description: "Initiatives durables et responsabilité sociale",
       votes: 0,
@@ -366,7 +366,7 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
     },
     {
       id: 23,
-      name: "Riviera Royal",
+      name: "Riviera Royal - RSE",
       category: "Meilleure Initiative RSE de l'année",
       description: "Programmes RSE innovants et impactants",
       votes: 0,
@@ -508,7 +508,7 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
     },
     {
       id: 36,
-      name: "Hôtel Mirador Park",
+      name: "Hôtel Mirador Park - Milieu de Gamme",
       category: "Meilleur Hôtel Milieu de Gamme de l'année",
       description: "Excellence en milieu de gamme",
       votes: 0,
