@@ -894,3 +894,4 @@ export const getCategoriesWithCandidates = (): string[] => {
   return Object.keys(officialCandidatesByCategory);
 };
 
+

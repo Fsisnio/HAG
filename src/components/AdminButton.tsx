@@ -6,6 +6,9 @@ const AdminButton: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Vérifier si on est en mode développement
+  const isDevelopment = process.env.NODE_ENV === 'development';
+
   useEffect(() => {
     checkAuthStatus();
   }, []);
@@ -41,6 +44,11 @@ const AdminButton: React.FC = () => {
     window.location.href = '/';
   };
 
+  // Ne pas afficher le bouton admin en production
+  if (!isDevelopment) {
+    return null;
+  }
+
   if (isLoading) {
     return (
       <div className="flex items-center space-x-2 text-white text-sm px-3 py-2 rounded-lg">
@@ -55,7 +63,7 @@ const AdminButton: React.FC = () => {
       <div className="flex items-center space-x-2">
         <Link
           to="/admin"
-          className="flex items-center space-x-2 text-gold hover:text-yellow-300 transition-colors duration-200 text-sm px-3 py-2 rounded-lg hover:bg-blue-deep/50"
+          className="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300 transition-colors duration-200 text-sm px-3 py-2 rounded-lg hover:bg-blue-800/50"
           title="Dashboard administrateur"
         >
           <Shield className="w-4 h-4" />
@@ -76,7 +84,7 @@ const AdminButton: React.FC = () => {
   return (
     <Link
       to="/admin"
-      className="flex items-center space-x-2 text-white hover:text-gold transition-colors duration-200 text-sm px-3 py-2 rounded-lg hover:bg-blue-deep/50"
+      className="flex items-center space-x-2 text-white hover:text-yellow-400 transition-colors duration-200 text-sm px-3 py-2 rounded-lg hover:bg-blue-800/50"
       title="Accès administrateur"
     >
       <LogIn className="w-4 h-4" />

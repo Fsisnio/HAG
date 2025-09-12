@@ -179,3 +179,4 @@ const handleRating = (candidateId: number, rating: number) => {
 
 Les utilisateurs peuvent noter les candidats avec des étoiles, voir les notes moyennes en temps réel, et toutes les données sont sauvegardées automatiquement.
 
+

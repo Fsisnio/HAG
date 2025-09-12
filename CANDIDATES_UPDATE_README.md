@@ -220,3 +220,4 @@ interface OfficialCandidate {
 
 Le système affiche tous les 41 candidats officiels répartis dans 12 catégories, avec un système de notation et de vote entièrement fonctionnel. Les administrateurs peuvent gérer et exporter toutes les données, tandis que les utilisateurs peuvent voter et noter leurs candidats préférés.
 
+

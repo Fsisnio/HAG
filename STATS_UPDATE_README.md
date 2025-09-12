@@ -139,3 +139,4 @@ const stats = {
 
 Les statistiques reflètent fidèlement la première édition des Hospitality Awards Guinée avec 41 candidats officiels, 13 catégories, et toutes les nouvelles fonctionnalités comme les critères de sélection et les vidéos de présentation.
 
+

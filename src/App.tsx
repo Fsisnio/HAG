@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import AdminAuth from './components/AdminAuth';
+import DevAdminLink from './components/DevAdminLink';
 import Home from './pages/Home';
 import About from './pages/About';
 import Categories from './pages/Categories';
@@ -52,6 +53,7 @@ const App: React.FC = () => {
         </Routes>
       </main>
       {!isAdminRoute && <Footer />}
+      <DevAdminLink />
     </div>
   );
 };

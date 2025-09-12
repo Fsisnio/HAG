@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Vote as VoteIcon, Heart, Users, Award, Star, CheckCircle } from 'lucide-react';
+import { Vote as VoteIcon, Heart, Users, Award, Star, CheckCircle, ArrowLeft } from 'lucide-react';
 import VoteStats from '../components/VoteStats';
 import VoteButton from '../components/VoteButton';
-import PremiumVoteModal from '../components/PremiumVoteModal';
 import { officialCategories } from '../data/categories';
-import { getAllOfficialCandidates, getCandidatesByCategory, getCategoriesWithCandidates } from '../data/officialCandidates';
+import { getAllOfficialCandidates, getCandidatesByCategory } from '../data/officialCandidates';
 import { validateVote, validateCandidatesUniqueness } from '../utils/voteValidation';
 
 // Composant pour l'affichage des étoiles de notation
@@ -70,23 +69,25 @@ interface Candidate {
 
 const VotePage: React.FC = () => {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [currentView, setCurrentView] = useState<'categories' | 'candidates'>('categories');
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
 
   // Charger les candidats officiels
   useEffect(() => {
     try {
+      // Effacer les anciennes données de ratings pour repartir à zéro
+      localStorage.removeItem('hag_candidates_ratings');
+      
       // Charger les candidats officiels
       const officialCandidates = getAllOfficialCandidates();
       
-      // Charger les notes et votes sauvegardés
-      const savedRatings = localStorage.getItem('hag_candidates_ratings');
+      // Charger seulement les votes sauvegardés (pas les ratings)
       const savedVotes = localStorage.getItem('hag_candidates_votes');
       
-      const ratingsData = savedRatings ? JSON.parse(savedRatings) : [];
       const votesData = savedVotes ? JSON.parse(savedVotes) : [];
       
-      // Convertir au format attendu et fusionner avec les données sauvegardées
+      // Convertir au format attendu et utiliser les nouvelles données (rating: 0)
       const formattedCandidates = officialCandidates.map(candidate => {
-        const savedRating = ratingsData.find((c: any) => c.id === candidate.id);
         const savedVote = votesData.find((c: any) => c.id === candidate.id);
         
         // Validation des données de vote sauvegardées
@@ -102,9 +103,9 @@ const VotePage: React.FC = () => {
           image: '/placeholder-hotel.jpg',
           votes: Math.max(0, votes), // S'assurer que les votes ne sont pas négatifs
           isVoted: isVoted,
-          rating: savedRating?.rating || candidate.rating || 4.0,
-          totalRatings: savedRating?.totalRatings || candidate.totalRatings || 0,
-          userRating: savedRating?.userRating || candidate.userRating
+          rating: candidate.rating || 0, // Utiliser les nouvelles données (0)
+          totalRatings: candidate.totalRatings || 0, // Utiliser les nouvelles données (0)
+          userRating: undefined // Pas de rating utilisateur au début
         };
       });
 
@@ -123,46 +124,22 @@ const VotePage: React.FC = () => {
     }
   }, []);
 
-  const [selectedCategory, setSelectedCategory] = useState<string>('Toutes');
   const [sortBy, setSortBy] = useState<'votes' | 'name'>('votes');
   const [showVoteSuccess, setShowVoteSuccess] = useState(false);
   const [votedCandidate, setVotedCandidate] = useState<string>('');
-  const [showPremiumModal, setShowPremiumModal] = useState(false);
-  const [selectedPremiumVote, setSelectedPremiumVote] = useState<{
-    type: 'bronze' | 'silver' | 'gold';
-    candidateName: string;
-    candidateCategory: string;
-  } | null>(null);
   const [votingInProgress, setVotingInProgress] = useState<Set<number>>(new Set());
 
-  const categories = ['Toutes', ...getCategoriesWithCandidates()];
 
-  // Fonction pour réinitialiser tous les votes
-  const resetAllVotes = () => {
-    if (window.confirm('Êtes-vous sûr de vouloir réinitialiser tous les votes ? Cette action est irréversible.')) {
-      localStorage.removeItem('hag_candidates_votes');
-      localStorage.removeItem('hag_candidates_ratings');
-      
-      // Recharger les candidats
-      const officialCandidates = getAllOfficialCandidates();
-      const formattedCandidates = officialCandidates.map(candidate => ({
-        id: candidate.id,
-        name: candidate.name,
-        organization: candidate.name,
-        category: candidate.category,
-        description: candidate.description || 'Candidat officiel des Hospitality Awards Guinée',
-        image: '/placeholder-hotel.jpg',
-        votes: 0,
-        isVoted: false,
-        rating: candidate.rating || 4.0,
-        totalRatings: candidate.totalRatings || 0,
-        userRating: candidate.userRating
-      }));
-      
-      setCandidates(formattedCandidates);
-      setVotingInProgress(new Set());
-      console.log('🔄 Tous les votes ont été réinitialisés');
-    }
+  // Fonction pour sélectionner une catégorie
+  const handleCategorySelect = (category: string) => {
+    setSelectedCategory(category);
+    setCurrentView('candidates');
+  };
+
+  // Fonction pour retourner aux catégories
+  const handleBackToCategories = () => {
+    setCurrentView('categories');
+    setSelectedCategory('');
   };
 
   const handleVote = (candidateId: number, candidateName: string, candidateCategory: string) => {
@@ -244,6 +221,7 @@ const VotePage: React.FC = () => {
     setCandidates(prev => {
       const updatedCandidates = prev.map(candidate => {
         if (candidate.id === candidateId) {
+          // Si c'est le premier rating de cet utilisateur
           const newTotalRatings = candidate.userRating ? candidate.totalRatings : candidate.totalRatings + 1;
           const newRating = candidate.userRating 
             ? ((candidate.rating * candidate.totalRatings - candidate.userRating + rating) / candidate.totalRatings)
@@ -259,20 +237,21 @@ const VotePage: React.FC = () => {
         return candidate;
       });
 
-      // Sauvegarder dans localStorage avec les données mises à jour
-      localStorage.setItem('hag_candidates_ratings', JSON.stringify(updatedCandidates));
+      // Sauvegarder seulement les données de rating dans localStorage
+      const ratingData = updatedCandidates.map(c => ({
+        id: c.id,
+        rating: c.rating,
+        totalRatings: c.totalRatings,
+        userRating: c.userRating
+      }));
+      localStorage.setItem('hag_candidates_ratings', JSON.stringify(ratingData));
       
       return updatedCandidates;
     });
   };
 
-  const handlePremiumVote = (type: 'bronze' | 'silver' | 'gold', candidateName: string, candidateCategory: string) => {
-    setSelectedPremiumVote({ type, candidateName, candidateCategory });
-    setShowPremiumModal(true);
-  };
-
   // Filtrer les candidats par catégorie
-  const filteredCandidates = selectedCategory === 'Toutes' 
+  const filteredCandidates = selectedCategory === '' 
     ? candidates 
     : candidates.filter(candidate => candidate.category === selectedCategory);
 
@@ -313,194 +292,178 @@ const VotePage: React.FC = () => {
 
       {/* Contenu principal */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {/* Filtres et tri */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-8">
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-            <div className="flex flex-col sm:flex-row gap-4 flex-1">
-              <div className="min-w-[200px]">
-                <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
-                  Catégorie
-                </label>
-                <select
-                  id="category"
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  {categories.map((category) => (
-                    <option key={category} value={category}>{category}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <div className="min-w-[150px]">
-                <label htmlFor="sort" className="block text-sm font-medium text-gray-700 mb-2">
-                  Trier par
-                </label>
-                <select
-                  id="sort"
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as 'votes' | 'name')}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="votes">Popularité</option>
-                  <option value="name">Nom</option>
-                </select>
-              </div>
+        {currentView === 'categories' ? (
+          // Vue des catégories
+          <div>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">Choisissez une catégorie</h2>
+              <p className="text-lg text-gray-600">Sélectionnez la catégorie pour laquelle vous souhaitez voter</p>
             </div>
-
-            <div className="flex items-center space-x-4">
-              <div className="text-sm text-gray-600">
-                {filteredCandidates.length} candidat(s) trouvé(s)
-              </div>
-              <button
-                onClick={resetAllVotes}
-                className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
-                title="Réinitialiser tous les votes"
-              >
-                🔄 Réinitialiser
-              </button>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {officialCategories.map((category) => {
+                const IconComponent = category.icon;
+                const candidateCount = getCandidatesByCategory(category.title).length;
+                
+                return (
+                  <div
+                    key={category.id}
+                    onClick={() => handleCategorySelect(category.title)}
+                    className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer group hover:scale-105"
+                  >
+                    <div className="text-center">
+                      <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-colors">
+                        <IconComponent className="w-8 h-8 text-blue-600" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                        {category.title}
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-4 line-clamp-3">
+                        {category.description}
+                      </p>
+                      <div className="flex items-center justify-center space-x-2 text-sm text-blue-600 font-medium">
+                        <Users className="w-4 h-4" />
+                        <span>{candidateCount} candidat{candidateCount > 1 ? 's' : ''}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-            </div>
-          </div>
-
-        {/* Message de succès */}
-        {showVoteSuccess && (
-          <div className="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center space-x-2">
-            <CheckCircle className="w-5 h-5" />
-            <span>Vote enregistré pour {votedCandidate} !</span>
-          </div>
-        )}
-
-          {/* Liste des candidats */}
-        {sortedCandidates.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
-              <VoteIcon className="w-12 h-12 text-gray-400" />
-            </div>
-            <h3 className="text-xl font-semibold text-gray-600 mb-2">Aucun candidat trouvé</h3>
-            <p className="text-gray-500">
-              {selectedCategory === 'Toutes' 
-                ? 'Aucun candidat n\'est disponible pour le moment.' 
-                : `Aucun candidat trouvé dans la catégorie "${selectedCategory}".`}
-            </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sortedCandidates.map((candidate) => {
-              console.log('🎨 Rendu du candidat:', { id: candidate.id, name: candidate.name, isVoted: candidate.isVoted });
-              return (
-              <div key={candidate.id} className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow">
-                {/* Image du candidat */}
-                <div className="h-48 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
-                  <div className="text-white text-center">
-                    <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-3 overflow-hidden">
-                      <img 
-                        src="./Logo HAG.png" 
-                        alt="Logo HAG" 
-                        className="w-full h-full object-contain"
-                        onError={(e) => {
-                          // Fallback vers l'icône Award si l'image ne charge pas
-                          e.currentTarget.style.display = 'none';
-                          const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
-                          if (nextElement) {
-                            nextElement.style.display = 'flex';
-                          }
-                        }}
-                      />
-                      <div className="w-full h-full flex items-center justify-center" style={{display: 'none'}}>
-                        <Award className="w-8 h-8" />
-                      </div>
-                  </div>
-                    <p className="text-sm font-medium">{candidate.organization}</p>
-                    </div>
-                  </div>
-                  
-                {/* Informations du candidat */}
-                  <div className="p-6">
-                  <div className="mb-4">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{candidate.name}</h3>
-                    <span className="inline-block bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full mb-2">
-                      {candidate.category}
-                    </span>
-                    <p className="text-gray-600 text-sm">{candidate.description}</p>
-                      </div>
-                      
-                  {/* Statistiques */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center space-x-1">
-                      <Heart className="w-4 h-4 text-red-500" />
-                      <span className="text-sm text-gray-600">{candidate.votes} votes</span>
-                    </div>
-                    <StarRating
-                      rating={candidate.rating}
-                      totalRatings={candidate.totalRatings}
-                      userRating={candidate.userRating}
-                      onRatingChange={(rating) => handleRating(candidate.id, rating)}
-                      interactive={true}
-                    />
-                    </div>
-                    
-                  {/* Actions */}
-                     <div className="space-y-3">
-                       <VoteButton
-                         candidateId={candidate.id}
-                         candidateName={candidate.name}
-                         candidateCategory={candidate.category}
-                         isVoted={candidate.isVoted}
-                         isVoting={votingInProgress.has(candidate.id)}
-                         onVote={handleVote}
-                         disabled={false}
-                       />
+          // Vue des candidats
+          <div>
+            {/* En-tête de la catégorie sélectionnée */}
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center space-x-4">
+                <button
+                  onClick={handleBackToCategories}
+                  className="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                  <span>Retour aux catégories</span>
+                </button>
+              </div>
+              <div className="text-sm text-gray-600">
+                {filteredCandidates.length} candidat(s) dans cette catégorie
+              </div>
+            </div>
 
-                    <div className="grid grid-cols-3 gap-2">
-                           <button
-                             id={`premium-bronze-${candidate.id}-${candidate.category.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`}
-                             data-candidate-id={candidate.id}
-                             data-candidate-name={candidate.name}
-                             data-candidate-category={candidate.category}
-                             onClick={() => {
-                               console.log('🖱️ Clic sur vote Bronze pour:', candidate.name, 'ID:', candidate.id, 'Catégorie:', candidate.category);
-                               handlePremiumVote('bronze', candidate.name, candidate.category);
-                             }}
-                        className="py-2 px-3 text-xs font-medium bg-amber-100 text-amber-800 rounded-lg hover:bg-amber-200 transition-colors"
-                           >
-                        Bronze
-                           </button>
-                           <button
-                             id={`premium-silver-${candidate.id}-${candidate.category.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`}
-                             data-candidate-id={candidate.id}
-                             data-candidate-name={candidate.name}
-                             data-candidate-category={candidate.category}
-                             onClick={() => {
-                               console.log('🖱️ Clic sur vote Argent pour:', candidate.name, 'ID:', candidate.id, 'Catégorie:', candidate.category);
-                               handlePremiumVote('silver', candidate.name, candidate.category);
-                             }}
-                        className="py-2 px-3 text-xs font-medium bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors"
-                           >
-                        Argent
-                           </button>
-                           <button
-                             id={`premium-gold-${candidate.id}-${candidate.category.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`}
-                             data-candidate-id={candidate.id}
-                             data-candidate-name={candidate.name}
-                             data-candidate-category={candidate.category}
-                             onClick={() => {
-                               console.log('🖱️ Clic sur vote Or pour:', candidate.name, 'ID:', candidate.id, 'Catégorie:', candidate.category);
-                               handlePremiumVote('gold', candidate.name, candidate.category);
-                             }}
-                        className="py-2 px-3 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-lg hover:bg-yellow-200 transition-colors"
-                           >
-                        Or
-                           </button>
-                     </div>
+            {/* Filtres et tri */}
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-8">
+              <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+                <div className="flex flex-col sm:flex-row gap-4 flex-1">
+                  <div className="min-w-[150px]">
+                    <label htmlFor="sort" className="block text-sm font-medium text-gray-700 mb-2">
+                      Trier par
+                    </label>
+                    <select
+                      id="sort"
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value as 'votes' | 'name')}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="votes">Popularité</option>
+                      <option value="name">Nom</option>
+                    </select>
                   </div>
                 </div>
               </div>
-              );
-            })}
             </div>
-          )}
+
+            {/* Message de succès */}
+            {showVoteSuccess && (
+              <div className="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center space-x-2">
+                <CheckCircle className="w-5 h-5" />
+                <span>Vote enregistré pour {votedCandidate} !</span>
+              </div>
+            )}
+
+            {/* Liste des candidats */}
+            {sortedCandidates.length === 0 ? (
+              <div className="text-center py-16">
+                <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <VoteIcon className="w-12 h-12 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-600 mb-2">Aucun candidat trouvé</h3>
+                <p className="text-gray-500">
+                  Aucun candidat n'est disponible dans cette catégorie pour le moment.
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {sortedCandidates.map((candidate) => {
+                  console.log('🎨 Rendu du candidat:', { id: candidate.id, name: candidate.name, isVoted: candidate.isVoted });
+                  return (
+                  <div key={candidate.id} className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow">
+                    {/* Image du candidat */}
+                    <div className="h-48 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+                      <div className="text-white text-center">
+                        <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-3 overflow-hidden">
+                          <img 
+                            src="./Logo HAG.png" 
+                            alt="Logo HAG" 
+                            className="w-full h-full object-contain"
+                            onError={(e) => {
+                              // Fallback vers l'icône Award si l'image ne charge pas
+                              e.currentTarget.style.display = 'none';
+                              const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
+                              if (nextElement) {
+                                nextElement.style.display = 'flex';
+                              }
+                            }}
+                          />
+                          <div className="w-full h-full flex items-center justify-center" style={{display: 'none'}}>
+                            <Award className="w-8 h-8" />
+                          </div>
+                        </div>
+                        <p className="text-sm font-medium">{candidate.organization}</p>
+                      </div>
+                    </div>
+                    
+                    {/* Informations du candidat */}
+                    <div className="p-6">
+                      <div className="mb-4">
+                        <h3 className="text-xl font-bold text-gray-900 mb-2">{candidate.name}</h3>
+                        <p className="text-gray-600 text-sm">{candidate.description}</p>
+                      </div>
+                        
+                      {/* Statistiques */}
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center space-x-1">
+                          <Heart className="w-4 h-4 text-red-500" />
+                          <span className="text-sm text-gray-600">{candidate.votes} votes</span>
+                        </div>
+                        <StarRating
+                          rating={candidate.rating}
+                          totalRatings={candidate.totalRatings}
+                          userRating={candidate.userRating}
+                          onRatingChange={(rating) => handleRating(candidate.id, rating)}
+                          interactive={true}
+                        />
+                      </div>
+                      
+                      {/* Action de vote */}
+                      <div className="space-y-3">
+                        <VoteButton
+                          candidateId={candidate.id}
+                          candidateName={candidate.name}
+                          candidateCategory={candidate.category}
+                          isVoted={candidate.isVoted}
+                          isVoting={votingInProgress.has(candidate.id)}
+                          onVote={handleVote}
+                          disabled={false}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Informations sur le vote */}
         <div className="mt-12 bg-blue-50 rounded-2xl p-8 text-center">
@@ -509,38 +472,27 @@ const VotePage: React.FC = () => {
             <div className="text-center">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="w-8 h-8 text-blue-600" />
-        </div>
+              </div>
               <h3 className="text-lg font-semibold text-blue-900 mb-2">1. Choisissez</h3>
-              <p className="text-blue-700">Sélectionnez votre candidat préféré dans la catégorie de votre choix</p>
-          </div>
+              <p className="text-blue-700">Sélectionnez une catégorie puis votre candidat préféré</p>
+            </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <VoteIcon className="w-8 h-8 text-blue-600" />
-                </div>
+              </div>
               <h3 className="text-lg font-semibold text-blue-900 mb-2">2. Votez</h3>
               <p className="text-blue-700">Cliquez sur "Voter" pour donner votre voix au candidat</p>
-              </div>
-              <div className="text-center">
+            </div>
+            <div className="text-center">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Award className="w-8 h-8 text-blue-600" />
-                </div>
+              </div>
               <h3 className="text-lg font-semibold text-blue-900 mb-2">3. Gagnez</h3>
               <p className="text-blue-700">Les gagnants seront annoncés lors de la cérémonie des awards</p>
-              </div>
             </div>
           </div>
         </div>
-
-      {/* Modal de vote premium */}
-       {selectedPremiumVote && (
-        <PremiumVoteModal
-          isOpen={showPremiumModal}
-           onClose={() => setShowPremiumModal(false)}
-          voteType={selectedPremiumVote.type}
-          candidateName={selectedPremiumVote.candidateName}
-          candidateCategory={selectedPremiumVote.candidateCategory}
-        />
-      )}
+      </div>
     </div>
   );
 };

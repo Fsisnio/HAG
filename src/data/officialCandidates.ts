@@ -22,8 +22,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleur Guide Touristique de l'année",
       description: "Guide touristique spécialisé dans la découverte du Fouta Djallon",
       votes: 0,
-      rating: 4.2,
-      totalRatings: 15,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false,
       criteria: [
         "Maîtrise du patrimoine culturel, historique et naturel",
@@ -43,8 +43,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleur Guide Touristique de l'année",
       description: "Guide expérimenté avec une connaissance approfondie de la Guinée",
       votes: 0,
-      rating: 4.5,
-      totalRatings: 23,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false,
       criteria: [
         "Maîtrise du patrimoine culturel, historique et naturel",
@@ -64,8 +64,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleur Guide Touristique de l'année",
       description: "Guide passionné par l'histoire et la culture guinéenne",
       votes: 0,
-      rating: 4.0,
-      totalRatings: 18,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false,
       criteria: [
         "Maîtrise du patrimoine culturel, historique et naturel",
@@ -88,8 +88,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleure Équipe en Housekeeping de l'année",
       description: "Équipe dédiée à l'excellence du service de ménage",
       votes: 0,
-      rating: 4.3,
-      totalRatings: 20,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false,
       criteria: [
         "Qualité et régularité du service (respect des normes de propreté, d'hygiène et de présentation dans tous les espaces assignés)",
@@ -109,8 +109,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleure Équipe en Housekeeping de l'année",
       description: "Service de housekeeping de qualité supérieure",
       votes: 0,
-      rating: 4.1,
-      totalRatings: 16,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false,
       criteria: [
         "Qualité et régularité du service (respect des normes de propreté, d'hygiène et de présentation dans tous les espaces assignés)",
@@ -130,8 +130,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleure Équipe en Housekeeping de l'année",
       description: "Équipe professionnelle et attentionnée",
       votes: 0,
-      rating: 4.4,
-      totalRatings: 22,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false,
       criteria: [
         "Qualité et régularité du service (respect des normes de propreté, d'hygiène et de présentation dans tous les espaces assignés)",
@@ -151,8 +151,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleure Équipe en Housekeeping de l'année",
       description: "Excellence dans l'entretien et la propreté",
       votes: 0,
-      rating: 4.2,
-      totalRatings: 19,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false,
       criteria: [
         "Qualité et régularité du service (respect des normes de propreté, d'hygiène et de présentation dans tous les espaces assignés)",
@@ -175,8 +175,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleure Brigade de Cuisine de l'année",
       description: "Cuisine créative et raffinée",
       votes: 0,
-      rating: 4.6,
-      totalRatings: 28,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false,
       criteria: [
         "Qualité gustative et visuelle des plats",
@@ -195,8 +195,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleure Brigade de Cuisine de l'année",
       description: "Excellence culinaire et innovation",
       votes: 0,
-      rating: 4.4,
-      totalRatings: 25,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false,
       criteria: [
         "Qualité gustative et visuelle des plats",
@@ -215,8 +215,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleure Brigade de Cuisine de l'année",
       description: "Tradition et modernité en cuisine",
       votes: 0,
-      rating: 4.3,
-      totalRatings: 21,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false,
       criteria: [
         "Qualité gustative et visuelle des plats",
@@ -238,8 +238,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleure Équipe de Service en Salle de l'année",
       description: "Service en salle exemplaire et professionnel",
       votes: 0,
-      rating: 4.5,
-      totalRatings: 26,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     },
     {
@@ -248,8 +248,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleure Équipe de Service en Salle de l'année",
       description: "Équipe dévouée au service client",
       votes: 0,
-      rating: 4.2,
-      totalRatings: 18,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     },
     {
@@ -258,8 +258,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleure Équipe de Service en Salle de l'année",
       description: "Excellence dans le service en salle",
       votes: 0,
-      rating: 4.4,
-      totalRatings: 24,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     }
   ],
@@ -271,8 +271,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleure Equipe d'accueil et Service Client de l'année",
       description: "Accueil chaleureux et service client exceptionnel",
       votes: 0,
-      rating: 4.7,
-      totalRatings: 32,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     },
     {
@@ -281,8 +281,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleure Equipe d'accueil et Service Client de l'année",
       description: "Équipe d'accueil professionnelle et souriante",
       votes: 0,
-      rating: 4.3,
-      totalRatings: 20,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     }
   ],
@@ -294,8 +294,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleur Etablissement de Formation de l'année",
       description: "École Supérieure de Tourisme et d'Hôtellerie",
       votes: 0,
-      rating: 4.4,
-      totalRatings: 22,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     },
     {
@@ -304,8 +304,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleur Etablissement de Formation de l'année",
       description: "Institut Supérieur de Tourisme et d'Hôtellerie de Guinée",
       votes: 0,
-      rating: 4.2,
-      totalRatings: 19,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     },
     {
@@ -314,8 +314,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleur Etablissement de Formation de l'année",
       description: "Institut de Formation Professionnelle en Arts et Design",
       votes: 0,
-      rating: 4.1,
-      totalRatings: 17,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     }
   ],
@@ -327,8 +327,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleur Club de Plage de l'année",
       description: "Club de plage avec ambiance festive et détente",
       votes: 0,
-      rating: 4.3,
-      totalRatings: 21,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     },
     {
@@ -337,8 +337,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleur Club de Plage de l'année",
       description: "Club de plage premium avec services haut de gamme",
       votes: 0,
-      rating: 4.5,
-      totalRatings: 27,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     }
   ],
@@ -350,8 +350,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleure Initiative RSE de l'année",
       description: "Engagement social et environnemental exemplaire",
       votes: 0,
-      rating: 4.6,
-      totalRatings: 29,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     },
     {
@@ -360,8 +360,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleure Initiative RSE de l'année",
       description: "Initiatives durables et responsabilité sociale",
       votes: 0,
-      rating: 4.4,
-      totalRatings: 23,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     },
     {
@@ -370,8 +370,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleure Initiative RSE de l'année",
       description: "Programmes RSE innovants et impactants",
       votes: 0,
-      rating: 4.3,
-      totalRatings: 20,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     }
   ],
@@ -383,8 +383,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleur projet Tourisme Culturel de l'année",
       description: "Festival célébrant la culture musicale guinéenne",
       votes: 0,
-      rating: 4.7,
-      totalRatings: 35,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     },
     {
@@ -393,8 +393,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleur projet Tourisme Culturel de l'année",
       description: "Préservation et promotion de la danse traditionnelle",
       votes: 0,
-      rating: 4.5,
-      totalRatings: 28,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     }
   ],
@@ -406,8 +406,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleure Agence de Voyage de l'année",
       description: "Agence de voyage avec services complets",
       votes: 0,
-      rating: 4.2,
-      totalRatings: 18,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     },
     {
@@ -416,8 +416,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleure Agence de Voyage de l'année",
       description: "Spécialiste des voyages sur mesure",
       votes: 0,
-      rating: 4.4,
-      totalRatings: 24,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     },
     {
@@ -426,8 +426,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleure Agence de Voyage de l'année",
       description: "Agence de voyage professionnelle et fiable",
       votes: 0,
-      rating: 4.1,
-      totalRatings: 16,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     },
     {
@@ -436,8 +436,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleure Agence de Voyage de l'année",
       description: "Découverte de la Guinée authentique",
       votes: 0,
-      rating: 4.3,
-      totalRatings: 22,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     },
     {
@@ -446,8 +446,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleure Agence de Voyage de l'année",
       description: "Voyages spirituels et culturels",
       votes: 0,
-      rating: 4.0,
-      totalRatings: 15,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     }
   ],
@@ -459,8 +459,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleur Écolodge ou écoresponsable de l'année",
       description: "Village écotouristique respectueux de l'environnement",
       votes: 0,
-      rating: 4.6,
-      totalRatings: 30,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     },
     {
@@ -469,8 +469,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleur Écolodge ou écoresponsable de l'année",
       description: "Hébergement écologique au cœur de la nature",
       votes: 0,
-      rating: 4.4,
-      totalRatings: 25,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     },
     {
@@ -479,8 +479,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleur Écolodge ou écoresponsable de l'année",
       description: "Établissement écoresponsable et durable",
       votes: 0,
-      rating: 4.2,
-      totalRatings: 19,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     }
   ],
@@ -492,8 +492,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleur Hôtel Milieu de Gamme de l'année",
       description: "Confort et qualité à prix accessible",
       votes: 0,
-      rating: 4.3,
-      totalRatings: 21,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     },
     {
@@ -502,8 +502,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleur Hôtel Milieu de Gamme de l'année",
       description: "Hôtel moderne avec services de qualité",
       votes: 0,
-      rating: 4.1,
-      totalRatings: 17,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     },
     {
@@ -512,8 +512,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleur Hôtel Milieu de Gamme de l'année",
       description: "Excellence en milieu de gamme",
       votes: 0,
-      rating: 4.4,
-      totalRatings: 26,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     },
     {
@@ -522,8 +522,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleur Hôtel Milieu de Gamme de l'année",
       description: "Hôtel contemporain et accueillant",
       votes: 0,
-      rating: 4.0,
-      totalRatings: 14,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     },
     {
@@ -532,8 +532,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleur Hôtel Milieu de Gamme de l'année",
       description: "Charme et confort dans un cadre élégant",
       votes: 0,
-      rating: 4.2,
-      totalRatings: 20,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     }
   ],
@@ -545,8 +545,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleur Groupe Hôtelier de l'année",
       description: "Groupe hôtelier leader en Guinée",
       votes: 0,
-      rating: 4.5,
-      totalRatings: 28,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     },
     {
@@ -555,8 +555,8 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleur Groupe Hôtelier de l'année",
       description: "Excellence et innovation hôtelière",
       votes: 0,
-      rating: 4.3,
-      totalRatings: 24,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     },
     {
@@ -565,8 +565,84 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       category: "Meilleur Groupe Hôtelier de l'année",
       description: "Groupe hôtelier de référence",
       votes: 0,
-      rating: 4.4,
-      totalRatings: 26,
+      rating: 0,
+      totalRatings: 0,
+      isVoted: false
+    }
+  ],
+
+  "Meilleur Restaurant de l'année": [
+    {
+      id: 42,
+      name: "Restaurant Le Palmier",
+      category: "Meilleur Restaurant de l'année",
+      description: "Cuisine française raffinée au cœur de Conakry",
+      votes: 0,
+      rating: 0,
+      totalRatings: 0,
+      isVoted: false
+    },
+    {
+      id: 43,
+      name: "Restaurant La Terrasse",
+      category: "Meilleur Restaurant de l'année",
+      description: "Spécialités guinéennes et internationales",
+      votes: 0,
+      rating: 0,
+      totalRatings: 0,
+      isVoted: false
+    },
+    {
+      id: 44,
+      name: "Restaurant Le Bistrot",
+      category: "Meilleur Restaurant de l'année",
+      description: "Ambiance chaleureuse et cuisine créative",
+      votes: 0,
+      rating: 0,
+      totalRatings: 0,
+      isVoted: false
+    },
+    {
+      id: 45,
+      name: "Restaurant Chez Fatou",
+      category: "Meilleur Restaurant de l'année",
+      description: "Cuisine traditionnelle guinéenne authentique",
+      votes: 0,
+      rating: 0,
+      totalRatings: 0,
+      isVoted: false
+    }
+  ],
+
+  "Meilleure Résidence de Luxe de l'année": [
+    {
+      id: 46,
+      name: "Résidence Les Jardins",
+      category: "Meilleure Résidence de Luxe de l'année",
+      description: "Luxe et exclusivité dans un cadre exceptionnel",
+      votes: 0,
+      rating: 0,
+      totalRatings: 0,
+      isVoted: false
+    },
+    {
+      id: 47,
+      name: "Villa Riviera Premium",
+      category: "Meilleure Résidence de Luxe de l'année",
+      description: "Villa de luxe avec vue sur l'océan",
+      votes: 0,
+      rating: 0,
+      totalRatings: 0,
+      isVoted: false
+    },
+    {
+      id: 48,
+      name: "Résidence Le Château",
+      category: "Meilleure Résidence de Luxe de l'année",
+      description: "Château historique transformé en résidence de luxe",
+      votes: 0,
+      rating: 0,
+      totalRatings: 0,
       isVoted: false
     }
   ]
