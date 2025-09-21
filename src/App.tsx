@@ -4,6 +4,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import AdminAuth from './components/AdminAuth';
 import DevAdminLink from './components/DevAdminLink';
+import SecretAdmin from './pages/SecretAdmin';
 import Home from './pages/Home';
 import About from './pages/About';
 import Categories from './pages/Categories';
@@ -38,6 +39,9 @@ const App: React.FC = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/candidater" element={<ApplicationForm />} />
           <Route path="/voter" element={<VotePage />} />
+          
+          {/* Route secrète pour l'administration */}
+          <Route path="/secret-admin-access-hag2025" element={<SecretAdmin />} />
           
           {/* Routes d'administration - Protégées par authentification */}
           <Route path="/admin" element={

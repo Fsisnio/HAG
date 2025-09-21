@@ -79,13 +79,13 @@ const CategoriesTable: React.FC<CategoriesTableProps> = ({
 
   const exportData = () => {
     const csvContent = [
-      ['ID', 'Catégorie', 'Description', 'Critères', 'Récompense'].join(','),
+      ['ID', 'Catégorie', 'Description', 'Critères'].join(','),
       ...officialCategories.map(category => [
         category.id,
         `"${category.title}"`,
         `"${category.description}"`,
         `"${category.criteria.join('; ')}"`,
-        `"${category.prize}"`
+        // `"${category.prize}"` // Récompenses masquées
       ].join(','))
     ].join('\n');
 
@@ -105,7 +105,7 @@ const CategoriesTable: React.FC<CategoriesTableProps> = ({
     { key: 'title', label: 'Catégorie', sortable: true },
     { key: 'description', label: 'Description', sortable: true },
     { key: 'criteria', label: 'Critères', sortable: false },
-    { key: 'prize', label: 'Récompense', sortable: true },
+    // { key: 'prize', label: 'Récompense', sortable: true }, // Récompenses masquées
     { key: 'actions', label: 'Actions', sortable: false }
   ];
 
@@ -204,9 +204,10 @@ const CategoriesTable: React.FC<CategoriesTableProps> = ({
                     {category.criteria.length} critères
                   </div>
                 </td>
-                <td className="px-6 py-4">
+                {/* Colonne récompense masquée */}
+                {/* <td className="px-6 py-4">
                   <div className="text-sm text-gray-900">{category.prize}</div>
-                </td>
+                </td> */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex items-center gap-2">
                     {onView && (

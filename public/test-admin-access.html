@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Accès Admin HAG 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="max-w-lg w-full bg-white rounded-2xl shadow-xl p-8 text-gray-800">
+        <h1 class="text-2xl font-bold text-center mb-6 text-blue-900">
+            🔐 Test Accès Admin HAG 2025
+        </h1>
+        
+        <div class="space-y-6">
+            <!-- URL Secrète -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h3 class="font-semibold text-blue-900 mb-2">1. URL Secrète</h3>
+                <button 
+                    onclick="window.open('/secret-admin-access-hag2025', '_blank')"
+                    class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
+                >
+                    Tester l'URL Secrète
+                </button>
+                <p class="text-xs text-gray-600 mt-2">
+                    URL : /secret-admin-access-hag2025
+                </p>
+            </div>
+
+            <!-- Triple Clic -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h3 class="font-semibold text-blue-900 mb-2">2. Triple-Clic Secret</h3>
+                <div class="text-center">
+                    <p class="text-sm text-gray-600 mb-2">Triple-cliquez sur ce point :</p>
+                    <span 
+                        class="text-blue-600 cursor-pointer opacity-50 hover:opacity-100 text-2xl"
+                        onclick="if(event.detail === 3) { window.open('/secret-admin-access-hag2025', '_blank'); }"
+                        title="Triple-cliquez pour accéder à l'admin"
+                    >
+                        •
+                    </span>
+                </div>
+            </div>
+
+            <!-- Raccourci Clavier -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h3 class="font-semibold text-blue-900 mb-2">3. Raccourci Clavier</h3>
+                <p class="text-sm text-gray-600 mb-2">
+                    Appuyez sur : <kbd class="bg-gray-200 px-1 rounded">Ctrl + Shift + A + D + M + I + N</kbd>
+                </p>
+                <div id="keySequence" class="text-xs text-gray-500 min-h-4"></div>
+            </div>
+
+            <!-- Informations -->
+            <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
+                <h3 class="font-semibold text-yellow-800 mb-2">📋 Informations</h3>
+                <ul class="text-sm text-yellow-700 space-y-1">
+                    <li>• Mot de passe : HAG2024Admin!SecretAccess</li>
+                    <li>• 3 tentatives maximum</li>
+                    <li>• Blocage 30 min après échec</li>
+                    <li>• Contact : +221 773 542 551</li>
+                </ul>
+            </div>
+
+            <!-- Retour au site -->
+            <div class="text-center">
+                <button 
+                    onclick="window.location.href = '/'"
+                    class="bg-green-600 text-white py-2 px-6 rounded hover:bg-green-700 transition-colors"
+                >
+                    ← Retour au Site Principal
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Détecter la séquence de touches secrète
+        let keySequence = [];
+        const secretSequence = ['Control', 'Shift', 'KeyA', 'KeyD', 'KeyM', 'KeyI', 'KeyN'];
+        
+        document.addEventListener('keydown', (event) => {
+            const key = event.code || event.key;
+            keySequence.push(key);
+            
+            // Limiter la longueur
+            if (keySequence.length > 10) {
+                keySequence = keySequence.slice(-10);
+            }
+            
+            // Afficher la séquence actuelle
+            document.getElementById('keySequence').textContent = 
+                'Séquence: ' + keySequence.slice(-7).join(' + ');
+            
+            // Vérifier si on a la séquence complète
+            if (keySequence.length >= secretSequence.length) {
+                const lastKeys = keySequence.slice(-secretSequence.length);
+                const isCorrect = secretSequence.every((secretKey, index) => 
+                    lastKeys[index] === secretKey
+                );
+                
+                if (isCorrect) {
+                    document.getElementById('keySequence').textContent = 
+                        '✅ Séquence détectée ! Redirection...';
+                    setTimeout(() => {
+                        window.open('/secret-admin-access-hag2025', '_blank');
+                    }, 1000);
+                    keySequence = [];
+                }
+            }
+            
+            // Réinitialiser après 5 secondes
+            setTimeout(() => {
+                if (keySequence.length > 0) {
+                    keySequence = [];
+                    document.getElementById('keySequence').textContent = '';
+                }
+            }, 5000);
+        });
+        
+        console.log('🔐 Test Admin Access HAG 2025');
+        console.log('URL Secrète: /secret-admin-access-hag2025');
+        console.log('Triple-clic: sur le point bleu');
+        console.log('Clavier: Ctrl + Shift + A + D + M + I + N');
+    </script>
+</body>
+</html>

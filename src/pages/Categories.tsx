@@ -98,10 +98,11 @@ const Categories: React.FC = () => {
                         </ul>
                       </div>
                       
-                      <div className="bg-gold/10 p-4 rounded-lg border border-gold/20">
+                      {/* Récompenses masquées temporairement */}
+                      {/* <div className="bg-gold/10 p-4 rounded-lg border border-gold/20">
                         <h4 className="font-semibold text-gold mb-2 text-sm">Récompense :</h4>
                         <p className="text-blue-dark font-medium text-sm">{category.prize}</p>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 ))}

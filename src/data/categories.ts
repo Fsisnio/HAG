@@ -30,7 +30,7 @@ export interface Category {
   title: string;
   description: string;
   criteria: string[];
-  prize: string;
+  prize?: string; // Rendu optionnel pour masquer temporairement
   group: string;
 }
 
@@ -59,7 +59,7 @@ export const officialCategories: Category[] = [
       'Partenariats avec le secteur professionnel',
       'Impact sur le développement des compétences'
     ],
-    prize: 'Trophée d\'Or + Certification Excellence',
+    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
     group: 'Formation Professionnelle'
   },
 
@@ -76,7 +76,7 @@ export const officialCategories: Category[] = [
       'Organisation et efficacité',
       'Attention au détail et innovation'
     ],
-    prize: 'Trophée d\'Or + Certification Excellence',
+    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
     group: 'Hôtellerie'
   },
   {
@@ -91,7 +91,7 @@ export const officialCategories: Category[] = [
       'Innovation culinaire',
       'Gestion efficace en période de forte activité'
     ],
-    prize: 'Trophée d\'Or + Certification Excellence',
+    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
     group: 'Hôtellerie'
   },
   {
@@ -106,7 +106,7 @@ export const officialCategories: Category[] = [
       'Maîtrise des arts de la table',
       'Gestion des situations délicates'
     ],
-    prize: 'Trophée d\'Or + Certification Excellence',
+    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
     group: 'Hôtellerie'
   },
   {
@@ -121,7 +121,7 @@ export const officialCategories: Category[] = [
       'Gestion professionnelle des situations délicates',
       'Retours clients positifs'
     ],
-    prize: 'Trophée d\'Or + Certification Excellence',
+    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
     group: 'Hôtellerie'
   },
   {
@@ -136,7 +136,7 @@ export const officialCategories: Category[] = [
       'Intégration dans l\'environnement naturel',
       'Sensibilisation et éducation environnementale'
     ],
-    prize: 'Trophée d\'Or + Certification Excellence',
+    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
     group: 'Hôtellerie'
   },
   {
@@ -151,7 +151,7 @@ export const officialCategories: Category[] = [
       'Offre de restauration et services additionnels',
       'Innovation et satisfaction client'
     ],
-    prize: 'Trophée d\'Or + Certification Excellence',
+    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
     group: 'Hôtellerie'
   },
   {
@@ -166,7 +166,7 @@ export const officialCategories: Category[] = [
       'Diversité de l\'offre',
       'Impact social et économique positif'
     ],
-    prize: 'Trophée d\'Or + Certification Excellence',
+    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
     group: 'Hôtellerie'
   },
   {
@@ -181,7 +181,7 @@ export const officialCategories: Category[] = [
       'Innovation et technologies',
       'Expérience client haut de gamme'
     ],
-    prize: 'Trophée d\'Or + Certification Excellence',
+    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
     group: 'Hôtellerie'
   },
   {
@@ -196,7 +196,7 @@ export const officialCategories: Category[] = [
       'Satisfaction client et réputation',
       'Contribution au rayonnement touristique'
     ],
-    prize: 'Trophée d\'Or + Certification Excellence',
+    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
     group: 'Hôtellerie'
   },
 
@@ -213,7 +213,7 @@ export const officialCategories: Category[] = [
       'Ambiance et décoration',
       'Réputation et reconnaissance'
     ],
-    prize: 'Trophée d\'Or + Certification Excellence',
+    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
     group: 'Restauration & Gastronomie'
   },
   {
@@ -228,7 +228,7 @@ export const officialCategories: Category[] = [
       'Innovation dans l\'offre',
       'Expansion et impact économique'
     ],
-    prize: 'Trophée d\'Or + Certification Excellence',
+    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
     group: 'Restauration & Gastronomie'
   },
 
@@ -245,7 +245,7 @@ export const officialCategories: Category[] = [
       'Gestion sécurisée des visites',
       'Retours positifs des visiteurs'
     ],
-    prize: 'Trophée d\'Or + Certification Excellence',
+    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
     group: 'Tourisme & Voyages'
   },
   {
@@ -260,7 +260,7 @@ export const officialCategories: Category[] = [
       'Engagement local et innovation',
       'Diversité des destinations'
     ],
-    prize: 'Trophée d\'Or + Certification Excellence',
+    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
     group: 'Tourisme & Voyages'
   },
   {
@@ -275,7 +275,7 @@ export const officialCategories: Category[] = [
       'Partenariats et collaborations',
       'Résultats mesurables'
     ],
-    prize: 'Trophée d\'Or + Certification Excellence',
+    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
     group: 'Tourisme & Voyages'
   },
   {
@@ -290,7 +290,7 @@ export const officialCategories: Category[] = [
       'Confort et innovations',
       'Contribution au développement touristique'
     ],
-    prize: 'Trophée d\'Or + Certification Excellence',
+    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
     group: 'Tourisme & Voyages'
   },
 
@@ -307,7 +307,7 @@ export const officialCategories: Category[] = [
       'Innovation dans l\'offre de loisirs',
       'Satisfaction et fidélisation des clients'
     ],
-    prize: 'Trophée d\'Or + Certification Excellence',
+    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
     group: 'Loisirs & Divertissement'
   },
   {
@@ -322,7 +322,7 @@ export const officialCategories: Category[] = [
       'Service client et hospitalité',
       'Impact sur la vie nocturne locale'
     ],
-    prize: 'Trophée d\'Or + Certification Excellence',
+    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
     group: 'Loisirs & Divertissement'
   },
 
@@ -339,7 +339,7 @@ export const officialCategories: Category[] = [
       'Promotion de la culture guinéenne',
       'Impact sur l\'image touristique du pays'
     ],
-    prize: 'Trophée d\'Honneur + Reconnaissance Spéciale',
+    // prize: 'Trophée d\'Honneur + Reconnaissance Spéciale', // Masqué temporairement
     group: 'Prix Spéciaux'
   },
   {
@@ -354,7 +354,7 @@ export const officialCategories: Category[] = [
       'Contributions remarquables malgré le jeune âge',
       'Vision d\'avenir pour le secteur'
     ],
-    prize: 'Trophée Jeune Talent + Bourse de Formation',
+    // prize: 'Trophée Jeune Talent + Bourse de Formation', // Masqué temporairement
     group: 'Prix Spéciaux'
   },
   {
@@ -369,7 +369,7 @@ export const officialCategories: Category[] = [
       'Innovation et excellence',
       'Impact social et économique'
     ],
-    prize: 'Trophée Leadership + Reconnaissance Spéciale',
+    // prize: 'Trophée Leadership + Reconnaissance Spéciale', // Masqué temporairement
     group: 'Prix Spéciaux'
   },
   {
@@ -384,7 +384,7 @@ export const officialCategories: Category[] = [
       'Reconnaissance par les pairs',
       'Héritage et vision à long terme'
     ],
-    prize: 'Trophée d\'Honneur + Reconnaissance à Vie',
+    // prize: 'Trophée d\'Honneur + Reconnaissance à Vie', // Masqué temporairement
     group: 'Prix Spéciaux'
   },
   {
@@ -399,7 +399,7 @@ export const officialCategories: Category[] = [
       'Innovation en matière de RSE',
       'Mesurabilité des résultats'
     ],
-    prize: 'Trophée RSE + Certification Développement Durable',
+    // prize: 'Trophée RSE + Certification Développement Durable', // Masqué temporairement
     group: 'Prix Spéciaux'
   },
   {
@@ -414,7 +414,7 @@ export const officialCategories: Category[] = [
       'Innovation et leadership',
       'Rayonnement médiatique et public'
     ],
-    prize: 'Trophée Personnalité + Reconnaissance Médiatique',
+    // prize: 'Trophée Personnalité + Reconnaissance Médiatique', // Masqué temporairement
     group: 'Prix Spéciaux'
   },
 
@@ -431,7 +431,7 @@ export const officialCategories: Category[] = [
       'Connexion émotionnelle avec le public',
       'Impact viral et médiatique'
     ],
-    prize: 'Trophée Coup de Cœur + Prix Spécial Public',
+    // prize: 'Trophée Coup de Cœur + Prix Spécial Public', // Masqué temporairement
     group: 'Prix HAG 2025'
   }
 ];
