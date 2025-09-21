@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Trophy, Mail, Phone, MapPin, Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
+import DiscreteLoginButton from './DiscreteLoginButton';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -137,6 +138,7 @@ const Footer: React.FC = () => {
             <Link to="/conditions-utilisation" className="text-gray-300 hover:text-gold transition-colors">
               Conditions d'utilisation
             </Link>
+            <DiscreteLoginButton />
           </div>
         </div>
       </div>
