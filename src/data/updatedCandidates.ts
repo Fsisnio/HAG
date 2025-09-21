@@ -895,3 +895,4 @@ export const getCategoriesWithCandidates = (): string[] => {
 };
 
 
+

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Injection de Données Test - HAG 2025</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        button {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+        }
+        .danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+        .danger:hover {
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+        }
+        .log {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #fbbf24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Injection de Données Test - HAG 2025</h1>
+        <p>Cet outil permet d'injecter des données de test pour tester le système de réinitialisation des votes.</p>
+
+        <div class="stats" id="currentStats">
+            <div class="stat-card">
+                <div class="stat-value" id="votesCount">0</div>
+                <div>Votes gratuits</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="paymentsCount">0</div>
+                <div>Votes payants</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="ratingsCount">0</div>
+                <div>Évaluations</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalCount">0</div>
+                <div>Total éléments</div>
+            </div>
+        </div>
+
+        <button onclick="injectTestData()">
+            🎯 Injecter des données de test
+        </button>
+
+        <button onclick="clearAllData()" class="danger">
+            🗑️ Supprimer toutes les données
+        </button>
+
+        <button onclick="location.href='/reset-votes.html'">
+            🔄 Aller à l'outil de reset
+        </button>
+
+        <button onclick="location.href='/admin'">
+            ⚙️ Aller à l'interface admin
+        </button>
+
+        <div class="log" id="logOutput">
+            <div><strong>Logs d'injection :</strong></div>
+        </div>
+    </div>
+
+    <script>
+        // Données de test à injecter
+        const testData = {
+            hag_candidates_votes: [
+                { candidateId: 1, candidateName: 'Hôtel Mariador Palace', category: 'Meilleur Hôtel de l\'année', timestamp: new Date().toISOString() },
+                { candidateId: 2, candidateName: 'Restaurant Le Palais', category: 'Meilleur Restaurant Gastronomique de l\'année', timestamp: new Date().toISOString() },
+                { candidateId: 3, candidateName: 'Guide Touristique Alpha', category: 'Meilleur Guide Touristique de l\'année', timestamp: new Date().toISOString() },
+                { candidateId: 4, candidateName: 'Agence Voyage Conakry', category: 'Meilleure Agence de Voyage de l\'année', timestamp: new Date().toISOString() },
+                { candidateId: 5, candidateName: 'Complexe Loisirs Riviera', category: 'Meilleur Complexe de Loisirs de l\'année', timestamp: new Date().toISOString() }
+            ],
+            hag_candidates_ratings: {
+                '1': 4.8,
+                '2': 4.6,
+                '3': 4.5,
+                '4': 4.7,
+                '5': 4.3
+            },
+            hag_completed_votes: [
+                { candidateId: 1, amount: 10000, transactionId: 'PAY_TEST_001', status: 'completed', timestamp: new Date().toISOString() },
+                { candidateId: 2, amount: 10000, transactionId: 'PAY_TEST_002', status: 'completed', timestamp: new Date().toISOString() },
+                { candidateId: 1, amount: 10000, transactionId: 'PAY_TEST_003', status: 'completed', timestamp: new Date().toISOString() }
+            ],
+            hag_vote_counts: {
+                '1': 25,
+                '2': 18,
+                '3': 12,
+                '4': 15,
+                '5': 9
+            },
+            hag_pending_vote: {
+                candidateId: 6,
+                candidateName: 'Institut Formation Pro',
+                category: 'Meilleur Institut de formation professionnel de l\'année',
+                timestamp: new Date().toISOString()
+            },
+            hag_user_votes: {
+                'user_001': { candidateId: 1, timestamp: new Date().toISOString() },
+                'user_002': { candidateId: 2, timestamp: new Date().toISOString() },
+                'user_003': { candidateId: 1, timestamp: new Date().toISOString() }
+            }
+        };
+
+        // Logger un message
+        function log(message) {
+            const logOutput = document.getElementById('logOutput');
+            const timestamp = new Date().toLocaleTimeString();
+            logOutput.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            logOutput.scrollTop = logOutput.scrollHeight;
+        }
+
+        // Mettre à jour les statistiques
+        function updateStats() {
+            const votesCount = getDataCount('hag_candidates_votes');
+            const paymentsCount = getDataCount('hag_completed_votes');
+            const ratingsCount = getDataCount('hag_candidates_ratings');
+            const totalCount = votesCount + paymentsCount + ratingsCount;
+
+            document.getElementById('votesCount').textContent = votesCount;
+            document.getElementById('paymentsCount').textContent = paymentsCount;
+            document.getElementById('ratingsCount').textContent = ratingsCount;
+            document.getElementById('totalCount').textContent = totalCount;
+        }
+
+        // Compter les éléments dans une clé
+        function getDataCount(key) {
+            const data = localStorage.getItem(key);
+            if (!data) return 0;
+            
+            try {
+                const parsed = JSON.parse(data);
+                return Array.isArray(parsed) ? parsed.length : Object.keys(parsed).length;
+            } catch {
+                return 0;
+            }
+        }
+
+        // Injecter les données de test
+        function injectTestData() {
+            log('🎯 Début de l\'injection des données de test...');
+            
+            let totalInjected = 0;
+            Object.entries(testData).forEach(([key, data]) => {
+                localStorage.setItem(key, JSON.stringify(data));
+                const count = Array.isArray(data) ? data.length : Object.keys(data).length;
+                totalInjected += count;
+                log(`   ✅ ${key}: ${count} éléments injectés`);
+            });
+
+            log(`🎊 Injection terminée ! ${totalInjected} éléments au total`);
+            updateStats();
+        }
+
+        // Supprimer toutes les données
+        function clearAllData() {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer toutes les données de test ?')) {
+                return;
+            }
+
+            log('🗑️ Suppression de toutes les données...');
+            
+            const keysToDelete = Object.keys(testData);
+            keysToDelete.forEach(key => {
+                if (localStorage.getItem(key)) {
+                    localStorage.removeItem(key);
+                    log(`   ❌ ${key}: supprimé`);
+                }
+            });
+
+            log('✨ Toutes les données ont été supprimées');
+            updateStats();
+        }
+
+        // Initialiser au chargement
+        window.addEventListener('load', () => {
+            updateStats();
+            log('🚀 Outil d\'injection de données test chargé');
+            log('💡 Cliquez sur "Injecter des données de test" pour commencer');
+        });
+    </script>
+</body>
+</html>

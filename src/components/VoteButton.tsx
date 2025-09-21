@@ -1,5 +1,6 @@
-import React from 'react';
-import { Vote as VoteIcon, CheckCircle, Loader2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Vote as VoteIcon, CheckCircle, Loader2, CreditCard } from 'lucide-react';
+import PaymentModal from './PaymentModal';
 
 interface VoteButtonProps {
   candidateId: number;
@@ -9,6 +10,8 @@ interface VoteButtonProps {
   isVoting: boolean;
   onVote: (candidateId: number, candidateName: string, candidateCategory: string) => void;
   disabled?: boolean;
+  voteAmount?: number; // Prix du vote
+  enablePayment?: boolean; // Activer le système de paiement
 }
 
 const VoteButton: React.FC<VoteButtonProps> = ({
@@ -18,9 +21,13 @@ const VoteButton: React.FC<VoteButtonProps> = ({
   isVoted,
   isVoting,
   onVote,
-  disabled = false
+  disabled = false,
+  voteAmount = 10000, // 10,000 GNF par défaut
+  enablePayment = true // Système de paiement activé par défaut
 }) => {
-  // Fonction de gestion du clic simplifiée
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+
+  // Fonction de gestion du clic
   const handleVoteClick = () => {
     // Validation basique
     if (!candidateId || !candidateName || !candidateCategory) {
@@ -28,8 +35,13 @@ const VoteButton: React.FC<VoteButtonProps> = ({
       return;
     }
 
-    // Appeler la fonction de vote avec la catégorie
-    onVote(candidateId, candidateName, candidateCategory);
+    if (enablePayment) {
+      // Ouvrir le modal de paiement
+      setShowPaymentModal(true);
+    } else {
+      // Vote gratuit (ancien système)
+      onVote(candidateId, candidateName, candidateCategory);
+    }
   };
 
   // Déterminer l'état du bouton
@@ -74,26 +86,40 @@ const VoteButton: React.FC<VoteButtonProps> = ({
     
     return (
       <span className="flex items-center justify-center space-x-2">
-        <VoteIcon className="w-5 h-5" />
-        <span>Voter</span>
+        {enablePayment ? <CreditCard className="w-5 h-5" /> : <VoteIcon className="w-5 h-5" />}
+        <span>{enablePayment ? `Voter (${(voteAmount / 1000).toFixed(0)}k GNF)` : 'Voter'}</span>
       </span>
     );
   };
 
   return (
-    <button
-      type="button"
-      onClick={handleVoteClick}
-      disabled={isButtonDisabled}
-      className={getButtonStyles()}
-      aria-label={isVoted ? `Voté pour ${candidateName} (${candidateCategory})` : `Voter pour ${candidateName} (${candidateCategory})`}
-      data-candidate-id={candidateId}
-      data-candidate-name={candidateName}
-      data-candidate-category={candidateCategory}
-      id={`vote-btn-${candidateId}-${candidateCategory.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`}
-    >
-      {getButtonContent()}
-    </button>
+    <>
+      <button
+        type="button"
+        onClick={handleVoteClick}
+        disabled={isButtonDisabled}
+        className={getButtonStyles()}
+        aria-label={isVoted ? `Voté pour ${candidateName} (${candidateCategory})` : `Voter pour ${candidateName} (${candidateCategory})`}
+        data-candidate-id={candidateId}
+        data-candidate-name={candidateName}
+        data-candidate-category={candidateCategory}
+        id={`vote-btn-${candidateId}-${candidateCategory.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`}
+      >
+        {getButtonContent()}
+      </button>
+
+      {/* Modal de paiement */}
+      {enablePayment && (
+        <PaymentModal
+          isOpen={showPaymentModal}
+          onClose={() => setShowPaymentModal(false)}
+          candidateId={candidateId}
+          candidateName={candidateName}
+          candidateCategory={candidateCategory}
+          voteAmount={voteAmount}
+        />
+      )}
+    </>
   );
 };
 

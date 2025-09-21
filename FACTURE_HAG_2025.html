@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facture - Développement Site HAG 2025</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        .invoice-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 40px;
+        }
+        .invoice-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        .detail-section h3 {
+            color: #1e3a8a;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .detail-section p {
+            margin: 5px 0;
+        }
+        .services-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        .services-table th {
+            background: #1e3a8a;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .services-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .services-table tr:nth-child(even) {
+            background: #f8fafc;
+        }
+        .services-table tr:hover {
+            background: #e0f2fe;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .font-bold {
+            font-weight: 600;
+        }
+        .total-section {
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 5px 0;
+        }
+        .total-row.final {
+            border-top: 2px solid #1e3a8a;
+            margin-top: 15px;
+            padding-top: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #1e3a8a;
+        }
+        .notes {
+            background: #fffbeb;
+            border: 1px solid #fbbf24;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        .notes h4 {
+            color: #92400e;
+            margin-top: 0;
+        }
+        .footer {
+            background: #374151;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .tech-badge {
+            display: inline-block;
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            margin: 2px;
+        }
+        @media print {
+            body { background: white; }
+            .invoice-container { box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>FACTURE</h1>
+            <p>Développement Site Internet - Hospitality Awards Guinée 2025</p>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Invoice Details -->
+            <div class="invoice-details">
+                <div class="detail-section">
+                    <h3>🏢 Prestataire</h3>
+                    <p><strong>SpparoW</strong></p>
+                    <p><em>"Building Success, Sparking Growth"</em></p>
+                    <p>Expert en Applications Web Modernes</p>
+                    <p>📧 info@spparow.org</p>
+                    <p>📱 +221 773 542 551</p>
+                    <p>📍 Sénégal, Thiès</p>
+                </div>
+                <div class="detail-section">
+                    <h3>🎯 Client</h3>
+                    <p><strong>Hospitality Awards Guinée</strong></p>
+                    <p>Organisation des Prix d'Excellence</p>
+                    <p>Secteur Hôtellerie & Tourisme</p>
+                    <p>Conakry, Guinée</p>
+                    <p><strong>Date:</strong> 20 Septembre 2025</p>
+                    <p><strong>Facture N°:</strong> HAG-2025-009</p>
+                </div>
+            </div>
+
+            <!-- Services Table -->
+            <table class="services-table">
+                <thead>
+                    <tr>
+                        <th>Service / Fonctionnalité</th>
+                        <th>Description</th>
+                        <th>Quantité</th>
+                        <th class="text-right">Prix Unitaire</th>
+                        <th class="text-right">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Design & UI/UX -->
+                    <tr>
+                        <td class="font-bold">🎨 Design & Interface Utilisateur</td>
+                        <td>Design moderne responsive, animations, thème HAG 2025 avec couleurs or & bleu</td>
+                        <td>1</td>
+                        <td class="text-right">2 500 000 GNF</td>
+                        <td class="text-right font-bold">2 500 000 GNF</td>
+                    </tr>
+
+                    <!-- Architecture -->
+                    <tr>
+                        <td class="font-bold">🏗️ Architecture & Configuration</td>
+                        <td>Setup React + TypeScript, structure modulaire, configuration environnement</td>
+                        <td>1</td>
+                        <td class="text-right">1 500 000 GNF</td>
+                        <td class="text-right font-bold">1 500 000 GNF</td>
+                    </tr>
+
+                    <!-- Système de Catégories -->
+                    <tr>
+                        <td class="font-bold">🏆 Système de Catégories</td>
+                        <td>25 récompenses en 7 catégories, gestion dynamique, filtrage, interface admin</td>
+                        <td>1</td>
+                        <td class="text-right">3 000 000 GNF</td>
+                        <td class="text-right font-bold">3 000 000 GNF</td>
+                    </tr>
+
+                    <!-- Système de Vote -->
+                    <tr>
+                        <td class="font-bold">🗳️ Système de Vote Avancé</td>
+                        <td>Vote gratuit + payant, intégration Paydunya, gestion paiements, validations</td>
+                        <td>1</td>
+                        <td class="text-right">4 500 000 GNF</td>
+                        <td class="text-right font-bold">4 500 000 GNF</td>
+                    </tr>
+
+                    <!-- Pages Principales -->
+                    <tr>
+                        <td class="font-bold">📄 Pages Principales</td>
+                        <td>Accueil, À propos, Catégories, Vote, Candidats (5 pages complètes)</td>
+                        <td>5</td>
+                        <td class="text-right">600 000 GNF</td>
+                        <td class="text-right font-bold">3 000 000 GNF</td>
+                    </tr>
+
+                    <!-- Interface Admin -->
+                    <tr>
+                        <td class="font-bold">⚙️ Interface Administrateur</td>
+                        <td>Dashboard complet, statistiques temps réel, gestion candidats, exports</td>
+                        <td>1</td>
+                        <td class="text-right">3 500 000 GNF</td>
+                        <td class="text-right font-bold">3 500 000 GNF</td>
+                    </tr>
+
+                    <!-- Système de Reset -->
+                    <tr>
+                        <td class="font-bold">🔄 Système de Réinitialisation</td>
+                        <td>3 interfaces de reset, sauvegardes, sécurité, outils de test</td>
+                        <td>1</td>
+                        <td class="text-right">2 000 000 GNF</td>
+                        <td class="text-right font-bold">2 000 000 GNF</td>
+                    </tr>
+
+                    <!-- Intégration Paiement -->
+                    <tr>
+                        <td class="font-bold">💳 Intégration Paydunya</td>
+                        <td>API Paydunya, webhooks, validation transactions, gestion erreurs</td>
+                        <td>1</td>
+                        <td class="text-right">2 500 000 GNF</td>
+                        <td class="text-right font-bold">2 500 000 GNF</td>
+                    </tr>
+
+                    <!-- Responsive & Mobile -->
+                    <tr>
+                        <td class="font-bold">📱 Responsive & Mobile</td>
+                        <td>Optimisation mobile, tablette, adaptation tous écrans</td>
+                        <td>1</td>
+                        <td class="text-right">1 500 000 GNF</td>
+                        <td class="text-right font-bold">1 500 000 GNF</td>
+                    </tr>
+
+                    <!-- Tests & Débogage -->
+                    <tr>
+                        <td class="font-bold">🧪 Tests & Débogage</td>
+                        <td>Tests fonctionnels, correction bugs, optimisation performances</td>
+                        <td>1</td>
+                        <td class="text-right">1 500 000 GNF</td>
+                        <td class="text-right font-bold">1 500 000 GNF</td>
+                    </tr>
+
+                    <!-- Documentation -->
+                    <tr>
+                        <td class="font-bold">📚 Documentation</td>
+                        <td>READMEs détaillés, guides d'utilisation, documentation technique</td>
+                        <td>1</td>
+                        <td class="text-right">1 000 000 GNF</td>
+                        <td class="text-right font-bold">1 000 000 GNF</td>
+                    </tr>
+
+                    <!-- Support & Formation -->
+                    <tr>
+                        <td class="font-bold">🎓 Support & Formation</td>
+                        <td>Formation équipe, support technique 30 jours, maintenance</td>
+                        <td>1</td>
+                        <td class="text-right">2 000 000 GNF</td>
+                        <td class="text-right font-bold">2 000 000 GNF</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Technologies Utilisées -->
+            <div style="margin: 30px 0;">
+                <h3 style="color: #1e3a8a;">💻 Technologies & Frameworks</h3>
+                <div>
+                    <span class="tech-badge">React 18</span>
+                    <span class="tech-badge">TypeScript</span>
+                    <span class="tech-badge">Tailwind CSS</span>
+                    <span class="tech-badge">Lucide React</span>
+                    <span class="tech-badge">React Router</span>
+                    <span class="tech-badge">Paydunya API</span>
+                    <span class="tech-badge">Responsive Design</span>
+                    <span class="tech-badge">Webpack</span>
+                    <span class="tech-badge">ESLint</span>
+                    <span class="tech-badge">PowerShell</span>
+                    <span class="tech-badge">HTML5</span>
+                    <span class="tech-badge">CSS3</span>
+                    <span class="tech-badge">JavaScript ES6+</span>
+                </div>
+            </div>
+
+            <!-- Total Section -->
+            <div class="total-section">
+                <div class="total-row">
+                    <span>Sous-total:</span>
+                    <span>27 000 000 GNF</span>
+                </div>
+                <div class="total-row">
+                    <span>TVA (18%):</span>
+                    <span>4 860 000 GNF</span>
+                </div>
+                <div class="total-row">
+                    <span>Remise Spéciale HAG:</span>
+                    <span style="color: #16a34a;">-2 000 000 GNF</span>
+                </div>
+                <div class="total-row final">
+                    <span>TOTAL À PAYER:</span>
+                    <span>29 860 000 GNF</span>
+                </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="notes">
+                <h4>📝 Notes Importantes</h4>
+                <ul>
+                    <li><strong>Délai de livraison:</strong> 5 jours ouvrables ✅ (TERMINÉ - Sept 2025)</li>
+                    <li><strong>Révisions incluses:</strong> 3 cycles de modifications</li>
+                    <li><strong>Support technique:</strong> 30 jours gratuits après livraison</li>
+                    <li><strong>Code source:</strong> Fourni intégralement avec documentation</li>
+                    <li><strong>Hébergement:</strong> Conseils et assistance pour le déploiement</li>
+                    <li><strong>Formation:</strong> 2h de formation équipe incluses</li>
+                    <li><strong>Maintenance:</strong> Première année -50% sur les interventions</li>
+                </ul>
+            </div>
+
+            <!-- Fonctionnalités Livrées -->
+            <div style="margin-top: 30px;">
+                <h3 style="color: #1e3a8a;">✅ Fonctionnalités Livrées</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h4>🎯 Interface Publique</h4>
+                        <ul>
+                            <li>Page d'accueil interactive</li>
+                            <li>Présentation des 25 récompenses</li>
+                            <li>Système de vote gratuit/payant</li>
+                            <li>Navigation responsive</li>
+                            <li>Animations et transitions</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>⚙️ Interface Admin</h4>
+                        <ul>
+                            <li>Dashboard avec statistiques</li>
+                            <li>Gestion des candidats</li>
+                            <li>Exports Excel/PDF</li>
+                            <li>Système de reset avancé</li>
+                            <li>Analytics en temps réel</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modalités de Paiement -->
+            <div style="background: #f0f9ff; padding: 20px; border-radius: 10px; margin-top: 30px;">
+                <h3 style="color: #0369a1; margin-top: 0;">💰 Modalités de Paiement</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <p><strong>Échéances:</strong></p>
+                        <ul>
+                            <li>50% à la commande: 14 930 000 GNF</li>
+                            <li>50% à la livraison: 14 930 000 GNF</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <p><strong>Moyens de paiement:</strong></p>
+                        <ul>
+                            <li>Virement bancaire</li>
+                            <li>Mobile Money</li>
+                            <li>Paiement échelonné possible</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>🎉 Site HAG 2025 - Développement Terminé avec Succès</strong></p>
+            <p>Merci de votre confiance pour ce projet d'envergure</p>
+            <p style="font-size: 0.9em; opacity: 0.8;">
+                <strong>SpparoW</strong> - "Building Success, Sparking Growth"
+            </p>
+            <p style="font-size: 0.8em; opacity: 0.7;">
+                Technologies modernes • Code de qualité • Support inclus • Documentation complète
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Impression automatique si désiré
+        // window.print();
+    </script>
+</body>
+</html>

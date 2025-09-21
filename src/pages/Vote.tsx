@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Vote as VoteIcon, Heart, Users, Award, Star, CheckCircle, ArrowLeft } from 'lucide-react';
+import { Vote as VoteIcon, Heart, Users, Award, Star, CheckCircle, ArrowLeft, AlertCircle } from 'lucide-react';
 import VoteStats from '../components/VoteStats';
 import VoteButton from '../components/VoteButton';
 import { officialCategories } from '../data/categories';
 import { getAllOfficialCandidates, getCandidatesByCategory } from '../data/officialCandidates';
 import { validateVote, validateCandidatesUniqueness } from '../utils/voteValidation';
+import votePaymentHandler from '../services/votePaymentHandler';
 
 // Composant pour l'affichage des étoiles de notation
 const StarRating: React.FC<{
@@ -71,6 +72,38 @@ const VotePage: React.FC = () => {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [currentView, setCurrentView] = useState<'categories' | 'candidates'>('categories');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [paymentMessage, setPaymentMessage] = useState<string>('');
+  const [paymentMessageType, setPaymentMessageType] = useState<'success' | 'error' | ''>('');
+
+  // Vérifier les retours de paiement
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const handlePaymentReturn = async () => {
+      const success = await votePaymentHandler.handlePaymentReturn(urlParams);
+      
+      if (success) {
+        setPaymentMessage('Paiement confirmé ! Votre vote a été enregistré avec succès.');
+        setPaymentMessageType('success');
+        // Nettoyer l'URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } else if (urlParams.get('payment') === 'cancelled') {
+        setPaymentMessage('Paiement annulé. Votre vote n\'a pas été enregistré.');
+        setPaymentMessageType('error');
+        // Nettoyer l'URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+      
+      // Masquer le message après 5 secondes
+      if (success || urlParams.get('payment') === 'cancelled') {
+        setTimeout(() => {
+          setPaymentMessage('');
+          setPaymentMessageType('');
+        }, 5000);
+      }
+    };
+
+    handlePaymentReturn();
+  }, []);
 
   // Charger les candidats officiels
   useEffect(() => {
@@ -279,6 +312,24 @@ const VotePage: React.FC = () => {
           </div>
         </div>
 
+          {/* Message de paiement */}
+          {paymentMessage && (
+            <div className={`max-w-md mx-auto mb-8 p-4 rounded-lg shadow-lg ${
+              paymentMessageType === 'success' 
+                ? 'bg-green-500 text-white' 
+                : 'bg-red-500 text-white'
+            }`}>
+              <div className="flex items-center space-x-2">
+                {paymentMessageType === 'success' ? (
+                  <CheckCircle className="w-5 h-5" />
+                ) : (
+                  <AlertCircle className="w-5 h-5" />
+                )}
+                <span>{paymentMessage}</span>
+              </div>
+            </div>
+          )}
+
           {/* Statistiques de vote */}
             <VoteStats
               totalVotes={candidates.reduce((sum, candidate) => sum + candidate.votes, 0)}
@@ -454,6 +505,8 @@ const VotePage: React.FC = () => {
                           isVoting={votingInProgress.has(candidate.id)}
                           onVote={handleVote}
                           disabled={false}
+                          enablePayment={true}
+                          voteAmount={10000}
                         />
                       </div>
                     </div>

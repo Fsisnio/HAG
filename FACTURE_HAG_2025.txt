@@ -1,0 +1,162 @@
+================================================================================
+                          FACTURE DÉVELOPPEMENT WEB
+                     HOSPITALITY AWARDS GUINÉE 2025
+================================================================================
+
+📅 Date: 20 Septembre 2025
+📄 Facture N°: HAG-2025-009
+
+🏢 PRESTATAIRE:
+   SpparoW
+   "Building Success, Sparking Growth"
+   Expert en Applications Web Modernes
+   📧 info@spparow.org
+   📱 +221 773 542 551
+   📍 Sénégal, Thiès
+
+🎯 CLIENT:
+   Hospitality Awards Guinée
+   Organisation des Prix d'Excellence
+   Secteur Hôtellerie & Tourisme
+   Conakry, Guinée
+
+================================================================================
+                              SERVICES FOURNIS
+================================================================================
+
+🎨 Design & Interface Utilisateur..................... 2 500 000 GNF
+   • Design moderne responsive
+   • Thème HAG 2025 (couleurs or & bleu)
+   • Animations et transitions fluides
+
+🏗️ Architecture & Configuration....................... 1 500 000 GNF
+   • Setup React + TypeScript
+   • Structure modulaire professionnelle
+   • Configuration environnement de développement
+
+🏆 Système de Catégories............................... 3 000 000 GNF
+   • 25 récompenses officielles
+   • 7 catégories principales
+   • Gestion dynamique et filtrage
+   • Interface administration
+
+🗳️ Système de Vote Avancé............................. 4 500 000 GNF
+   • Vote gratuit avec validation
+   • Vote payant intégré Paydunya
+   • Gestion complète des paiements
+   • Sécurité renforcée
+
+📄 Pages Principales (x5).............................. 3 000 000 GNF
+   • Accueil interactif
+   • À propos HAG
+   • Catégories et récompenses
+   • Interface de vote
+   • Présentation candidats
+
+⚙️ Interface Administrateur............................ 3 500 000 GNF
+   • Dashboard avec statistiques temps réel
+   • Gestion candidats et votes
+   • Exports Excel/PDF
+   • Analytics avancées
+
+🔄 Système de Réinitialisation......................... 2 000 000 GNF
+   • 3 interfaces de reset différentes
+   • Sauvegardes et restauration
+   • Sécurité multi-niveaux
+   • Outils de test intégrés
+
+💳 Intégration Paydunya................................ 2 500 000 GNF
+   • API complète Paydunya
+   • Webhooks sécurisés
+   • Validation des transactions
+   • Gestion des erreurs
+
+📱 Responsive & Mobile................................. 1 500 000 GNF
+   • Optimisation tous écrans
+   • Performance mobile
+   • Adaptation tablettes
+
+🧪 Tests & Débogage.................................... 1 500 000 GNF
+   • Tests fonctionnels complets
+   • Correction bugs
+   • Optimisation performances
+
+📚 Documentation....................................... 1 000 000 GNF
+   • READMEs détaillés
+   • Guides d'utilisation
+   • Documentation technique
+
+🎓 Support & Formation................................. 2 000 000 GNF
+   • Formation équipe (2h)
+   • Support technique 30 jours
+   • Maintenance incluse
+
+================================================================================
+                                TOTAL
+================================================================================
+
+Sous-total services.................................... 27 000 000 GNF
+TVA (18%).............................................. +4 860 000 GNF
+Remise spéciale HAG.................................... -2 000 000 GNF
+                                                       ________________
+TOTAL À PAYER.......................................... 29 860 000 GNF
+
+================================================================================
+                          TECHNOLOGIES UTILISÉES
+================================================================================
+
+Frontend: React 18, TypeScript, Tailwind CSS, React Router, Lucide React
+Backend: Paydunya API, Webhooks
+Outils: Webpack, ESLint, PowerShell, Responsive Design
+Qualité: Tests, Documentation, Support, Formation
+
+================================================================================
+                           MODALITÉS DE PAIEMENT
+================================================================================
+
+📅 Échéances:
+   • 50% à la commande: 14 930 000 GNF
+   • 50% à la livraison: 14 930 000 GNF ✅ (LIVRÉ)
+
+💰 Moyens de paiement:
+   • Virement bancaire
+   • Mobile Money
+   • Paiement échelonné possible
+
+================================================================================
+                              LIVRABLES
+================================================================================
+
+✅ Site web complet et fonctionnel
+✅ Code source avec documentation
+✅ 25 récompenses en 7 catégories
+✅ Système de vote gratuit/payant
+✅ Interface admin complète
+✅ Intégration Paydunya
+✅ Système de reset avancé
+✅ Design responsive
+✅ Formation et support
+
+================================================================================
+                              GARANTIES
+================================================================================
+
+🛡️ 30 jours de support technique gratuit
+🔄 Première année: -50% sur maintenance
+📚 Documentation complète fournie
+🎓 Formation équipe incluse (2h)
+⚡ Code de qualité professionnelle
+📱 Compatibilité tous devices
+🔒 Sécurité renforcée
+
+================================================================================
+
+🎉 PROJET HAG 2025 - DÉVELOPPEMENT TERMINÉ AVEC SUCCÈS
+
+Merci de votre confiance pour ce projet d'envergure.
+Le site est prêt à transformer l'industrie de l'hospitalité en Guinée !
+
+SpparoW - "Building Success, Sparking Growth"
+Technologies modernes • Code de qualité • Support inclus
+
+================================================================================

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur PDF Facture HAG</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 50px;
+            background: linear-gradient(135deg, #007777 0%, #009999 100%);
+            color: white;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 600px;
+        }
+        
+        h1 {
+            color: #fbbf24;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            background: #fbbf24;
+            color: #007777;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            background: #f59e0b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(251, 191, 36, 0.4);
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .step {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📄 Générateur PDF Facture</h1>
+        <p style="font-size: 1.2em; margin-bottom: 30px;">
+            Facture HAG-2025-009 - SpparoW
+        </p>
+        
+        <button class="btn" onclick="ouvrirFactureEtImprimer()">
+            🖨️ Générer PDF de la Facture
+        </button>
+        
+        <button class="btn" onclick="ouvrirFactureSimple()">
+            👁️ Voir la Facture
+        </button>
+        
+        <div class="instructions">
+            <h3 style="color: #fbbf24;">📋 Instructions pour générer le PDF :</h3>
+            
+            <div class="step">
+                <strong>1.</strong> Cliquez sur "Générer PDF de la Facture"
+            </div>
+            
+            <div class="step">
+                <strong>2.</strong> Dans la fenêtre d'impression qui s'ouvre :
+                <ul>
+                    <li>Sélectionnez "Enregistrer au format PDF" ou "Microsoft Print to PDF"</li>
+                    <li>Choisissez le dossier de destination</li>
+                    <li>Nommez le fichier : "Facture_HAG_2025_SpparoW.pdf"</li>
+                </ul>
+            </div>
+            
+            <div class="step">
+                <strong>3.</strong> Cliquez sur "Enregistrer" pour créer le PDF
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px; font-size: 0.9em; opacity: 0.8;">
+            <p><strong>SpparoW</strong> - "Building Success, Sparking Growth"</p>
+            <p>📧 info@spparow.org | 📱 +221 773 542 551</p>
+        </div>
+    </div>
+
+    <script>
+        function ouvrirFactureEtImprimer() {
+            // Ouvrir la facture dans une nouvelle fenêtre
+            const factureWindow = window.open('FACTURE_HAG_2025_PRINT.html', '_blank', 'width=1000,height=800');
+            
+            // Attendre que la page soit chargée puis ouvrir l'impression
+            factureWindow.onload = function() {
+                setTimeout(() => {
+                    factureWindow.print();
+                }, 1000);
+            };
+        }
+        
+        function ouvrirFactureSimple() {
+            // Ouvrir la facture dans une nouvelle fenêtre pour consultation
+            window.open('FACTURE_HAG_2025_PRINT.html', '_blank');
+        }
+        
+        // Message d'aide
+        console.log('🎯 Générateur PDF Facture HAG 2025');
+        console.log('📧 Contact SpparoW: info@spparow.org');
+        console.log('📱 Téléphone: +221 773 542 551');
+    </script>
+</body>
+</html>

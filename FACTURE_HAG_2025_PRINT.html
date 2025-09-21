@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facture HAG 2025 - SpparoW</title>
+    <style>
+        @media print {
+            body { margin: 0; padding: 0; }
+            .no-print { display: none; }
+            .page-break { page-break-before: always; }
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: white;
+            color: #333;
+            line-height: 1.4;
+        }
+        
+        .invoice {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border: 2px solid #007777;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #007777;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.2em;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .invoice-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 20px;
+        }
+        
+        .info-section h3 {
+            color: #007777;
+            margin-top: 0;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+        
+        .info-section p {
+            margin: 5px 0;
+        }
+        
+        .services {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .services th {
+            background: #007777;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        
+        .services td {
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+        }
+        
+        .services tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .text-right {
+            text-align: right;
+        }
+        
+        .font-bold {
+            font-weight: bold;
+        }
+        
+        .total-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border: 2px solid #007777;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            padding: 3px 0;
+        }
+        
+        .total-final {
+            border-top: 2px solid #007777;
+            margin-top: 10px;
+            padding-top: 10px;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #007777;
+        }
+        
+        .footer {
+            background: #007777;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .print-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #007777;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            z-index: 1000;
+        }
+        
+        .print-btn:hover {
+            background: #005555;
+        }
+        
+        @page {
+            margin: 1cm;
+        }
+    </style>
+</head>
+<body>
+    <button class="print-btn no-print" onclick="window.print()">🖨️ Imprimer/PDF</button>
+    
+    <div class="invoice">
+        <!-- Header -->
+        <div class="header">
+            <h1>FACTURE</h1>
+            <p>Développement Site Internet - HAG 2025</p>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Invoice Info -->
+            <div class="invoice-info">
+                <div class="info-section">
+                    <h3>🏢 PRESTATAIRE</h3>
+                    <p><strong>SpparoW</strong></p>
+                    <p><em>"Building Success, Sparking Growth"</em></p>
+                    <p>Expert en Applications Web Modernes</p>
+                    <p><strong>Email:</strong> info@spparow.org</p>
+                    <p><strong>Tél:</strong> +221 773 542 551</p>
+                    <p><strong>Adresse:</strong> Sénégal, Thiès</p>
+                </div>
+                
+                <div class="info-section">
+                    <h3>🎯 CLIENT</h3>
+                    <p><strong>Hospitality Awards Guinée</strong></p>
+                    <p>Organisation des Prix d'Excellence</p>
+                    <p>Secteur Hôtellerie & Tourisme</p>
+                    <p>Conakry, Guinée</p>
+                    <br>
+                    <p><strong>Date:</strong> 20 Septembre 2025</p>
+                    <p><strong>Facture N°:</strong> HAG-2025-009</p>
+                </div>
+            </div>
+
+            <!-- Services Table -->
+            <table class="services">
+                <thead>
+                    <tr>
+                        <th style="width: 35%;">Service</th>
+                        <th style="width: 45%;">Description</th>
+                        <th style="width: 20%;" class="text-right">Montant (GNF)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="font-bold">🎨 Design & Interface</td>
+                        <td>Design moderne responsive, thème HAG 2025</td>
+                        <td class="text-right font-bold">2 500 000</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">🏗️ Architecture & Config</td>
+                        <td>Setup React + TypeScript, structure modulaire</td>
+                        <td class="text-right font-bold">1 500 000</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">🏆 Système Catégories</td>
+                        <td>25 récompenses en 7 catégories, gestion admin</td>
+                        <td class="text-right font-bold">3 000 000</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">🗳️ Système Vote Avancé</td>
+                        <td>Vote gratuit + payant, intégration Paydunya</td>
+                        <td class="text-right font-bold">4 500 000</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">📄 Pages Web (x5)</td>
+                        <td>Accueil, À propos, Catégories, Vote, Candidats</td>
+                        <td class="text-right font-bold">3 000 000</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">⚙️ Interface Admin</td>
+                        <td>Dashboard, statistiques, gestion, exports</td>
+                        <td class="text-right font-bold">3 500 000</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">🔄 Système Reset</td>
+                        <td>3 interfaces reset, sauvegardes, sécurité</td>
+                        <td class="text-right font-bold">2 000 000</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">💳 Intégration Paydunya</td>
+                        <td>API Paydunya, webhooks, validation transactions</td>
+                        <td class="text-right font-bold">2 500 000</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">📱 Responsive Design</td>
+                        <td>Optimisation mobile, tablette, tous écrans</td>
+                        <td class="text-right font-bold">1 500 000</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">🧪 Tests & Débogage</td>
+                        <td>Tests fonctionnels, correction bugs, optimisation</td>
+                        <td class="text-right font-bold">1 500 000</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">📚 Documentation</td>
+                        <td>READMEs détaillés, guides, documentation technique</td>
+                        <td class="text-right font-bold">1 000 000</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">🎓 Support & Formation</td>
+                        <td>Formation équipe 2h, support 30 jours</td>
+                        <td class="text-right font-bold">2 000 000</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Total Section -->
+            <div class="total-section">
+                <div class="total-row">
+                    <span><strong>Sous-total services:</strong></span>
+                    <span><strong>27 000 000 GNF</strong></span>
+                </div>
+                <div class="total-row">
+                    <span>TVA (18%):</span>
+                    <span>4 860 000 GNF</span>
+                </div>
+                <div class="total-row">
+                    <span>Remise SpparoW:</span>
+                    <span style="color: #16a34a;">-2 000 000 GNF</span>
+                </div>
+                <div class="total-row total-final">
+                    <span>TOTAL À PAYER:</span>
+                    <span>29 860 000 GNF</span>
+                </div>
+            </div>
+
+            <!-- Technologies -->
+            <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                <h3 style="color: #007777; margin-top: 0;">💻 Technologies Utilisées</h3>
+                <p><strong>Frontend:</strong> React 18, TypeScript, Tailwind CSS, React Router, Lucide React</p>
+                <p><strong>Backend/API:</strong> Paydunya API, Webhooks</p>
+                <p><strong>Outils:</strong> Webpack, ESLint, PowerShell, Responsive Design</p>
+            </div>
+
+            <!-- Livrables -->
+            <div style="margin: 20px 0; padding: 15px; background: #e0f2fe; border-radius: 8px;">
+                <h3 style="color: #0369a1; margin-top: 0;">✅ Livrables Terminés</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                        <h4>🎯 Interface Publique</h4>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li>Page d'accueil interactive</li>
+                            <li>25 récompenses en 7 catégories</li>
+                            <li>Système de vote gratuit/payant</li>
+                            <li>Design responsive moderne</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>⚙️ Interface Admin</h4>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li>Dashboard avec statistiques</li>
+                            <li>Gestion des candidats</li>
+                            <li>Système de reset avancé</li>
+                            <li>Exports Excel/PDF</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes -->
+            <div style="margin: 20px 0; padding: 15px; background: #fffbeb; border: 1px solid #fbbf24; border-radius: 8px;">
+                <h3 style="color: #92400e; margin-top: 0;">📝 Notes Importantes</h3>
+                <ul style="margin: 0; padding-left: 20px;">
+                    <li><strong>Délai de livraison:</strong> 5 jours ouvrables ✅ (TERMINÉ - Sept 2025)</li>
+                    <li><strong>Support technique:</strong> 30 jours gratuits après livraison</li>
+                    <li><strong>Code source:</strong> Fourni intégralement avec documentation</li>
+                    <li><strong>Formation:</strong> 2h de formation équipe incluses</li>
+                    <li><strong>Maintenance:</strong> Première année -50% sur les interventions</li>
+                </ul>
+            </div>
+
+            <!-- Paiement -->
+            <div style="margin: 20px 0; padding: 15px; background: #f0f9ff; border: 1px solid #3b82f6; border-radius: 8px;">
+                <h3 style="color: #1e40af; margin-top: 0;">💰 Modalités de Paiement</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                        <p><strong>Échéances:</strong></p>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li>50% à la commande: 14 930 000 GNF</li>
+                            <li>50% à la livraison: 14 930 000 GNF ✅</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <p><strong>Moyens de paiement:</strong></p>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li>Virement bancaire</li>
+                            <li>Mobile Money</li>
+                            <li>Paiement échelonné possible</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>🎉 Site HAG 2025 - Développement Terminé avec Succès</strong></p>
+            <p><strong>SpparoW</strong> - "Building Success, Sparking Growth"</p>
+            <p>Thiès, Sénégal | info@spparow.org | +221 773 542 551</p>
+        </div>
+    </div>
+
+    <script>
+        // Auto-focus pour l'impression
+        window.onload = function() {
+            document.title = "Facture HAG-2025-009 - SpparoW";
+        };
+        
+        // Raccourci clavier Ctrl+P
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'p') {
+                e.preventDefault();
+                window.print();
+            }
+        });
+    </script>
+</body>
+</html>

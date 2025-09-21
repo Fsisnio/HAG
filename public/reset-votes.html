@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réinitialisation des Votes HAG 2025</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo h1 {
+            color: #fbbf24;
+            margin: 0;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .warning {
+            background: rgba(239, 68, 68, 0.2);
+            border: 2px solid #ef4444;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .success {
+            background: rgba(34, 197, 94, 0.2);
+            border: 2px solid #22c55e;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .stats {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #fbbf24;
+        }
+        button {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+        }
+        button:disabled {
+            background: #6b7280;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+        }
+        .btn-secondary:hover {
+            box-shadow: 0 6px 20px rgba(107, 114, 128, 0.4);
+        }
+        .hidden {
+            display: none;
+        }
+        .log {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>HAG 2025</h1>
+            <p>Réinitialisation des Votes</p>
+        </div>
+
+        <div class="warning">
+            <h3>⚠️ Attention !</h3>
+            <p>Cette action va supprimer <strong>TOUS</strong> les votes et données de paiement de l'application HAG 2025.</p>
+            <p>Cette opération est <strong>irréversible</strong>.</p>
+        </div>
+
+        <div class="stats" id="statsContainer">
+            <div class="stat-item">
+                <div class="stat-value" id="votesCount">0</div>
+                <div>Votes gratuits</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="paymentsCount">0</div>
+                <div>Votes payants</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="ratingsCount">0</div>
+                <div>Évaluations</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="totalCount">0</div>
+                <div>Total éléments</div>
+            </div>
+        </div>
+
+        <button onclick="createBackup()" class="btn-secondary">
+            📥 Créer une sauvegarde
+        </button>
+
+        <button onclick="resetVotes()" id="resetBtn">
+            🔄 Réinitialiser TOUS les votes
+        </button>
+
+        <button onclick="resetFreeVotesOnly()" class="btn-secondary">
+            🔄 Réinitialiser votes gratuits seulement
+        </button>
+
+        <div id="result" class="hidden"></div>
+
+        <div class="log" id="logContainer">
+            <div>Logs de réinitialisation :</div>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px; font-size: 12px; color: rgba(255,255,255,0.7);">
+            Hospitality Awards Guinée 2025 - Outil d'administration
+        </div>
+    </div>
+
+    <script>
+        // Clés de stockage
+        const STORAGE_KEYS = {
+            VOTES: 'hag_candidates_votes',
+            RATINGS: 'hag_candidates_ratings',
+            COMPLETED_VOTES: 'hag_completed_votes',
+            PENDING_VOTE: 'hag_pending_vote',
+            VOTE_COUNTS: 'hag_vote_counts',
+            USER_VOTES: 'hag_user_votes'
+        };
+
+        // Initialiser l'affichage
+        function init() {
+            updateStats();
+            displayResetHistory();
+            log('Interface de réinitialisation chargée');
+        }
+
+        // Mettre à jour les statistiques
+        function updateStats() {
+            const votesCount = getDataCount(STORAGE_KEYS.VOTES);
+            const paymentsCount = getDataCount(STORAGE_KEYS.COMPLETED_VOTES);
+            const ratingsCount = getDataCount(STORAGE_KEYS.RATINGS);
+            const totalCount = votesCount + paymentsCount + ratingsCount;
+
+            document.getElementById('votesCount').textContent = votesCount;
+            document.getElementById('paymentsCount').textContent = paymentsCount;
+            document.getElementById('ratingsCount').textContent = ratingsCount;
+            document.getElementById('totalCount').textContent = totalCount;
+
+            // Désactiver le bouton si aucune donnée
+            document.getElementById('resetBtn').disabled = totalCount === 0;
+        }
+
+        // Compter les éléments dans une clé
+        function getDataCount(key) {
+            const data = localStorage.getItem(key);
+            if (!data) return 0;
+            
+            try {
+                const parsed = JSON.parse(data);
+                return Array.isArray(parsed) ? parsed.length : Object.keys(parsed).length;
+            } catch {
+                return 0;
+            }
+        }
+
+        // Logger un message
+        function log(message) {
+            const logContainer = document.getElementById('logContainer');
+            const timestamp = new Date().toLocaleTimeString();
+            logContainer.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        // Créer une sauvegarde
+        function createBackup() {
+            const backup = {
+                timestamp: new Date().toISOString(),
+                data: {}
+            };
+
+            Object.values(STORAGE_KEYS).forEach(key => {
+                const data = localStorage.getItem(key);
+                if (data) {
+                    backup.data[key] = JSON.parse(data);
+                }
+            });
+
+            const backupString = JSON.stringify(backup, null, 2);
+            
+            // Télécharger le fichier
+            const blob = new Blob([backupString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `hag-votes-backup-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            log('✅ Sauvegarde créée et téléchargée');
+        }
+
+        // Réinitialiser tous les votes
+        function resetVotes() {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer TOUS les votes et paiements ?\n\nTapez "RESET" dans la prochaine boîte pour confirmer.')) {
+                return;
+            }
+
+            const confirmation = prompt('Tapez "RESET" pour confirmer la suppression complète :');
+            if (confirmation !== 'RESET') {
+                log('❌ Réinitialisation annulée - confirmation incorrecte');
+                return;
+            }
+
+            const resetData = {
+                votesReset: getDataCount(STORAGE_KEYS.VOTES),
+                paymentsReset: getDataCount(STORAGE_KEYS.COMPLETED_VOTES),
+                ratingsReset: getDataCount(STORAGE_KEYS.RATINGS),
+                candidatesReset: getDataCount(STORAGE_KEYS.VOTE_COUNTS)
+            };
+
+            // Supprimer toutes les données
+            Object.values(STORAGE_KEYS).forEach(key => {
+                localStorage.removeItem(key);
+            });
+
+            // Logger la réinitialisation
+            logReset(resetData, 'full_reset');
+
+            showResult('success', `Réinitialisation complète réussie !<br>
+                ${resetData.votesReset} votes gratuits, 
+                ${resetData.paymentsReset} votes payants et 
+                ${resetData.ratingsReset} évaluations ont été supprimés.`);
+
+            updateStats();
+            log('✅ Réinitialisation complète terminée');
+        }
+
+        // Réinitialiser seulement les votes gratuits
+        function resetFreeVotesOnly() {
+            if (!confirm('Réinitialiser seulement les votes gratuits ?\n(Les votes payants seront conservés)')) {
+                return;
+            }
+
+            const resetData = {
+                votesReset: getDataCount(STORAGE_KEYS.VOTES),
+                paymentsReset: 0,
+                ratingsReset: getDataCount(STORAGE_KEYS.RATINGS),
+                candidatesReset: 0
+            };
+
+            // Supprimer seulement les votes gratuits
+            localStorage.removeItem(STORAGE_KEYS.VOTES);
+            localStorage.removeItem(STORAGE_KEYS.RATINGS);
+
+            logReset(resetData, 'free_votes_only');
+
+            showResult('success', `Votes gratuits réinitialisés !<br>
+                ${resetData.votesReset} votes gratuits et 
+                ${resetData.ratingsReset} évaluations ont été supprimés.<br>
+                Les votes payants ont été conservés.`);
+
+            updateStats();
+            log('✅ Réinitialisation des votes gratuits terminée');
+        }
+
+        // Logger une réinitialisation
+        function logReset(resetData, type) {
+            const resetLog = {
+                timestamp: new Date().toISOString(),
+                type,
+                data: resetData,
+                userAgent: navigator.userAgent,
+                source: 'reset_tool'
+            };
+
+            const existingLogs = localStorage.getItem('hag_reset_logs');
+            const logs = existingLogs ? JSON.parse(existingLogs) : [];
+            logs.push(resetLog);
+            
+            if (logs.length > 10) {
+                logs.splice(0, logs.length - 10);
+            }
+            
+            localStorage.setItem('hag_reset_logs', JSON.stringify(logs));
+        }
+
+        // Afficher un résultat
+        function showResult(type, message) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = type === 'success' ? 'success' : 'warning';
+            resultDiv.innerHTML = message;
+            resultDiv.classList.remove('hidden');
+
+            setTimeout(() => {
+                resultDiv.classList.add('hidden');
+            }, 5000);
+        }
+
+        // Afficher l'historique des réinitialisations
+        function displayResetHistory() {
+            const logs = localStorage.getItem('hag_reset_logs');
+            if (logs) {
+                const parsed = JSON.parse(logs);
+                log(`Historique: ${parsed.length} réinitialisations précédentes`);
+            }
+        }
+
+        // Initialiser au chargement
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

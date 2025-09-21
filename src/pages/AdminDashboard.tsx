@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Home, 
   Tag, 
@@ -12,10 +12,13 @@ import {
   Download,
   RefreshCw,
   FileText,
-  FileSpreadsheet
+  FileSpreadsheet,
+  RotateCcw
 } from 'lucide-react';
 import { officialCategories } from '../data/categories';
 import { getAllOfficialCandidates, getCandidatesByCategory, getCategoriesWithCandidates } from '../data/officialCandidates';
+import VoteResetModal from '../components/VoteResetModal';
+import { ResetResult } from '../services/voteResetService';
 
 const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -27,16 +30,55 @@ const AdminDashboard: React.FC = () => {
   const [votes, setVotes] = useState<any[]>([]);
   const [analyticsData, setAnalyticsData] = useState<any>({});
   const [approvedCandidates, setApprovedCandidates] = useState<any[]>([]);
+  const [showResetModal, setShowResetModal] = useState(false);
+  const [resetMessage, setResetMessage] = useState<string>('');
+  const [resetMessageType, setResetMessageType] = useState<'success' | 'error' | ''>('');
 
   // Données simulées pour les statistiques
   const [stats, setStats] = useState({
     totalCandidates: 0,
     totalVotes: 0,
-    totalCategories: 13,
+    totalCategories: 7, // Mise à jour pour 7 catégories
     averageRating: 0
   });
 
   const [recentActivities, setRecentActivities] = useState<any[]>([]);
+
+  // Mettre à jour les statistiques
+  const updateStats = useCallback(() => {
+    const officialCandidates = getAllOfficialCandidates();
+    
+    // Récupérer les vraies données de vote depuis localStorage
+    let realVotes = 0;
+    let realAverageRating = 0;
+    
+    try {
+      const savedVotes = localStorage.getItem('hag_candidates_votes');
+      const savedRatings = localStorage.getItem('hag_candidates_ratings');
+
+      if (savedVotes) {
+        const votes = JSON.parse(savedVotes);
+        realVotes = votes.length;
+      }
+
+      if (savedRatings) {
+        const ratings = JSON.parse(savedRatings);
+        const ratingsArray = Object.values(ratings) as number[];
+        if (ratingsArray.length > 0) {
+          realAverageRating = ratingsArray.reduce((acc: number, curr: number) => acc + curr, 0) / ratingsArray.length;
+        }
+      }
+    } catch (error) {
+      console.error('Erreur lors de la récupération des données de vote:', error);
+    }
+    
+    setStats({
+      totalCandidates: 25, // 25 récompenses officielles
+      totalVotes: realVotes,
+      totalCategories: 7, // 7 catégories principales
+      averageRating: realAverageRating || 0
+    });
+  }, [applications]);
 
   // Initialisation des données
   useEffect(() => {
@@ -67,21 +109,22 @@ const AdminDashboard: React.FC = () => {
     // Mettre à jour les statistiques
     updateStats();
 
-    // Mettre à jour les données toutes les 30 secondes
-    const interval = setInterval(() => {
-      loadRealVoteData();
-      updateRecentActivities();
-      updateStats();
-      setLastUpdate(new Date());
-    }, 30000);
+    // Optionnel : mettre à jour les données toutes les 5 minutes (au lieu de 30 secondes)
+    // const interval = setInterval(() => {
+    //   loadRealVoteData();
+    //   updateRecentActivities();
+    //   updateStats();
+    //   setLastUpdate(new Date());
+    // }, 300000); // 5 minutes au lieu de 30 secondes
 
-    return () => clearInterval(interval);
+    // return () => clearInterval(interval);
   }, []);
 
   // Charger les vraies données de vote
   const loadRealVoteData = () => {
     try {
       const savedVotes = localStorage.getItem('hag_candidates_votes');
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const savedRatings = localStorage.getItem('hag_candidates_ratings');
       
       if (savedVotes) {
@@ -109,6 +152,7 @@ const AdminDashboard: React.FC = () => {
   };
 
   // Générer des votes simulés
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const generateSimulatedVotes = () => {
     const voteTypes = ['online', 'jury', 'public'];
     const statuses = ['pending', 'approved', 'rejected'];
@@ -162,41 +206,6 @@ const AdminDashboard: React.FC = () => {
     };
   };
 
-  // Mettre à jour les statistiques
-  const updateStats = () => {
-    const officialCandidates = getAllOfficialCandidates();
-    
-    // Récupérer les vraies données de vote depuis localStorage
-    let realVotes = 0;
-    let realAverageRating = 0;
-    
-    try {
-      const savedVotes = localStorage.getItem('hag_candidates_votes');
-      const savedRatings = localStorage.getItem('hag_candidates_ratings');
-      
-      if (savedVotes) {
-        const votesData = JSON.parse(savedVotes);
-        realVotes = votesData.reduce((sum: number, candidate: any) => sum + (candidate.votes || 0), 0);
-      }
-      
-      if (savedRatings) {
-        const ratingsData = JSON.parse(savedRatings);
-        const candidatesWithRatings = ratingsData.filter((c: any) => c.rating && c.rating > 0);
-        if (candidatesWithRatings.length > 0) {
-          realAverageRating = Number((candidatesWithRatings.reduce((sum: number, c: any) => sum + c.rating, 0) / candidatesWithRatings.length).toFixed(1));
-        }
-      }
-    } catch (error) {
-      console.error('Erreur lors de la récupération des données de vote:', error);
-    }
-    
-    setStats({
-      totalCandidates: applications.length + officialCandidates.length,
-      totalVotes: realVotes,
-      totalCategories: getCategoriesWithCandidates().length,
-      averageRating: realAverageRating
-    });
-  };
 
   // Filtrer les votes
   const filteredVotes = votes.filter(vote => {
@@ -456,11 +465,46 @@ const AdminDashboard: React.FC = () => {
     }, 1000);
   };
 
+  // Gérer la réinitialisation des votes
+  const handleResetComplete = (result: ResetResult) => {
+    setResetMessage(result.message);
+    setResetMessageType(result.success ? 'success' : 'error');
+    
+    if (result.success) {
+      // Actualiser les statistiques après reset
+      refreshData();
+    }
+
+    // Masquer le message après 5 secondes
+    setTimeout(() => {
+      setResetMessage('');
+      setResetMessageType('');
+    }, 5000);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
                 {/* En-tête */}
         <div className="mb-8">
+          {/* Message de réinitialisation */}
+          {resetMessage && (
+            <div className={`mb-4 p-4 rounded-lg ${
+              resetMessageType === 'success' 
+                ? 'bg-green-50 border border-green-200 text-green-800' 
+                : 'bg-red-50 border border-red-200 text-red-800'
+            }`}>
+              <div className="flex items-center space-x-2">
+                {resetMessageType === 'success' ? (
+                  <CheckCircle className="w-5 h-5" />
+                ) : (
+                  <XCircle className="w-5 h-5" />
+                )}
+                <span>{resetMessage}</span>
+              </div>
+            </div>
+          )}
+
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-blue-dark mb-2">Tableau de Bord Administratif</h1>
@@ -472,7 +516,12 @@ const AdminDashboard: React.FC = () => {
                 <span className="text-sm text-green-700 font-medium">Système actif</span>
               </div>
               <button
-                onClick={refreshData}
+                onClick={() => {
+                  loadRealVoteData();
+                  updateStats();
+                  updateRecentActivities();
+                  setLastUpdate(new Date());
+                }}
                 disabled={isLoading}
                 className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 disabled:opacity-50"
               >
@@ -485,6 +534,14 @@ const AdminDashboard: React.FC = () => {
               </div>
               <div className="flex space-x-2">
                 <button
+                  onClick={() => setShowResetModal(true)}
+                  className="bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center space-x-2"
+                  title="Réinitialiser tous les votes"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  <span>Reset Votes</span>
+                </button>
+                <button
                   onClick={() => exportData('overview', 'excel')}
                   className="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2"
                   title="Exporter la vue d'ensemble en Excel"
@@ -494,7 +551,7 @@ const AdminDashboard: React.FC = () => {
                 </button>
                 <button
                   onClick={() => exportData('overview', 'pdf')}
-                  className="bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center space-x-2"
+                  className="bg-orange-600 text-white px-3 py-2 rounded-lg hover:bg-orange-700 transition-colors flex items-center space-x-2"
                   title="Exporter la vue d'ensemble en PDF"
                 >
                   <FileText className="w-4 h-4" />
@@ -545,7 +602,7 @@ const AdminDashboard: React.FC = () => {
                   <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-600">Total Candidats</p>
+                        <p className="text-sm font-medium text-gray-600">Récompenses officielles</p>
                         <p className="text-3xl font-bold text-blue-dark animate-pulse">{stats.totalCandidates}</p>
                         <p className="text-xs text-green-600 flex items-center mt-1">
                           <TrendingUp className="w-3 h-3 mr-1" />
@@ -577,7 +634,7 @@ const AdminDashboard: React.FC = () => {
                   <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-600">Catégories</p>
+                        <p className="text-sm font-medium text-gray-600">Catégories principales</p>
                         <p className="text-3xl font-bold text-purple-600">{stats.totalCategories}</p>
                         <p className="text-xs text-purple-600 flex items-center mt-1">
                           <Tag className="w-3 h-3 mr-1" />
@@ -713,7 +770,7 @@ const AdminDashboard: React.FC = () => {
                   <div className="flex items-center justify-between mb-6">
                     <div>
                       <h2 className="text-2xl font-bold text-blue-dark">Gestion des Catégories</h2>
-                      <p className="text-gray-600">15 catégories officielles</p>
+                      <p className="text-gray-600">25 récompenses en 7 catégories officielles</p>
                     </div>
                     <div className="flex space-x-2">
                       <button
@@ -1403,6 +1460,13 @@ const AdminDashboard: React.FC = () => {
         <div className="mt-8 text-center text-sm text-gray-500">
           Dernière mise à jour : {lastUpdate.toLocaleString('fr-FR')}
         </div>
+
+        {/* Modal de réinitialisation */}
+        <VoteResetModal
+          isOpen={showResetModal}
+          onClose={() => setShowResetModal(false)}
+          onResetComplete={handleResetComplete}
+        />
       </div>
     </div>
   );

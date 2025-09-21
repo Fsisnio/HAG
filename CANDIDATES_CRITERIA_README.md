@@ -284,3 +284,4 @@ interface OfficialCandidate {
 Chaque candidat dispose de critères détaillés, de liens vers des vidéos de présentation et de réseaux sociaux, offrant une expérience complète et transparente pour les votants et les administrateurs.
 
 
+

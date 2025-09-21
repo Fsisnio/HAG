@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Star, Award, Users, Calendar } from 'lucide-react';
 import Countdown from '../components/Countdown';
+import { getTotalCategoriesCount, getGroupsCount } from '../data/categories';
 
 const Home: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -18,10 +19,10 @@ const Home: React.FC = () => {
   }, []);
 
   const stats = [
-    { icon: Award, value: '15+', label: 'Catégories de prix' },
-    { icon: Users, value: '200+', label: 'Candidats attendus' },
-    { icon: Star, value: '50+', label: 'Lauréats honorés' },
-    { icon: Calendar, value: '1ère', label: 'Édition organisée' }
+    { icon: Award, value: getTotalCategoriesCount().toString(), label: 'Récompenses officielles' },
+    { icon: Star, value: getGroupsCount().toString(), label: 'Catégories principales' },
+    { icon: Users, value: '250+', label: 'Candidats attendus' },
+    { icon: Calendar, value: '2025', label: 'Édition HAG' }
   ];
 
   const features = [
@@ -93,7 +94,7 @@ const Home: React.FC = () => {
               <span className="block text-gold">GUINÉE</span>
             </h1>
             <p className="text-xl text-white/90 max-w-2xl mx-auto leading-relaxed">
-              Innovation et proximité – Célébrons l'excellence en hospitalité
+              Innovation et proximité – Célébrons l'excellence en hospitalité avec 25 récompenses en 7 catégories
             </p>
           </div>
 
@@ -155,11 +156,13 @@ const Home: React.FC = () => {
               </h2>
               <p className="text-lg mb-6">
                 Les Hospitality Awards Guinée (HAG) sont l'événement de référence pour 
-                récompenser et valoriser les talents du secteur touristique et hôtelier guinéen.
+                récompenser et valoriser les talents du secteur touristique et hôtelier guinéen avec 
+                25 récompenses organisées en 7 catégories principales.
               </p>
               <p className="mb-8">
                 Notre mission est de promouvoir l'innovation, encourager l'excellence 
-                et renforcer la visibilité du tourisme guinéen sur la scène internationale.
+                et renforcer la visibilité du tourisme guinéen sur la scène internationale à travers 
+                une reconnaissance complète de tous les secteurs de l'hospitalité.
               </p>
               <Link to="/a-propos" className="btn btn-primary">
                 En savoir plus
@@ -245,9 +248,9 @@ const Home: React.FC = () => {
                    <Link to="/candidater" className="btn btn-primary btn-large">
                      Candidater maintenant
                    </Link>
-                   <Link to="/voter" className="btn btn-primary btn-large">
+                   {/* <Link to="/voter" className="btn btn-primary btn-large">
                      Voter maintenant
-                   </Link>
+                   </Link> */}
                    <Link to="/contact" className="btn btn-secondary btn-large">
                      Nous contacter
                    </Link>
