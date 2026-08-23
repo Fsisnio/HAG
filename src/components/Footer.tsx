@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Trophy, Mail, Phone, MapPin, Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
-import DiscreteLoginButton from './DiscreteLoginButton';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -115,18 +114,6 @@ const Footer: React.FC = () => {
         <div className="py-6 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <div className="text-gray-300 text-sm">
             © {currentYear} Hospitality Awards Guinée - HAG. Tous droits réservés.
-            {/* Lien administrateur caché - Triple clic sur le point pour accéder */}
-            <span 
-              className="text-blue-600 cursor-pointer opacity-20 hover:opacity-100 transition-opacity text-xs ml-2"
-              onClick={(e) => {
-                if (e.detail === 3) { // Triple clic
-                  window.location.href = '/secret-admin-access-hag2025';
-                }
-              }}
-              title="Administration"
-            >
-              •
-            </span>
           </div>
           <div className="flex space-x-6 text-sm">
             <Link to="/mentions-legales" className="text-gray-300 hover:text-gold transition-colors">
@@ -138,7 +125,6 @@ const Footer: React.FC = () => {
             <Link to="/conditions-utilisation" className="text-gray-300 hover:text-gold transition-colors">
               Conditions d'utilisation
             </Link>
-            <DiscreteLoginButton />
           </div>
         </div>
 
@@ -149,7 +135,7 @@ const Footer: React.FC = () => {
             rel="noreferrer"
             className="text-gray-400 hover:text-gold transition-colors text-sm"
           >
-            Powered by SpparoW (spparow.org)
+            Powered by SpparoW
           </a>
         </div>
       </div>
