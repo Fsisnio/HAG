@@ -141,6 +141,17 @@ const Footer: React.FC = () => {
             <DiscreteLoginButton />
           </div>
         </div>
+
+        <div className="pb-6 text-center">
+          <a
+            href="https://spparow.org"
+            target="_blank"
+            rel="noreferrer"
+            className="text-gray-400 hover:text-gold transition-colors text-sm"
+          >
+            Powered by SpparoW (spparow.org)
+          </a>
+        </div>
       </div>
     </footer>
   );
