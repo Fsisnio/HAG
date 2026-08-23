@@ -6,6 +6,7 @@ import { officialCategories } from '../data/categories';
 import { getAllOfficialCandidates, getCandidatesByCategory } from '../data/officialCandidates';
 import { validateVote, validateCandidatesUniqueness } from '../utils/voteValidation';
 import votePaymentHandler from '../services/votePaymentHandler';
+import { formatGnf, isVotingOpen, ORANGE_MONEY_NUMBER, VOTE_AMOUNT_GNF, VOTES_END, VOTES_START } from '../data/event';
 
 // Composant pour l'affichage des étoiles de notation
 const StarRating: React.FC<{
@@ -305,9 +306,14 @@ const VotePage: React.FC = () => {
           <div className="text-center">
             <h1 className="text-4xl font-bold mb-4">Votez pour l'Excellence</h1>
             <p className="text-xl text-blue-100 max-w-3xl mx-auto">
-              Participez aux Hospitality Awards Guinée en votant pour vos établissements préférés. 
-              Chaque vote compte pour récompenser l'excellence dans le secteur touristique guinéen.
+              Chaque vote payant coûte {formatGnf(VOTE_AMOUNT_GNF)}, à envoyer par Orange Money au {ORANGE_MONEY_NUMBER}.
+              Votes ouverts du {VOTES_START.split('-').reverse().join('/')} au {VOTES_END.split('-').reverse().join('/')}.
             </p>
+            {!isVotingOpen() && (
+              <p className="mt-4 text-gold font-semibold">
+                La période officielle de vote n’est pas encore ouverte. Vous pouvez déjà découvrir les nominés.
+              </p>
+            )}
             </div>
           </div>
         </div>
@@ -351,7 +357,7 @@ const VotePage: React.FC = () => {
               <p className="text-lg text-gray-600">Sélectionnez la catégorie pour laquelle vous souhaitez voter</p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="prize-cards">
               {officialCategories.map((category) => {
                 const IconComponent = category.icon;
                 const candidateCount = getCandidatesByCategory(category.title).length;
@@ -360,7 +366,7 @@ const VotePage: React.FC = () => {
                   <div
                     key={category.id}
                     onClick={() => handleCategorySelect(category.title)}
-                    className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer group hover:scale-105"
+                    className="prize-card bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer group hover:scale-105"
                   >
                     <div className="text-center">
                       <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-colors">
@@ -506,7 +512,7 @@ const VotePage: React.FC = () => {
                           onVote={handleVote}
                           disabled={false}
                           enablePayment={true}
-                          voteAmount={10000}
+                          voteAmount={VOTE_AMOUNT_GNF}
                         />
                       </div>
                     </div>
@@ -534,7 +540,7 @@ const VotePage: React.FC = () => {
                 <VoteIcon className="w-8 h-8 text-blue-600" />
               </div>
               <h3 className="text-lg font-semibold text-blue-900 mb-2">2. Votez</h3>
-              <p className="text-blue-700">Cliquez sur "Voter" pour donner votre voix au candidat</p>
+              <p className="text-blue-700">Envoyez {formatGnf(VOTE_AMOUNT_GNF)} par Orange Money au {ORANGE_MONEY_NUMBER}</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">

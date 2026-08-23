@@ -14,651 +14,132 @@ export interface OfficialCandidate {
   socialMediaLinks?: string[];
 }
 
+const candidate = (
+  id: number,
+  name: string,
+  category: string,
+  description: string
+): OfficialCandidate => ({
+  id,
+  name,
+  category,
+  description,
+  votes: 0,
+  rating: 0,
+  totalRatings: 0,
+  isVoted: false
+});
+
 export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] } = {
-  "Meilleur Guide Touristique de l'année": [
-    {
-      id: 1,
-      name: "Fouta Tourisme",
-      category: "Meilleur Guide Touristique de l'année",
-      description: "Guide touristique spécialisé dans la découverte du Fouta Djallon",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false,
-      criteria: [
-        "Maîtrise du patrimoine culturel, historique et naturel",
-        "Capacité pédagogique et art du récit captivant",
-        "Adaptabilité aux différents profils touristiques",
-        "Gestion sécurisée des visites et excursions",
-        "Retours positifs des visiteurs",
-        "Bilinguisme",
-        "Vidéo de présentation de 3 min (+ liens des réseaux sociaux)"
-      ],
-      presentationVideo: "https://example.com/fouta-tourisme-video",
-      socialMediaLinks: ["@foutatourisme", "facebook.com/foutatourisme"]
-    },
-    {
-      id: 2,
-      name: "Tibou Bah",
-      category: "Meilleur Guide Touristique de l'année",
-      description: "Guide expérimenté avec une connaissance approfondie de la Guinée",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false,
-      criteria: [
-        "Maîtrise du patrimoine culturel, historique et naturel",
-        "Capacité pédagogique et art du récit captivant",
-        "Adaptabilité aux différents profils touristiques",
-        "Gestion sécurisée des visites et excursions",
-        "Retours positifs des visiteurs",
-        "Bilinguisme",
-        "Vidéo de présentation de 3 min (+ liens des réseaux sociaux)"
-      ],
-      presentationVideo: "https://example.com/tibou-bah-video",
-      socialMediaLinks: ["@tiboubah", "facebook.com/tiboubah"]
-    },
-    {
-      id: 3,
-      name: "Hassan Bah",
-      category: "Meilleur Guide Touristique de l'année",
-      description: "Guide passionné par l'histoire et la culture guinéenne",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false,
-      criteria: [
-        "Maîtrise du patrimoine culturel, historique et naturel",
-        "Capacité pédagogique et art du récit captivant",
-        "Adaptabilité aux différents profils touristiques",
-        "Gestion sécurisée des visites et excursions",
-        "Retours positifs des visiteurs",
-        "Bilinguisme",
-        "Vidéo de présentation de 3 min (+ liens des réseaux sociaux)"
-      ],
-      presentationVideo: "https://example.com/hassan-bah-video",
-      socialMediaLinks: ["@hassanbah", "facebook.com/hassanbah"]
-    }
+  'Prix du Meilleur Etablissement de Formation professionnelle et Technique': [
+    candidate(1, 'Institut Gastronomique le Chef', 'Prix du Meilleur Etablissement de Formation professionnelle et Technique', 'Établissement de formation gastronomique'),
+    candidate(2, 'Institut de Formation Professionnelle Amadou Dieng (IFPAD)', 'Prix du Meilleur Etablissement de Formation professionnelle et Technique', 'Institut de formation professionnelle'),
+    candidate(3, 'ISTHOG', 'Prix du Meilleur Etablissement de Formation professionnelle et Technique', 'Institut supérieur de tourisme et d’hôtellerie'),
+    candidate(4, 'Nako Diabaté', 'Prix du Meilleur Etablissement de Formation professionnelle et Technique', 'Établissement de formation professionnelle'),
+    candidate(5, 'Billy Ecole', 'Prix du Meilleur Etablissement de Formation professionnelle et Technique', 'École de formation professionnelle'),
+    candidate(6, 'CENFORTH', 'Prix du Meilleur Etablissement de Formation professionnelle et Technique', 'Centre de formation en tourisme et hôtellerie')
   ],
-
-  "Meilleure Équipe en Housekeeping de l'année": [
-    {
-      id: 4,
-      name: "Hôtel Onomo",
-      category: "Meilleure Équipe en Housekeeping de l'année",
-      description: "Équipe dédiée à l'excellence du service de ménage",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false,
-      criteria: [
-        "Qualité et régularité du service (respect des normes de propreté, d'hygiène et de présentation dans tous les espaces assignés)",
-        "Esprit d'équipe",
-        "Professionnalisme et discrétion",
-        "Organisation et efficacité",
-        "Attention aux détails",
-        "Formation continue et innovation",
-        "Vidéo de présentation de 3 min (+ liens des réseaux sociaux)"
-      ],
-      presentationVideo: "https://example.com/hotel-onomo-video",
-      socialMediaLinks: ["@hotelonomo", "facebook.com/hotelonomo"]
-    },
-    {
-      id: 5,
-      name: "Atlantic View Hôtel",
-      category: "Meilleure Équipe en Housekeeping de l'année",
-      description: "Service de housekeeping de qualité supérieure",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false,
-      criteria: [
-        "Qualité et régularité du service (respect des normes de propreté, d'hygiène et de présentation dans tous les espaces assignés)",
-        "Esprit d'équipe",
-        "Professionnalisme et discrétion",
-        "Organisation et efficacité",
-        "Attention aux détails",
-        "Formation continue et innovation",
-        "Vidéo de présentation de 3 min (+ liens des réseaux sociaux)"
-      ],
-      presentationVideo: "https://example.com/atlantic-view-video",
-      socialMediaLinks: ["@atlanticview", "facebook.com/atlanticview"]
-    },
-    {
-      id: 6,
-      name: "Souaré Premium Hôtel",
-      category: "Meilleure Équipe en Housekeeping de l'année",
-      description: "Équipe professionnelle et attentionnée",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false,
-      criteria: [
-        "Qualité et régularité du service (respect des normes de propreté, d'hygiène et de présentation dans tous les espaces assignés)",
-        "Esprit d'équipe",
-        "Professionnalisme et discrétion",
-        "Organisation et efficacité",
-        "Attention aux détails",
-        "Formation continue et innovation",
-        "Vidéo de présentation de 3 min (+ liens des réseaux sociaux)"
-      ],
-      presentationVideo: "https://example.com/souare-premium-video",
-      socialMediaLinks: ["@souarepremium", "facebook.com/souarepremium"]
-    },
-    {
-      id: 7,
-      name: "Hôtel Mirador Park",
-      category: "Meilleure Équipe en Housekeeping de l'année",
-      description: "Excellence dans l'entretien et la propreté",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false,
-      criteria: [
-        "Qualité et régularité du service (respect des normes de propreté, d'hygiène et de présentation dans tous les espaces assignés)",
-        "Esprit d'équipe",
-        "Professionnalisme et discrétion",
-        "Organisation et efficacité",
-        "Attention aux détails",
-        "Formation continue et innovation",
-        "Vidéo de présentation de 3 min (+ liens des réseaux sociaux)"
-      ],
-      presentationVideo: "https://example.com/mirador-park-video",
-      socialMediaLinks: ["@miradorpark", "facebook.com/miradorpark"]
-    }
+  'Prix du Meilleur Etablissement d’Enseignement Supérieur': [
+    candidate(7, 'École Supérieure de Tourisme et de l’Hotellerie (ESTH)', 'Prix du Meilleur Etablissement d’Enseignement Supérieur', 'École supérieure spécialisée tourisme et hôtellerie'),
+    candidate(8, 'Université Koffi', 'Prix du Meilleur Etablissement d’Enseignement Supérieur', 'Établissement d’enseignement supérieur')
   ],
-
-  "Meilleure Brigade de Cuisine de l'année": [
-    {
-      id: 8,
-      name: "Noom Hôtel",
-      category: "Meilleure Brigade de Cuisine de l'année",
-      description: "Cuisine créative et raffinée",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false,
-      criteria: [
-        "Qualité gustative et visuelle des plats",
-        "Coordination, discipline et esprit d'équipe",
-        "Respect des normes HACCP",
-        "Capacité d'innovation et créativité culinaire",
-        "Gestion efficace en période d'affluence",
-        "Vidéo de présentation de 3 min (+ liens des réseaux sociaux)"
-      ],
-      presentationVideo: "https://example.com/noom-hotel-video",
-      socialMediaLinks: ["@noomhotel", "facebook.com/noomhotel"]
-    },
-    {
-      id: 9,
-      name: "Riviera Royal",
-      category: "Meilleure Brigade de Cuisine de l'année",
-      description: "Excellence culinaire et innovation",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false,
-      criteria: [
-        "Qualité gustative et visuelle des plats",
-        "Coordination, discipline et esprit d'équipe",
-        "Respect des normes HACCP",
-        "Capacité d'innovation et créativité culinaire",
-        "Gestion efficace en période d'affluence",
-        "Vidéo de présentation de 3 min (+ liens des réseaux sociaux)"
-      ],
-      presentationVideo: "https://example.com/riviera-royal-video",
-      socialMediaLinks: ["@rivieraroyal", "facebook.com/rivieraroyal"]
-    },
-    {
-      id: 10,
-      name: "Hôtel PalmCamayenne",
-      category: "Meilleure Brigade de Cuisine de l'année",
-      description: "Tradition et modernité en cuisine",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false,
-      criteria: [
-        "Qualité gustative et visuelle des plats",
-        "Coordination, discipline et esprit d'équipe",
-        "Respect des normes HACCP",
-        "Capacité d'innovation et créativité culinaire",
-        "Gestion efficace en période d'affluence",
-        "Vidéo de présentation de 3 min (+ liens des réseaux sociaux)"
-      ],
-      presentationVideo: "https://example.com/palmcamayenne-video",
-      socialMediaLinks: ["@palmcamayenne", "facebook.com/palmcamayenne"]
-    }
+  'Prix du Meilleur Guide Touristique': [
+    candidate(9, 'M. Hassan Bah', 'Prix du Meilleur Guide Touristique', 'Guide touristique'),
+    candidate(10, 'M. Taibou', 'Prix du Meilleur Guide Touristique', 'Guide touristique'),
+    candidate(11, 'M. Oumar', 'Prix du Meilleur Guide Touristique', 'Guide touristique'),
+    candidate(12, 'M. Kolié', 'Prix du Meilleur Guide Touristique', 'Guide touristique'),
+    candidate(13, 'M. Fernand Léno', 'Prix du Meilleur Guide Touristique', 'Guide touristique')
   ],
-
-  "Meilleure Équipe de Service en Salle de l'année": [
-    {
-      id: 11,
-      name: "Noom Hôtel - Service Salle",
-      category: "Meilleure Équipe de Service en Salle de l'année",
-      description: "Service en salle exemplaire et professionnel",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 12,
-      name: "Hôtel Kaloum",
-      category: "Meilleure Équipe de Service en Salle de l'année",
-      description: "Équipe dévouée au service client",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 13,
-      name: "Riviera Royal - Service Salle",
-      category: "Meilleure Équipe de Service en Salle de l'année",
-      description: "Excellence dans le service en salle",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    }
+  'Prix de la Meilleure Agence de Voyage': [
+    candidate(14, 'Mondial Express', 'Prix de la Meilleure Agence de Voyage', 'Agence de voyage'),
+    candidate(15, 'Dounia Voyage', 'Prix de la Meilleure Agence de Voyage', 'Agence de voyage'),
+    candidate(16, 'Mondial Tour', 'Prix de la Meilleure Agence de Voyage', 'Agence de voyage')
   ],
-
-  "Meilleure Equipe d'accueil et Service Client de l'année": [
-    {
-      id: 14,
-      name: "Radisson Blu Hôtel",
-      category: "Meilleure Equipe d'accueil et Service Client de l'année",
-      description: "Accueil chaleureux et service client exceptionnel",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 15,
-      name: "Hôtel Kaloum - Service Client",
-      category: "Meilleure Equipe d'accueil et Service Client de l'année",
-      description: "Équipe d'accueil professionnelle et souriante",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    }
+  'Meilleur Ambassadeur (rice) de la Destination Guinée': [
+    candidate(17, 'Abdoulaye M’baye', 'Meilleur Ambassadeur (rice) de la Destination Guinée', 'Ambassadeur de la destination Guinée'),
+    candidate(18, 'Takana Zion', 'Meilleur Ambassadeur (rice) de la Destination Guinée', 'Ambassadeur de la destination Guinée'),
+    candidate(19, 'Serhou Guirassy', 'Meilleur Ambassadeur (rice) de la Destination Guinée', 'Ambassadeur de la destination Guinée'),
+    candidate(20, 'Jupiter Devibe', 'Meilleur Ambassadeur (rice) de la Destination Guinée', 'Ambassadeur de la destination Guinée'),
+    candidate(21, 'Naby Keita', 'Meilleur Ambassadeur (rice) de la Destination Guinée', 'Ambassadeur de la destination Guinée'),
+    candidate(22, 'Djelikaba Bintou', 'Meilleur Ambassadeur (rice) de la Destination Guinée', 'Ambassadrice de la destination Guinée'),
+    candidate(23, 'Iya Traoré', 'Meilleur Ambassadeur (rice) de la Destination Guinée', 'Ambassadeur de la destination Guinée'),
+    candidate(24, 'Saïfon Baldé', 'Meilleur Ambassadeur (rice) de la Destination Guinée', 'Ambassadeur de la destination Guinée')
   ],
-
-  "Meilleur Etablissement de Formation de l'année": [
-    {
-      id: 16,
-      name: "ESTH",
-      category: "Meilleur Etablissement de Formation de l'année",
-      description: "École Supérieure de Tourisme et d'Hôtellerie",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 17,
-      name: "ISTHOG",
-      category: "Meilleur Etablissement de Formation de l'année",
-      description: "Institut Supérieur de Tourisme et d'Hôtellerie de Guinée",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 18,
-      name: "IFPAD",
-      category: "Meilleur Etablissement de Formation de l'année",
-      description: "Institut de Formation Professionnelle en Arts et Design",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    }
+  'Prix de la Meilleure Destination Touristique': [
+    candidate(25, 'La voile de la Marié', 'Prix de la Meilleure Destination Touristique', 'Destination touristique'),
+    candidate(26, 'Les Eaux de Kilissi', 'Prix de la Meilleure Destination Touristique', 'Destination touristique'),
+    candidate(27, 'Le Pont de Liane', 'Prix de la Meilleure Destination Touristique', 'Destination touristique')
   ],
-
-  "Meilleur Club de Plage de l'année": [
-    {
-      id: 19,
-      name: "Club Iya Traoré",
-      category: "Meilleur Club de Plage de l'année",
-      description: "Club de plage avec ambiance festive et détente",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 20,
-      name: "Club Camayenne",
-      category: "Meilleur Club de Plage de l'année",
-      description: "Club de plage premium avec services haut de gamme",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    }
+  'Prix Meilleur Événement Touristique': [
+    candidate(28, 'La Saison Touristique', 'Prix Meilleur Événement Touristique', 'Événement touristique'),
+    candidate(29, 'Festival des Arts et de la Culture', 'Prix Meilleur Événement Touristique', 'Événement touristique et culturel')
   ],
-
-  "Meilleure Initiative RSE de l'année": [
-    {
-      id: 21,
-      name: "Noom Hôtel - RSE",
-      category: "Meilleure Initiative RSE de l'année",
-      description: "Engagement social et environnemental exemplaire",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 22,
-      name: "Hôtel Onomo - RSE",
-      category: "Meilleure Initiative RSE de l'année",
-      description: "Initiatives durables et responsabilité sociale",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 23,
-      name: "Riviera Royal - RSE",
-      category: "Meilleure Initiative RSE de l'année",
-      description: "Programmes RSE innovants et impactants",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    }
+  'Prix de la Meilleure Initiative Eco-Responsable': [
+    candidate(30, 'Palmeraie Lodge', 'Prix de la Meilleure Initiative Eco-Responsable', 'Initiative éco-responsable'),
+    candidate(31, 'Maf Village', 'Prix de la Meilleure Initiative Eco-Responsable', 'Initiative éco-responsable'),
+    candidate(32, 'Jardin D’Eden', 'Prix de la Meilleure Initiative Eco-Responsable', 'Initiative éco-responsable'),
+    candidate(33, 'Beau Village de YARAYA', 'Prix de la Meilleure Initiative Eco-Responsable', 'Initiative éco-responsable')
   ],
-
-  "Meilleur projet Tourisme Culturel de l'année": [
-    {
-      id: 24,
-      name: "Festival international du Djémbé de Conakry",
-      category: "Meilleur projet Tourisme Culturel de l'année",
-      description: "Festival célébrant la culture musicale guinéenne",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 25,
-      name: "Danse Traditionnelle Mamaya",
-      category: "Meilleur projet Tourisme Culturel de l'année",
-      description: "Préservation et promotion de la danse traditionnelle",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    }
+  'Prix de l’Innovation Digital dans l’Hospitalité': [
+    candidate(34, 'AphoGest-Visit Guinea', 'Prix de l’Innovation Digital dans l’Hospitalité', 'Solution digitale pour l’hospitalité'),
+    candidate(35, 'OBS Technologie', 'Prix de l’Innovation Digital dans l’Hospitalité', 'Innovation digitale'),
+    candidate(36, 'Zaly Meirveille', 'Prix de l’Innovation Digital dans l’Hospitalité', 'Innovation digitale')
   ],
-
-  "Meilleure Agence de Voyage de l'année": [
-    {
-      id: 26,
-      name: "Mondial Express",
-      category: "Meilleure Agence de Voyage de l'année",
-      description: "Agence de voyage avec services complets",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 27,
-      name: "Dunia Voyages",
-      category: "Meilleure Agence de Voyage de l'année",
-      description: "Spécialiste des voyages sur mesure",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 28,
-      name: "IPC Voyages",
-      category: "Meilleure Agence de Voyage de l'année",
-      description: "Agence de voyage professionnelle et fiable",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 29,
-      name: "Guinée Voyages",
-      category: "Meilleure Agence de Voyage de l'année",
-      description: "Découverte de la Guinée authentique",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 30,
-      name: "Satguru Travel Guinée",
-      category: "Meilleure Agence de Voyage de l'année",
-      description: "Voyages spirituels et culturels",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    }
+  'Prix de l’Excellence en Accueil et Service Client': [
+    candidate(37, 'Souaré Premium Hôtel', 'Prix de l’Excellence en Accueil et Service Client', 'Hôtel – accueil et service client'),
+    candidate(38, 'Hôtel ONOMO', 'Prix de l’Excellence en Accueil et Service Client', 'Hôtel – accueil et service client'),
+    candidate(39, 'Atlantic View Hôtel', 'Prix de l’Excellence en Accueil et Service Client', 'Hôtel – accueil et service client'),
+    candidate(40, 'Riviera Taouyah', 'Prix de l’Excellence en Accueil et Service Client', 'Hôtel – accueil et service client')
   ],
-
-  "Meilleur Écolodge ou écoresponsable de l'année": [
-    {
-      id: 31,
-      name: "Maf Village",
-      category: "Meilleur Écolodge ou écoresponsable de l'année",
-      description: "Village écotouristique respectueux de l'environnement",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 32,
-      name: "Jardin D'éden",
-      category: "Meilleur Écolodge ou écoresponsable de l'année",
-      description: "Hébergement écologique au cœur de la nature",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 33,
-      name: "Hôtel yarayah",
-      category: "Meilleur Écolodge ou écoresponsable de l'année",
-      description: "Établissement écoresponsable et durable",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    }
+  'Prix du Bartender de l’Année': [
+    candidate(41, 'Jean Sivily Koivogui', 'Prix du Bartender de l’Année', 'Bartender'),
+    candidate(42, 'Emmanuel Koivogui', 'Prix du Bartender de l’Année', 'Bartender')
   ],
-
-  "Meilleur Hôtel Milieu de Gamme de l'année": [
-    {
-      id: 34,
-      name: "Riviera Taouyah",
-      category: "Meilleur Hôtel Milieu de Gamme de l'année",
-      description: "Confort et qualité à prix accessible",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 35,
-      name: "Hôtel M Lys",
-      category: "Meilleur Hôtel Milieu de Gamme de l'année",
-      description: "Hôtel moderne avec services de qualité",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 36,
-      name: "Hôtel Mirador Park - Milieu de Gamme",
-      category: "Meilleur Hôtel Milieu de Gamme de l'année",
-      description: "Excellence en milieu de gamme",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 37,
-      name: "Hôtel 2Flo",
-      category: "Meilleur Hôtel Milieu de Gamme de l'année",
-      description: "Hôtel contemporain et accueillant",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 38,
-      name: "Hôtel Maison Blanche",
-      category: "Meilleur Hôtel Milieu de Gamme de l'année",
-      description: "Charme et confort dans un cadre élégant",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    }
+  'Prix de l’Excellence Food & Beverage': [
+    candidate(43, 'M. Mohamed Firas Challoub', 'Prix de l’Excellence Food & Beverage', 'Professionnel Food & Beverage')
   ],
-
-  "Meilleur Groupe Hôtelier de l'année": [
-    {
-      id: 39,
-      name: "Riviera Hôtels",
-      category: "Meilleur Groupe Hôtelier de l'année",
-      description: "Groupe hôtelier leader en Guinée",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 40,
-      name: "Souaré Hôtels",
-      category: "Meilleur Groupe Hôtelier de l'année",
-      description: "Excellence et innovation hôtelière",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 41,
-      name: "Hôtels Mirador",
-      category: "Meilleur Groupe Hôtelier de l'année",
-      description: "Groupe hôtelier de référence",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    }
+  'Prix de la Création Culinaire Guinéenne': [
+    candidate(44, 'Le Jacquier', 'Prix de la Création Culinaire Guinéenne', 'Création culinaire guinéenne')
   ],
-
-  "Meilleur Restaurant de l'année": [
-    {
-      id: 42,
-      name: "Restaurant Le Palmier",
-      category: "Meilleur Restaurant de l'année",
-      description: "Cuisine française raffinée au cœur de Conakry",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 43,
-      name: "Restaurant La Terrasse",
-      category: "Meilleur Restaurant de l'année",
-      description: "Spécialités guinéennes et internationales",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 44,
-      name: "Restaurant Le Bistrot",
-      category: "Meilleur Restaurant de l'année",
-      description: "Ambiance chaleureuse et cuisine créative",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 45,
-      name: "Restaurant Chez Fatou",
-      category: "Meilleur Restaurant de l'année",
-      description: "Cuisine traditionnelle guinéenne authentique",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    }
+  'Prix de la Meilleure Chaîne de Restauration': [
+    candidate(45, 'Big FATAYA', 'Prix de la Meilleure Chaîne de Restauration', 'Chaîne de restauration'),
+    candidate(46, 'Heroes Coffee', 'Prix de la Meilleure Chaîne de Restauration', 'Chaîne de restauration'),
+    candidate(47, 'RFC', 'Prix de la Meilleure Chaîne de Restauration', 'Chaîne de restauration'),
+    candidate(48, 'SLM', 'Prix de la Meilleure Chaîne de Restauration', 'Chaîne de restauration')
   ],
-
-  "Meilleure Résidence de Luxe de l'année": [
-    {
-      id: 46,
-      name: "Résidence Les Jardins",
-      category: "Meilleure Résidence de Luxe de l'année",
-      description: "Luxe et exclusivité dans un cadre exceptionnel",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 47,
-      name: "Villa Riviera Premium",
-      category: "Meilleure Résidence de Luxe de l'année",
-      description: "Villa de luxe avec vue sur l'océan",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    },
-    {
-      id: 48,
-      name: "Résidence Le Château",
-      category: "Meilleure Résidence de Luxe de l'année",
-      description: "Château historique transformé en résidence de luxe",
-      votes: 0,
-      rating: 0,
-      totalRatings: 0,
-      isVoted: false
-    }
+  'Prix du Meilleur Restaurant': [
+    candidate(49, 'G. BARISTA', 'Prix du Meilleur Restaurant', 'Restaurant'),
+    candidate(50, 'Avenue', 'Prix du Meilleur Restaurant', 'Restaurant'),
+    candidate(51, 'Aquarium', 'Prix du Meilleur Restaurant', 'Restaurant'),
+    candidate(52, 'Istanbul', 'Prix du Meilleur Restaurant', 'Restaurant')
+  ],
+  'Prix de la Meilleure Experience de divertissement': [
+    candidate(53, 'Plage Camayenne', 'Prix de la Meilleure Experience de divertissement', 'Expérience de divertissement'),
+    candidate(54, 'Iles de Los', 'Prix de la Meilleure Experience de divertissement', 'Expérience de divertissement'),
+    candidate(55, 'Plage de Tayaki', 'Prix de la Meilleure Experience de divertissement', 'Expérience de divertissement'),
+    candidate(56, 'Jardin du 2 Octobre', 'Prix de la Meilleure Experience de divertissement', 'Expérience de divertissement')
+  ],
+  'Prix de la Meilleure Experience de Loisirs': [
+    candidate(57, 'Le Baron', 'Prix de la Meilleure Experience de Loisirs', 'Expérience de loisirs'),
+    candidate(58, 'Boulevard Select', 'Prix de la Meilleure Experience de Loisirs', 'Expérience de loisirs')
+  ],
+  'Prix Coup de Cœur du Public – Hôtels': [
+    candidate(59, 'Noom Hôtel', 'Prix Coup de Cœur du Public – Hôtels', 'Hôtel – coup de cœur du public'),
+    candidate(60, 'PalmCamayenne Hôtel', 'Prix Coup de Cœur du Public – Hôtels', 'Hôtel – coup de cœur du public'),
+    candidate(61, 'Hôtel Kaloum', 'Prix Coup de Cœur du Public – Hôtels', 'Hôtel – coup de cœur du public'),
+    candidate(62, 'Riviera Royal Hôtel', 'Prix Coup de Cœur du Public – Hôtels', 'Hôtel – coup de cœur du public'),
+    candidate(63, 'Radisson Blu Hôtel Conakry', 'Prix Coup de Cœur du Public – Hôtels', 'Hôtel – coup de cœur du public')
   ]
 };
 
-// Fonction pour obtenir tous les candidats
 export const getAllOfficialCandidates = (): OfficialCandidate[] => {
   return Object.values(officialCandidatesByCategory).flat();
 };
 
-// Fonction pour obtenir les candidats d'une catégorie spécifique
 export const getCandidatesByCategory = (category: string): OfficialCandidate[] => {
   return officialCandidatesByCategory[category] || [];
 };
 
-// Fonction pour obtenir toutes les catégories avec candidats
 export const getCategoriesWithCandidates = (): string[] => {
   return Object.keys(officialCandidatesByCategory);
 };

@@ -47,8 +47,8 @@ class PaydunyaService {
       },
       store: {
         name: "Hospitality Awards Guinée",
-        tagline: "Système de vote officiel HAG 2025",
-        phone: "+224 xxx xxx xxx",
+        tagline: "Système de vote officiel HAG 2026",
+        phone: "+224 626 93 04 83",
         postal_address: "Conakry, Guinée",
         website_url: window.location.origin,
         logo_url: `${window.location.origin}/Logo HAG.png`

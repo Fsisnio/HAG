@@ -38,7 +38,7 @@ const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState({
     totalCandidates: 0,
     totalVotes: 0,
-    totalCategories: 7, // Mise à jour pour 7 catégories
+    totalCategories: 8,
     averageRating: 0
   });
 
@@ -73,9 +73,9 @@ const AdminDashboard: React.FC = () => {
     }
     
     setStats({
-      totalCandidates: 25, // 25 récompenses officielles
+      totalCandidates: officialCandidates.length,
       totalVotes: realVotes,
-      totalCategories: 7, // 7 catégories principales
+      totalCategories: 8,
       averageRating: realAverageRating || 0
     });
   }, [applications]);
@@ -770,7 +770,7 @@ const AdminDashboard: React.FC = () => {
                   <div className="flex items-center justify-between mb-6">
                     <div>
                       <h2 className="text-2xl font-bold text-blue-dark">Gestion des Catégories</h2>
-                      <p className="text-gray-600">25 récompenses en 7 catégories officielles</p>
+                      <p className="text-gray-600">19 prix en 8 catégories officielles HAG 2026</p>
                     </div>
                     <div className="flex space-x-2">
                       <button

@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Star } from 'lucide-react';
-import { getCategoriesGrouped, categoryGroups } from '../data/categories';
+import { getCategoriesGrouped, categoryGroups, getTotalCategoriesCount, getGroupsCount } from '../data/categories';
+import { EVENT_YEAR } from '../data/event';
 
 const Categories: React.FC = () => {
   const eligibilityCriteria = [
@@ -23,8 +24,7 @@ const Categories: React.FC = () => {
             Catégories <span className="text-gold">Officielles</span> des Prix
           </h1>
           <p className="text-xl max-w-3xl mx-auto leading-relaxed">
-            Découvrez les 25 récompenses organisées en 7 catégories officielles des Hospitality Awards Guinée et 
-            trouvez celle qui correspond le mieux à votre excellence.
+            Découvrez les {getTotalCategoriesCount()} prix organisés en {getGroupsCount()} catégories officielles des Hospitality Awards Guinée {EVENT_YEAR}.
           </p>
         </div>
       </section>
@@ -40,7 +40,7 @@ const Categories: React.FC = () => {
         <div className="container relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-blue-dark mb-6">
-              Nos <span className="text-gold">25 récompenses</span> en 7 catégories
+              Nos <span className="text-gold">{getTotalCategoriesCount()} prix</span> en {getGroupsCount()} catégories
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Les récompenses officielles organisées par catégories par les Hospitality Awards Guinée pour récompenser l'excellence dans le secteur
@@ -48,6 +48,23 @@ const Categories: React.FC = () => {
           </div>
           
           {/* Affichage par groupes */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-16">
+            <a href="/hag-categories-2026.png" target="_blank" rel="noreferrer" className="block bg-white rounded-3xl shadow-lg overflow-hidden border border-gray-100">
+              <img
+                src="/hag-categories-2026.png"
+                alt={`Affiche officielle des catégories et prix HAG ${EVENT_YEAR}`}
+                className="w-full h-auto"
+              />
+            </a>
+            <a href="/hag-categories-liste-2026.png" target="_blank" rel="noreferrer" className="block bg-white rounded-3xl shadow-lg overflow-hidden border border-gray-100">
+              <img
+                src="/hag-categories-liste-2026.png"
+                alt={`Liste officielle des catégories et prix HAG ${EVENT_YEAR}`}
+                className="w-full h-auto"
+              />
+            </a>
+          </div>
+
           {categoryGroups.map((groupName) => (
             <div key={groupName} className="mb-16">
               <div className="text-center mb-8">
@@ -60,28 +77,31 @@ const Categories: React.FC = () => {
                 </p>
               </div>
               
-              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+              <div className="prize-cards">
                 {categoriesGrouped[groupName]?.map((category) => (
-                  <div key={category.id} className="group">
-                    <div className="bg-white p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 overflow-hidden relative">
+                  <div key={category.id} className="prize-card group">
+                    <div className="bg-white p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 overflow-hidden relative h-full text-center">
                       {/* Numéro de catégorie */}
-                      <div className="absolute top-4 left-4 w-12 h-12 bg-gradient-to-br from-gold to-yellow-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                      <div className="mx-auto mb-5 w-12 h-12 bg-gradient-to-br from-gold to-yellow-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
                         {category.id}
                       </div>
                       
                       {/* Indicateur de catégorie */}
                       <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-gold/20 to-yellow-500/20 rounded-full -translate-y-16 translate-x-16"></div>
                       
-                      <div className="w-24 h-24 bg-gradient-to-br from-gold to-yellow-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg ml-auto">
+                      <div className="w-24 h-24 bg-gradient-to-br from-gold to-yellow-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg mx-auto">
                         <category.icon className="w-12 h-12 text-blue-dark" />
                       </div>
                       
                       <h3 className="text-xl font-bold mb-4 text-blue-dark group-hover:text-gold transition-colors leading-tight">
                         {category.title}
                       </h3>
+                      {category.publicVote && (
+                        <p className="text-xs font-semibold text-gold mb-4">Attribution 100 % vote du public</p>
+                      )}
                       <p className="text-gray-600 mb-6 leading-relaxed text-sm">{category.description}</p>
                       
-                      <div className="mb-6">
+                      <div className="mb-6 text-left max-w-[300px] mx-auto">
                         <h4 className="font-semibold text-blue-dark mb-3 text-sm">Critères d'évaluation :</h4>
                         <ul className="space-y-2">
                           {category.criteria.slice(0, 3).map((criterion, idx) => (
@@ -180,8 +200,8 @@ const Categories: React.FC = () => {
             Prêt à <span className="text-gold">candidater</span> ?
           </h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Choisissez votre récompense parmi nos 25 récompenses organisées en 7 catégories officielles et soumettez votre candidature pour 
-            les Hospitality Awards Guinée 2025.
+            Choisissez votre prix parmi nos {getTotalCategoriesCount()} récompenses officielles et soumettez votre candidature pour
+            les Hospitality Awards Guinée {EVENT_YEAR}. Les inscriptions sont ouvertes du 25 août au 25 septembre.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/candidater" className="btn btn-primary btn-large">

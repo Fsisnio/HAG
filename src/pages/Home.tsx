@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Star, Award, Users, Calendar } from 'lucide-react';
 import Countdown from '../components/Countdown';
 import { getTotalCategoriesCount, getGroupsCount } from '../data/categories';
+import { EVENT_YEAR, SLOGAN, CALENDAR, TICKETS, formatGnf, GALA_VENUE } from '../data/event';
 
 const Home: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -22,7 +23,7 @@ const Home: React.FC = () => {
     { icon: Award, value: getTotalCategoriesCount().toString(), label: 'Récompenses officielles' },
     { icon: Star, value: getGroupsCount().toString(), label: 'Catégories principales' },
     { icon: Users, value: '250+', label: 'Candidats attendus' },
-    { icon: Calendar, value: '2025', label: 'Édition HAG' }
+    { icon: Calendar, value: String(EVENT_YEAR), label: 'Édition HAG' }
   ];
 
   const features = [
@@ -49,10 +50,13 @@ const Home: React.FC = () => {
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Image de couverture en arrière-plan */}
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-no-repeat"
           style={{
             backgroundImage: 'url(/couverture.jpg)',
-            backgroundAttachment: isMobile ? 'scroll' : 'fixed'
+            backgroundSize: 'cover',
+            backgroundPosition: 'center 42%',
+            transform: isMobile ? 'scale(1.55)' : 'scale(1.45)',
+            transformOrigin: 'center center'
           }}
         ></div>
         
@@ -94,7 +98,7 @@ const Home: React.FC = () => {
               <span className="block text-gold">GUINÉE</span>
             </h1>
             <p className="text-xl text-white/90 max-w-2xl mx-auto leading-relaxed">
-              Innovation et proximité – Célébrons l'excellence en hospitalité avec 25 récompenses en 7 catégories
+              {SLOGAN} — {getTotalCategoriesCount()} prix en {getGroupsCount()} catégories
             </p>
           </div>
 
@@ -112,8 +116,8 @@ const Home: React.FC = () => {
             <Link to="/categories" className="btn btn-secondary btn-large">
               Voir les catégories
             </Link>
-            <Link to="/laureats" className="btn btn-secondary btn-large">
-              Découvrir les lauréats
+            <Link to="/voter" className="btn btn-secondary btn-large">
+              Voter
             </Link>
           </div>
         </div>
@@ -157,7 +161,7 @@ const Home: React.FC = () => {
               <p className="text-lg mb-6">
                 Les Hospitality Awards Guinée (HAG) sont l'événement de référence pour 
                 récompenser et valoriser les talents du secteur touristique et hôtelier guinéen avec 
-                25 récompenses organisées en 7 catégories principales.
+                {getTotalCategoriesCount()} prix organisés en {getGroupsCount()} catégories officielles.
               </p>
               <p className="mb-8">
                 Notre mission est de promouvoir l'innovation, encourager l'excellence 
@@ -234,6 +238,41 @@ const Home: React.FC = () => {
         </div>
       </section>
 
+      <section className="section">
+        <div className="container">
+          <div className="text-center mb-12">
+            <h2 className="mb-4">
+              Calendrier <span className="text-gold">HAG {EVENT_YEAR}</span>
+            </h2>
+            <p className="text-gray-600">Inscriptions du 25 août au 25 septembre • Gala à l’{GALA_VENUE}</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
+            {CALENDAR.map((item) => (
+              <div key={item.label} className="bg-white rounded-2xl shadow-lg p-5 border border-gray-100">
+                <div className="text-sm text-gold font-semibold mb-1">{item.label}</div>
+                <div className="text-blue-dark font-bold">{item.date}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center mb-10">
+            <h2 className="mb-4">
+              Tickets du <span className="text-gold">dîner gala</span>
+            </h2>
+            <p className="text-gray-600">Soirée de remise des prix le 11 décembre 2026 à l’Hôtel Kaloum</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            {TICKETS.map((ticket) => (
+              <div key={ticket.name} className="bg-blue-dark text-white rounded-2xl p-5 text-center">
+                <div className="text-gold font-bold mb-2">{ticket.name}</div>
+                <div className="text-xl font-heading mb-2">{formatGnf(ticket.price)}</div>
+                <p className="text-sm text-white/80">{ticket.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Section CTA */}
       <section className="section bg-blue-dark text-white">
         <div className="container text-center">
@@ -248,9 +287,9 @@ const Home: React.FC = () => {
                    <Link to="/candidater" className="btn btn-primary btn-large">
                      Candidater maintenant
                    </Link>
-                   {/* <Link to="/voter" className="btn btn-primary btn-large">
+                   <Link to="/voter" className="btn btn-primary btn-large">
                      Voter maintenant
-                   </Link> */}
+                   </Link>
                    <Link to="/contact" className="btn btn-secondary btn-large">
                      Nous contacter
                    </Link>

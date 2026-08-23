@@ -255,8 +255,8 @@ const Partners: React.FC = () => {
                   <Mail className="w-8 h-8 text-blue-dark" />
                 </div>
                 <h3 className="font-semibold text-blue-dark mb-2">Par email</h3>
-                <a href="mailto:Sorodou@gmail.com" className="text-gold hover:text-blue-deep">
-                  Sorodou@gmail.com
+                <a href="mailto:groupelmcontact@gmail.com" className="text-gold hover:text-blue-deep">
+                  groupelmcontact@gmail.com
                 </a>
               </div>
               
@@ -265,8 +265,8 @@ const Partners: React.FC = () => {
                   <Phone className="w-8 h-8 text-blue-dark" />
                 </div>
                 <h3 className="font-semibold text-blue-dark mb-2">Par téléphone</h3>
-                <a href="tel:+224622586253" className="text-gold hover:text-blue-deep">
-                  +224 622 586 253
+                <a href="tel:+224626930483" className="text-gold hover:text-blue-deep">
+                  +224 626 93 04 83
                 </a>
               </div>
             </div>

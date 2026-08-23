@@ -44,19 +44,25 @@ const Contact: React.FC = () => {
     {
       icon: Mail,
       title: 'Email',
-      value: 'Sorodou@gmail.com',
-      link: 'mailto:Sorodou@gmail.com'
+      value: 'groupelmcontact@gmail.com',
+      link: 'mailto:groupelmcontact@gmail.com'
+    },
+    {
+      icon: Phone,
+      title: 'Orange Money / Votes',
+      value: '+224 626 93 04 83',
+      link: 'tel:+224626930483'
     },
     {
       icon: Phone,
       title: 'Téléphone',
-      value: '+224 622 586 253',
-      link: 'tel:+224622586253'
+      value: '+224 666 63 76 62 / +224 622 58 62 53',
+      link: 'tel:+224666637662'
     },
     {
       icon: MapPin,
       title: 'Adresse',
-      value: 'Conakry, Guinée',
+      value: 'Hôtel Kaloum, Conakry – Guinée',
       link: null
     },
     {
@@ -294,8 +300,10 @@ const Contact: React.FC = () => {
                   Quelles sont les dates importantes ?
                 </h3>
                 <p className="text-gray-600 leading-relaxed text-lg">
-                  Les candidatures sont ouvertes jusqu'au 30 novembre 2024. 
-                  La cérémonie de remise des prix aura lieu le 15 décembre 2024.
+                  Les inscriptions sont ouvertes du 25 août au 25 septembre 2026.
+                  Les votes du public se déroulent du 25 septembre au 4 décembre 2026
+                  (5 000 GNF par vote via Orange Money au 626 93 04 83).
+                  La soirée de remise des prix a lieu le 11 décembre 2026 à 17h00 à l’Hôtel Kaloum.
                 </p>
               </div>
             </div>

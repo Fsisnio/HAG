@@ -8,24 +8,16 @@ interface TimeLeft {
 }
 
 const Countdown: React.FC = () => {
-  // Date fixe de la cérémonie : 6 décembre 2025 à 20h00
   const getTargetDate = () => {
     try {
-      // Date fixe : 6 décembre 2025 à 20h00 (heure de Conakry)
-      const targetDate = new Date('2025-12-06T20:00:00+00:00'); // UTC
-      
-      // Vérifier que la date est valide
+      const targetDate = new Date('2026-12-11T17:00:00+00:00');
       if (isNaN(targetDate.getTime())) {
-        console.error('Date cible invalide');
-        // Fallback : 6 décembre 2025 à 20h00 UTC
-        return new Date('2025-12-06T20:00:00Z').getTime();
+        return new Date('2026-12-11T17:00:00Z').getTime();
       }
-      
       return targetDate.getTime();
     } catch (error) {
       console.error('Erreur lors de la création de la date cible:', error);
-      // Fallback : 6 décembre 2025 à 20h00 UTC
-      return new Date('2025-12-06T20:00:00Z').getTime();
+      return new Date('2026-12-11T17:00:00Z').getTime();
     }
   };
   
@@ -128,8 +120,8 @@ const Countdown: React.FC = () => {
           </div>
           
           <div className="mt-8 text-white">
-            <p className="text-xl font-medium mb-2">{formatTargetDate()} • 20h00</p>
-            <p className="text-gold font-semibold text-lg">Conakry, Guinée</p>
+            <p className="text-xl font-medium mb-2">{formatTargetDate()} • 17h00</p>
+            <p className="text-gold font-semibold text-lg">Hôtel Kaloum, Conakry – Guinée</p>
           </div>
         </>
       )}

@@ -172,6 +172,18 @@ const About: React.FC = () => {
         </div>
       </section>
 
+      <section className="section section-alt">
+        <div className="container text-center">
+          <h2 className="mb-6">
+            Édition <span className="text-gold">2026</span>
+          </h2>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-8">
+            Les inscriptions sont ouvertes du 25 août au 25 septembre 2026. La soirée de remise des prix
+            et le dîner gala se tiendront le 11 décembre 2026 à 17h00 à l’Hôtel Kaloum, Conakry.
+          </p>
+        </div>
+      </section>
+
       {/* Section CTA */}
       <section className="section bg-blue-dark text-white">
         <div className="container text-center">

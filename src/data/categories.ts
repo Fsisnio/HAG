@@ -1,27 +1,23 @@
-import { 
-  User, 
-  Users, 
-  Utensils, 
-  Server, 
-  Headphones, 
-  GraduationCap, 
-  Umbrella, 
-  Heart, 
-  Globe, 
-  Plane, 
-  Coffee, 
-  TreePine, 
-  Building, 
-  Crown, 
-  Star,
-  Award,
-  Music,
+import {
+  GraduationCap,
+  BookOpen,
+  User,
+  Plane,
+  Globe,
+  MapPin,
+  Calendar,
+  Leaf,
+  Smartphone,
+  Headphones,
   Wine,
-  Home,
-  UserCheck,
-  Zap,
-  Trophy,
-  ThumbsUp
+  Utensils,
+  ChefHat,
+  Store,
+  Coffee,
+  Music,
+  Palmtree,
+  Heart,
+  Trophy
 } from 'lucide-react';
 
 export interface Category {
@@ -30,413 +26,292 @@ export interface Category {
   title: string;
   description: string;
   criteria: string[];
-  prize?: string; // Rendu optionnel pour masquer temporairement
+  prize?: string;
   group: string;
+  publicVote?: boolean;
 }
 
-// Groupes de catégories
 export const categoryGroups = [
-  'Formation Professionnelle',
-  'Hôtellerie',
-  'Restauration & Gastronomie',
-  'Tourisme & Voyages',
-  'Loisirs & Divertissement',
-  'Prix Spéciaux',
-  'Prix HAG 2025'
+  'Formation professionnelle et Enseignement Supérieur',
+  'Tourisme',
+  'Innovation',
+  'Accueil et Service',
+  'Restauration',
+  'Divertissement et Loisirs',
+  'Coup de Cœur du Public',
+  'Grand Prix Hospitality Awards Guinée 2026'
 ];
 
 export const officialCategories: Category[] = [
-  // 1. Catégorie Formation Professionnelle
   {
     id: 1,
     icon: GraduationCap,
-    title: 'Meilleur Institut de formation professionnel de l\'année',
-    description: 'Récompense l\'institut de formation qui excelle dans la qualité de son enseignement et son impact sur la professionnalisation du secteur.',
+    title: 'Prix du Meilleur Etablissement de Formation professionnelle et Technique',
+    description: 'Récompense l’établissement qui excelle dans la formation professionnelle et technique liée à l’hospitalité.',
     criteria: [
-      'Innovation pédagogique et méthodes d\'enseignement',
-      'Taux d\'insertion professionnelle des diplômés',
-      'Qualité des infrastructures et équipements',
-      'Partenariats avec le secteur professionnel',
-      'Impact sur le développement des compétences'
+      'Qualité de la formation et des programmes',
+      'Insertion professionnelle des diplômés',
+      'Infrastructures et encadrement',
+      'Partenariats avec le secteur',
+      'Impact sur les compétences du métier'
     ],
-    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
-    group: 'Formation Professionnelle'
+    group: 'Formation professionnelle et Enseignement Supérieur'
   },
-
-  // 2. Catégorie Hôtellerie
   {
     id: 2,
-    icon: Users,
-    title: 'Meilleure Équipe en service d\'étage de l\'année',
-    description: 'Récompense l\'équipe de service d\'étage qui se distingue par son efficacité, sa rigueur et son sens du détail.',
+    icon: BookOpen,
+    title: 'Prix du Meilleur Etablissement d’Enseignement Supérieur',
+    description: 'Récompense l’établissement d’enseignement supérieur qui forme les futurs cadres de l’hospitalité et du tourisme.',
     criteria: [
-      'Qualité et constance du service',
-      'Travail d\'équipe et coordination',
-      'Professionnalisme et discrétion',
-      'Organisation et efficacité',
-      'Attention au détail et innovation'
+      'Excellence académique',
+      'Pertinence des filières tourisme et hôtellerie',
+      'Recherche et innovation pédagogique',
+      'Ouverture internationale',
+      'Employabilité des diplômés'
     ],
-    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
-    group: 'Hôtellerie'
+    group: 'Formation professionnelle et Enseignement Supérieur'
   },
   {
     id: 3,
-    icon: Utensils,
-    title: 'Meilleure Brigade de Cuisine de l\'année',
-    description: 'Récompense la performance collective d\'une équipe de cuisine qui excelle dans l\'art culinaire.',
+    icon: User,
+    title: 'Prix du Meilleur Guide Touristique',
+    description: 'Récompense le guide qui incarne la passion, le savoir et l’art de transmettre la destination Guinée.',
     criteria: [
-      'Qualité gustative et visuelle des plats',
-      'Coordination, discipline et esprit d\'équipe',
-      'Respect des normes HACCP et d\'hygiène',
-      'Innovation culinaire',
-      'Gestion efficace en période de forte activité'
+      'Maîtrise du patrimoine culturel et naturel',
+      'Capacité pédagogique et storytelling',
+      'Accueil et relation avec les visiteurs',
+      'Sécurité et organisation des visites',
+      'Retours positifs des voyageurs'
     ],
-    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
-    group: 'Hôtellerie'
+    group: 'Tourisme'
   },
   {
     id: 4,
-    icon: Server,
-    title: 'Meilleure Équipe de Service en Salle de l\'année',
-    description: 'Récompense l\'équipe offrant une expérience gastronomique complète et harmonieuse.',
+    icon: Plane,
+    title: 'Prix de la Meilleure Agence de Voyage',
+    description: 'Récompense l’agence qui se distingue par la qualité de son offre et de son accompagnement.',
     criteria: [
-      'Rapidité, précision et élégance du service',
-      'Coordination et esprit d\'équipe',
-      'Relation cordiale et professionnelle avec les clients',
-      'Maîtrise des arts de la table',
-      'Gestion des situations délicates'
+      'Qualité et originalité des offres',
+      'Service client et réactivité',
+      'Organisation et fiabilité',
+      'Promotion de la destination Guinée',
+      'Satisfaction des voyageurs'
     ],
-    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
-    group: 'Hôtellerie'
+    group: 'Tourisme'
   },
   {
     id: 5,
-    icon: Headphones,
-    title: 'Meilleure Équipe d\'accueil et Service Client de l\'année',
-    description: 'Récompense l\'équipe de réception offrant une expérience client exceptionnelle.',
+    icon: Globe,
+    title: 'Meilleur Ambassadeur (rice) de la Destination Guinée',
+    description: 'Récompense une personnalité qui promeut et rayonne pour la destination Guinée.',
     criteria: [
-      'Qualité de l\'accueil et des échanges',
-      'Rapidité et efficacité dans le traitement des demandes',
-      'Capacité d\'écoute et personnalisation',
-      'Gestion professionnelle des situations délicates',
-      'Retours clients positifs'
+      'Rayonnement national et international',
+      'Promotion de l’image de la Guinée',
+      'Engagement pour le tourisme et la culture',
+      'Influence et capacité d’inspiration',
+      'Contribution à l’attractivité du pays'
     ],
-    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
-    group: 'Hôtellerie'
+    group: 'Tourisme'
   },
   {
     id: 6,
-    icon: TreePine,
-    title: 'Meilleur Écolodge ou écoresponsable de l\'année',
-    description: 'Récompense un établissement qui se distingue par son engagement en développement durable.',
+    icon: MapPin,
+    title: 'Prix de la Meilleure Destination Touristique',
+    description: 'Récompense le site ou la destination qui offre la plus belle expérience de visite.',
     criteria: [
-      'Gestion environnementale durable',
-      'Utilisation d\'énergies renouvelables',
-      'Réduction des déchets et impact carbone',
-      'Intégration dans l\'environnement naturel',
-      'Sensibilisation et éducation environnementale'
+      'Attractivité et unicité du site',
+      'Accueil et aménagements',
+      'Préservation du patrimoine',
+      'Expérience visiteur',
+      'Potentiel de développement touristique'
     ],
-    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
-    group: 'Hôtellerie'
+    group: 'Tourisme'
   },
   {
     id: 7,
-    icon: Building,
-    title: 'Meilleur Hôtel Milieu de Gamme de l\'année',
-    description: 'Récompense un hôtel milieu de gamme qui se distingue par son excellent rapport qualité-prix.',
+    icon: Calendar,
+    title: 'Prix Meilleur Événement Touristique',
+    description: 'Récompense l’événement qui dynamise le tourisme et valorise la culture guinéenne.',
     criteria: [
-      'Qualité de l\'accueil et du service',
-      'Confort et fonctionnalité des chambres',
-      'Rapport qualité-prix optimal',
-      'Offre de restauration et services additionnels',
-      'Innovation et satisfaction client'
+      'Originalité et attractivité',
+      'Organisation et fréquentation',
+      'Impact économique et médiatique',
+      'Rayonnement de la destination',
+      'Pérennité et vision'
     ],
-    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
-    group: 'Hôtellerie'
+    group: 'Tourisme'
   },
   {
     id: 8,
-    icon: Crown,
-    title: 'Meilleur Groupe Hôtelier de l\'année',
-    description: 'Récompense un groupe hôtelier qui contribue à élever les standards de l\'hôtellerie en Guinée.',
+    icon: Leaf,
+    title: 'Prix de la Meilleure Initiative Eco-Responsable',
+    description: 'Récompense une initiative exemplaire en matière d’écologie et de tourisme durable.',
     criteria: [
-      'Croissance et innovation',
-      'Gestion et leadership',
-      'Expérience client exceptionnelle',
-      'Diversité de l\'offre',
-      'Impact social et économique positif'
+      'Impact environnemental positif',
+      'Pratiques durables concrètes',
+      'Sensibilisation des publics',
+      'Intégration communautaire',
+      'Innovation éco-responsable'
     ],
-    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
-    group: 'Hôtellerie'
+    group: 'Tourisme'
   },
   {
     id: 9,
-    icon: Star,
-    title: 'Meilleure Résidence de luxe de l\'année',
-    description: 'Récompense une résidence de luxe qui incarne l\'élégance et l\'exclusivité.',
+    icon: Smartphone,
+    title: 'Prix de l’Innovation Digital dans l’Hospitalité',
+    description: 'Récompense une solution digitale qui transforme l’expérience ou la gestion de l’hospitalité.',
     criteria: [
-      'Qualité des infrastructures',
-      'Excellence du service personnalisé',
-      'Confort et exclusivité',
-      'Innovation et technologies',
-      'Expérience client haut de gamme'
+      'Innovation technologique',
+      'Utilité pour les professionnels ou les voyageurs',
+      'Qualité de l’expérience utilisateur',
+      'Impact mesurable',
+      'Potentiel de déploiement'
     ],
-    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
-    group: 'Hôtellerie'
+    group: 'Innovation'
   },
   {
     id: 10,
-    icon: Home,
-    title: 'Meilleur Hôtel de l\'année',
-    description: 'Récompense l\'hôtel qui excelle dans tous les aspects de l\'hospitalité et du service.',
+    icon: Headphones,
+    title: 'Prix de l’Excellence en Accueil et Service Client',
+    description: 'Récompense l’établissement qui offre un accueil et un service client d’exception.',
     criteria: [
-      'Excellence globale du service',
-      'Qualité des infrastructures',
-      'Innovation et technologies',
-      'Satisfaction client et réputation',
-      'Contribution au rayonnement touristique'
+      'Qualité de l’accueil',
+      'Personnalisation du service',
+      'Réactivité et professionnalisme',
+      'Satisfaction client',
+      'Constante dans l’excellence'
     ],
-    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
-    group: 'Hôtellerie'
+    group: 'Accueil et Service'
   },
-
-  // 3. Catégorie Restauration & Gastronomie
   {
     id: 11,
-    icon: Coffee,
-    title: 'Meilleur Restaurant Gastronomique de l\'année',
-    description: 'Récompense un restaurant qui excelle en combinant haute gastronomie, service et ambiance.',
+    icon: Wine,
+    title: 'Prix du Bartender de l’Année',
+    description: 'Récompense le bartender qui se distingue par sa créativité, sa technique et son sens du service.',
     criteria: [
-      'Excellence culinaire et créativité',
-      'Qualité du service de table',
-      'Originalité et promotion des produits locaux',
-      'Ambiance et décoration',
-      'Réputation et reconnaissance'
+      'Maîtrise technique',
+      'Créativité des cocktails',
+      'Relation client et mise en scène',
+      'Hygiène et professionnalisme',
+      'Contribution à l’expérience de l’établissement'
     ],
-    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
-    group: 'Restauration & Gastronomie'
+    group: 'Accueil et Service'
   },
   {
     id: 12,
-    icon: Wine,
-    title: 'Meilleure Chaîne de Restauration Rapide de l\'année',
-    description: 'Récompense la chaîne de restauration rapide qui se distingue par sa qualité et son service.',
+    icon: Utensils,
+    title: 'Prix de l’Excellence Food & Beverage',
+    description: 'Récompense l’excellence dans la restauration et le service Food & Beverage.',
     criteria: [
-      'Qualité et consistance des produits',
-      'Rapidité et efficacité du service',
-      'Hygiène et standards de qualité',
-      'Innovation dans l\'offre',
-      'Expansion et impact économique'
+      'Qualité de l’offre F&B',
+      'Cohérence du service',
+      'Innovation et présentation',
+      'Standards d’hygiène',
+      'Expérience client'
     ],
-    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
-    group: 'Restauration & Gastronomie'
+    group: 'Accueil et Service'
   },
-
-  // 4. Catégorie Tourisme & Voyages
   {
     id: 13,
-    icon: User,
-    title: 'Meilleur Guide Touristique de l\'année',
-    description: 'Récompense le guide incarnant la passion et l\'art de transmettre l\'histoire guinéenne.',
+    icon: ChefHat,
+    title: 'Prix de la Création Culinaire Guinéenne',
+    description: 'Récompense une création qui sublime et modernise la gastronomie guinéenne.',
     criteria: [
-      'Maîtrise du patrimoine culturel et historique',
-      'Capacité pédagogique et storytelling',
-      'Adaptabilité aux différents profils',
-      'Gestion sécurisée des visites',
-      'Retours positifs des visiteurs'
+      'Créativité et identité guinéenne',
+      'Qualité gustative',
+      'Mise en valeur des produits locaux',
+      'Présentation et signature',
+      'Contribution à la cuisine nationale'
     ],
-    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
-    group: 'Tourisme & Voyages'
+    group: 'Restauration'
   },
   {
     id: 14,
-    icon: Plane,
-    title: 'Meilleure Agence de Voyage de l\'année',
-    description: 'Récompense une agence qui se distingue par la qualité de son support client.',
+    icon: Store,
+    title: 'Prix de la Meilleure Chaîne de Restauration',
+    description: 'Récompense la chaîne qui allie qualité, consistance et développement.',
     criteria: [
-      'Originalité et attractivité des offres',
-      'Organisation et ponctualité',
-      'Retours clients positifs',
-      'Engagement local et innovation',
-      'Diversité des destinations'
+      'Qualité et constance de l’offre',
+      'Identité et positionnement',
+      'Service et hygiène',
+      'Expansion et impact',
+      'Satisfaction client'
     ],
-    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
-    group: 'Tourisme & Voyages'
+    group: 'Restauration'
   },
   {
     id: 15,
-    icon: Globe,
-    title: 'Meilleure Initiative de Promotion Touristique',
-    description: 'Récompense une initiative qui contribue significativement à la promotion du tourisme guinéen.',
+    icon: Coffee,
+    title: 'Prix du Meilleur Restaurant',
+    description: 'Récompense le restaurant qui offre la meilleure expérience gastronomique.',
     criteria: [
-      'Innovation et créativité de l\'initiative',
-      'Impact sur la promotion touristique',
-      'Rayonnement national et international',
-      'Partenariats et collaborations',
-      'Résultats mesurables'
+      'Excellence culinaire',
+      'Qualité du service',
+      'Ambiance et cadre',
+      'Rapport qualité-prix',
+      'Réputation et fidélisation'
     ],
-    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
-    group: 'Tourisme & Voyages'
+    group: 'Restauration'
   },
   {
     id: 16,
-    icon: Zap,
-    title: 'Meilleure Compagnie Aérienne de l\'année',
-    description: 'Récompense la compagnie aérienne qui excelle dans le service et la sécurité.',
+    icon: Music,
+    title: 'Prix de la Meilleure Experience de divertissement',
+    description: 'Récompense le lieu ou l’expérience qui offre le meilleur divertissement.',
     criteria: [
-      'Qualité du service client',
-      'Ponctualité et fiabilité',
-      'Sécurité et standards internationaux',
-      'Confort et innovations',
-      'Contribution au développement touristique'
+      'Qualité de l’expérience',
+      'Attractivité et originalité',
+      'Accueil et organisation',
+      'Sécurité et confort',
+      'Satisfaction du public'
     ],
-    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
-    group: 'Tourisme & Voyages'
+    group: 'Divertissement et Loisirs'
   },
-
-  // 5. Catégorie Loisirs & Divertissement
   {
     id: 17,
-    icon: Umbrella,
-    title: 'Meilleur Complexe de Loisirs de l\'année',
-    description: 'Récompense le complexe offrant la meilleure expérience de loisirs et divertissement.',
+    icon: Palmtree,
+    title: 'Prix de la Meilleure Experience de Loisirs',
+    description: 'Récompense l’expérience de loisirs la plus mémorable et qualitative.',
     criteria: [
       'Diversité et qualité des activités',
-      'Sécurité et confort des installations',
-      'Qualité de l\'accueil et du service',
-      'Innovation dans l\'offre de loisirs',
-      'Satisfaction et fidélisation des clients'
+      'Ambiance et cadre',
+      'Service et hospitalité',
+      'Innovation dans l’offre',
+      'Fidélisation de la clientèle'
     ],
-    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
-    group: 'Loisirs & Divertissement'
+    group: 'Divertissement et Loisirs'
   },
   {
     id: 18,
-    icon: Music,
-    title: 'Meilleur Club/Discothèque de l\'année',
-    description: 'Récompense l\'établissement nocturne offrant la meilleure ambiance et expérience.',
-    criteria: [
-      'Qualité de l\'ambiance et de la programmation',
-      'Sécurité et organisation',
-      'Innovation dans l\'offre de divertissement',
-      'Service client et hospitalité',
-      'Impact sur la vie nocturne locale'
-    ],
-    // prize: 'Trophée d\'Or + Certification Excellence', // Masqué temporairement
-    group: 'Loisirs & Divertissement'
-  },
-
-  // 6. Catégorie Prix Spéciaux
-  {
-    id: 19,
-    icon: Award,
-    title: 'Ambassadeur de l\'Hospitalité Guinéenne',
-    description: 'Récompense une personnalité qui incarne et promeut l\'excellence de l\'hospitalité guinéenne.',
-    criteria: [
-      'Rayonnement et représentation internationale',
-      'Contribution au secteur de l\'hospitalité',
-      'Leadership et inspiration',
-      'Promotion de la culture guinéenne',
-      'Impact sur l\'image touristique du pays'
-    ],
-    // prize: 'Trophée d\'Honneur + Reconnaissance Spéciale', // Masqué temporairement
-    group: 'Prix Spéciaux'
-  },
-  {
-    id: 20,
-    icon: Star,
-    title: 'Jeune Talent de l\'Hospitalité',
-    description: 'Récompense un jeune professionnel prometteur du secteur de l\'hospitalité.',
-    criteria: [
-      'Innovation et créativité',
-      'Potentiel de développement',
-      'Engagement et passion',
-      'Contributions remarquables malgré le jeune âge',
-      'Vision d\'avenir pour le secteur'
-    ],
-    // prize: 'Trophée Jeune Talent + Bourse de Formation', // Masqué temporairement
-    group: 'Prix Spéciaux'
-  },
-  {
-    id: 21,
-    icon: Crown,
-    title: 'Femme Leader de l\'Hospitalité',
-    description: 'Récompense une femme leader qui contribue exceptionnellement au secteur.',
-    criteria: [
-      'Leadership et influence positive',
-      'Contributions significatives au secteur',
-      'Inspiration pour d\'autres femmes',
-      'Innovation et excellence',
-      'Impact social et économique'
-    ],
-    // prize: 'Trophée Leadership + Reconnaissance Spéciale', // Masqué temporairement
-    group: 'Prix Spéciaux'
-  },
-  {
-    id: 22,
-    icon: Trophy,
-    title: 'Prix d\'Honneur pour Contribution à l\'Hôtellerie & Tourisme en Guinée',
-    description: 'Récompense une contribution exceptionnelle et durable au développement du secteur.',
-    criteria: [
-      'Ancienneté et constance dans l\'excellence',
-      'Impact transformateur sur le secteur',
-      'Mentorat et formation de la relève',
-      'Reconnaissance par les pairs',
-      'Héritage et vision à long terme'
-    ],
-    // prize: 'Trophée d\'Honneur + Reconnaissance à Vie', // Masqué temporairement
-    group: 'Prix Spéciaux'
-  },
-  {
-    id: 23,
     icon: Heart,
-    title: 'Prix RSE (Responsabilité Sociétale & Développement Durable)',
-    description: 'Récompense un engagement exemplaire en responsabilité sociale et environnementale.',
-    criteria: [
-      'Impact social et environnemental positif',
-      'Initiatives de développement durable',
-      'Implication communautaire',
-      'Innovation en matière de RSE',
-      'Mesurabilité des résultats'
-    ],
-    // prize: 'Trophée RSE + Certification Développement Durable', // Masqué temporairement
-    group: 'Prix Spéciaux'
-  },
-  {
-    id: 24,
-    icon: UserCheck,
-    title: 'Personnalité de l\'année dans l\'hospitalité',
-    description: 'Récompense la personnalité qui a le plus marqué le secteur durant l\'année.',
-    criteria: [
-      'Impact et influence durant l\'année',
-      'Contributions remarquables',
-      'Reconnaissance par le secteur',
-      'Innovation et leadership',
-      'Rayonnement médiatique et public'
-    ],
-    // prize: 'Trophée Personnalité + Reconnaissance Médiatique', // Masqué temporairement
-    group: 'Prix Spéciaux'
-  },
-
-  // 7. Catégorie Prix HAG 2025
-  {
-    id: 25,
-    icon: ThumbsUp,
-    title: 'Coup de cœur du public',
-    description: 'Récompense le candidat ayant reçu le plus de votes et de soutien du public.',
+    title: 'Prix Coup de Cœur du Public – Hôtels',
+    description: 'Récompense l’hôtel plébiscité par le public. Attribution 100 % par vote du public.',
     criteria: [
       'Nombre de votes du public',
-      'Engagement sur les réseaux sociaux',
       'Popularité et notoriété',
       'Connexion émotionnelle avec le public',
-      'Impact viral et médiatique'
+      'Engagement des supporters',
+      'Image et rayonnement'
     ],
-    // prize: 'Trophée Coup de Cœur + Prix Spécial Public', // Masqué temporairement
-    group: 'Prix HAG 2025'
+    group: 'Coup de Cœur du Public',
+    publicVote: true
+  },
+  {
+    id: 19,
+    icon: Trophy,
+    title: 'Grand prix National d’Excellence de l’Hospitalité',
+    description: 'Plus haute distinction des HAG 2026, attribuée par le jury et un comité spécial de professionnels reconnus.',
+    criteria: [
+      'Excellence globale',
+      'Impact sur le secteur',
+      'Leadership et exemplarité',
+      'Innovation et vision',
+      'Contribution au rayonnement de l’hospitalité guinéenne'
+    ],
+    group: 'Grand Prix Hospitality Awards Guinée 2026'
   }
 ];
 
-// Fonctions utilitaires
 export const getCategoriesByGroup = (group: string): Category[] => {
   return officialCategories.filter(category => category.group === group);
 };
@@ -459,6 +334,3 @@ export const getTotalCategoriesCount = (): number => {
 export const getGroupsCount = (): number => {
   return categoryGroups.length;
 };
-
-
-

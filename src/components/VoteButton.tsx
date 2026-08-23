@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Vote as VoteIcon, CheckCircle, Loader2, CreditCard } from 'lucide-react';
 import PaymentModal from './PaymentModal';
+import { formatGnf, VOTE_AMOUNT_GNF } from '../data/event';
 
 interface VoteButtonProps {
   candidateId: number;
@@ -22,8 +23,8 @@ const VoteButton: React.FC<VoteButtonProps> = ({
   isVoting,
   onVote,
   disabled = false,
-  voteAmount = 10000, // 10,000 GNF par défaut
-  enablePayment = true // Système de paiement activé par défaut
+  voteAmount = VOTE_AMOUNT_GNF,
+  enablePayment = true
 }) => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
@@ -87,7 +88,7 @@ const VoteButton: React.FC<VoteButtonProps> = ({
     return (
       <span className="flex items-center justify-center space-x-2">
         {enablePayment ? <CreditCard className="w-5 h-5" /> : <VoteIcon className="w-5 h-5" />}
-        <span>{enablePayment ? `Voter (${(voteAmount / 1000).toFixed(0)}k GNF)` : 'Voter'}</span>
+        <span>{enablePayment ? `Voter (${formatGnf(voteAmount)})` : 'Voter'}</span>
       </span>
     );
   };
@@ -117,6 +118,7 @@ const VoteButton: React.FC<VoteButtonProps> = ({
           candidateName={candidateName}
           candidateCategory={candidateCategory}
           voteAmount={voteAmount}
+          onPaymentConfirmed={() => onVote(candidateId, candidateName, candidateCategory)}
         />
       )}
     </>

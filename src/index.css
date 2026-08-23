@@ -173,6 +173,19 @@ p {
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
+.prize-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: 2rem;
+}
+
+.prize-card {
+  width: min(100%, 380px);
+  flex: 0 0 min(100%, 380px);
+}
+
 /* Utilitaires */
 .text-center {
   text-align: center;

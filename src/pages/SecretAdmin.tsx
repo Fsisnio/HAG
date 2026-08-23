@@ -96,7 +96,7 @@ const SecretAdmin: React.FC = () => {
               Accès Administrateur
             </h1>
             <p className="text-gray-600 text-sm">
-              Interface réservée aux administrateurs HAG 2025
+              Interface réservée aux administrateurs HAG 2026
             </p>
           </div>
 
@@ -164,7 +164,7 @@ const SecretAdmin: React.FC = () => {
         {/* Instructions discrètes */}
         <div className="mt-6 text-center">
           <p className="text-white/70 text-xs">
-            HAG 2025 - Interface Administrateur Sécurisée
+            HAG 2026 - Interface Administrateur Sécurisée
           </p>
         </div>
       </div>

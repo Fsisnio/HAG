@@ -12,7 +12,7 @@ export const paydunyaConfig = {
   token: 'your_token_here',
   
   // Configuration des votes
-  voteAmount: 10000, // Prix du vote en GNF
+  voteAmount: 5000, // Prix du vote en GNF
   currency: 'GNF',
   
   // URL du webhook pour les notifications de paiement
@@ -22,8 +22,8 @@ export const paydunyaConfig = {
   // Informations de la boutique
   store: {
     name: "Hospitality Awards Guinée",
-    tagline: "Système de vote officiel HAG 2025",
-    phone: "+224 xxx xxx xxx",
+    tagline: "Système de vote officiel HAG 2026",
+    phone: "+224 626 93 04 83",
     postalAddress: "Conakry, Guinée",
     websiteUrl: "https://hag-awards.com",
     logoUrl: "/Logo HAG.png"

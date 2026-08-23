@@ -50,7 +50,7 @@ const Footer: React.FC = () => {
                      <li><Link to="/categories" className="text-gray-300 hover:text-gold transition-colors">Catégories</Link></li>
                      {/* <li><Link to="/laureats" className="text-gray-300 hover:text-gold transition-colors">Lauréats</Link></li> */}
                      <li><Link to="/candidater" className="text-gray-300 hover:text-gold transition-colors">Candidater</Link></li>
-                     {/* <li><Link to="/voter" className="text-gray-300 hover:text-gold transition-colors">Voter</Link></li> */}
+                     <li><Link to="/voter" className="text-gray-300 hover:text-gold transition-colors">Voter</Link></li>
                    </ul>
           </div>
 
@@ -71,14 +71,14 @@ const Footer: React.FC = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-2">
                 <Mail className="w-4 h-4 text-gold" />
-                <a href="mailto:Sorodou@gmail.com" className="text-gray-300 hover:text-gold transition-colors text-sm">
-                  Sorodou@gmail.com
+                <a href="mailto:groupelmcontact@gmail.com" className="text-gray-300 hover:text-gold transition-colors text-sm">
+                  groupelmcontact@gmail.com
                 </a>
               </div>
               <div className="flex items-center space-x-2">
                 <Phone className="w-4 h-4 text-gold" />
-                <a href="tel:+224622586253" className="text-gray-300 hover:text-gold transition-colors text-sm">
-                  +224 622 586 253
+                <a href="tel:+224626930483" className="text-gray-300 hover:text-gold transition-colors text-sm">
+                  +224 626 93 04 83
                 </a>
               </div>
               <div className="flex items-center space-x-2">
