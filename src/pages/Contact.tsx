@@ -159,13 +159,13 @@ const Contact: React.FC = () => {
               <div className="mt-8 pt-8 border-t border-gray-200">
                 <h3 className="font-semibold text-blue-dark mb-4">Suivez-nous</h3>
                 <div className="flex space-x-4">
-                  <a href="#" className="w-12 h-12 bg-blue-deep rounded-full flex items-center justify-center hover:bg-gold transition-colors">
+                  <a href="https://www.facebook.com/HospitalityAwardsGuinee" target="_blank" rel="noreferrer" aria-label="Facebook" className="w-12 h-12 bg-blue-deep rounded-full flex items-center justify-center hover:bg-gold transition-colors">
                     <span className="text-white font-bold">f</span>
                   </a>
-                  <a href="#" className="w-12 h-12 bg-blue-deep rounded-full flex items-center justify-center hover:bg-gold transition-colors">
+                  <a href="https://www.linkedin.com/search/results/all/?keywords=Hospitality%20Awards%20Guinee" target="_blank" rel="noreferrer" aria-label="LinkedIn" className="w-12 h-12 bg-blue-deep rounded-full flex items-center justify-center hover:bg-gold transition-colors">
                     <span className="text-white font-bold">in</span>
                   </a>
-                  <a href="#" className="w-12 h-12 bg-blue-deep rounded-full flex items-center justify-center hover:bg-gold transition-colors">
+                  <a href="https://www.instagram.com/HospitalityAwardsGuinee" target="_blank" rel="noreferrer" aria-label="Instagram" className="w-12 h-12 bg-blue-deep rounded-full flex items-center justify-center hover:bg-gold transition-colors">
                     <span className="text-white font-bold">@</span>
                   </a>
                 </div>

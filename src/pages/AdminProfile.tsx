@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { 
   User, 
-  Mail, 
-  Phone, 
-  MapPin, 
   Camera, 
   Save, 
   Edit, 
@@ -14,21 +11,15 @@ import {
   Globe,
   Calendar,
   Award,
-  CheckCircle,
-  AlertCircle,
-  Clock,
   Activity,
   BarChart3,
   Settings,
   LogOut,
-  Eye,
-  EyeOff,
   Lock,
-  Unlock,
   Users
 } from 'lucide-react';
 
-interface AdminProfile {
+interface AdminProfileData {
   id: string;
   firstName: string;
   lastName: string;
@@ -63,8 +54,7 @@ interface AdminProfile {
 const AdminProfile: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [showSecurityModal, setShowSecurityModal] = useState(false);
-  const [profile, setProfile] = useState<AdminProfile>({
+  const [profile, setProfile] = useState<AdminProfileData>({
     id: 'admin-001',
     firstName: 'Faya Maurice',
     lastName: 'MILLIMOUNO',
@@ -96,7 +86,7 @@ const AdminProfile: React.FC = () => {
     }
   });
 
-  const [editForm, setEditForm] = useState<Partial<AdminProfile>>({});
+  const [editForm, setEditForm] = useState<Partial<AdminProfileData>>({});
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -117,7 +107,7 @@ const AdminProfile: React.FC = () => {
     setEditForm({});
   };
 
-  const handleInputChange = (field: keyof AdminProfile, value: string | boolean) => {
+  const handleInputChange = (field: keyof AdminProfileData, value: string | boolean) => {
     setEditForm(prev => ({ ...prev, [field]: value }));
   };
 

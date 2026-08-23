@@ -91,16 +91,16 @@ const Footer: React.FC = () => {
             <div className="pt-2">
               <h5 className="font-heading font-semibold text-gold mb-3">Suivez-nous</h5>
               <div className="flex space-x-3">
-                <a href="#" className="w-12 h-12 bg-gradient-to-br from-blue-deep to-blue-dark rounded-2xl flex items-center justify-center hover:from-gold hover:to-yellow-500 hover:scale-110 transition-all duration-300 shadow-lg group">
+                <a href="https://www.facebook.com/HospitalityAwardsGuinee" target="_blank" rel="noreferrer" aria-label="Facebook" className="w-12 h-12 bg-gradient-to-br from-blue-deep to-blue-dark rounded-2xl flex items-center justify-center hover:from-gold hover:to-yellow-500 hover:scale-110 transition-all duration-300 shadow-lg group">
                   <Facebook className="w-6 h-6 text-white group-hover:text-blue-dark" />
                 </a>
-                <a href="#" className="w-12 h-12 bg-gradient-to-br from-blue-deep to-blue-dark rounded-2xl flex items-center justify-center hover:from-gold hover:to-yellow-500 hover:scale-110 transition-all duration-300 shadow-lg group">
+                <a href="https://www.instagram.com/HospitalityAwardsGuinee" target="_blank" rel="noreferrer" aria-label="Instagram" className="w-12 h-12 bg-gradient-to-br from-blue-deep to-blue-dark rounded-2xl flex items-center justify-center hover:from-gold hover:to-yellow-500 hover:scale-110 transition-all duration-300 shadow-lg group">
                   <Instagram className="w-6 h-6 text-white group-hover:text-blue-dark" />
                 </a>
-                <a href="#" className="w-12 h-12 bg-gradient-to-br from-blue-deep to-blue-dark rounded-2xl flex items-center justify-center hover:from-gold hover:to-yellow-500 hover:scale-110 transition-all duration-300 shadow-lg group">
+                <a href="https://www.linkedin.com/search/results/all/?keywords=Hospitality%20Awards%20Guinee" target="_blank" rel="noreferrer" aria-label="LinkedIn" className="w-12 h-12 bg-gradient-to-br from-blue-deep to-blue-dark rounded-2xl flex items-center justify-center hover:from-gold hover:to-yellow-500 hover:scale-110 transition-all duration-300 shadow-lg group">
                   <Linkedin className="w-6 h-6 text-white group-hover:text-blue-dark" />
                 </a>
-                <a href="#" className="w-12 h-12 bg-gradient-to-br from-blue-deep to-blue-dark rounded-2xl flex items-center justify-center hover:from-gold hover:to-yellow-500 hover:scale-110 transition-all duration-300 shadow-lg group">
+                <a href="https://x.com/HospitalityAwardsGuinee" target="_blank" rel="noreferrer" aria-label="X" className="w-12 h-12 bg-gradient-to-br from-blue-deep to-blue-dark rounded-2xl flex items-center justify-center hover:from-gold hover:to-yellow-500 hover:scale-110 transition-all duration-300 shadow-lg group">
                   <Twitter className="w-6 h-6 text-white group-hover:text-blue-dark" />
                 </a>
               </div>

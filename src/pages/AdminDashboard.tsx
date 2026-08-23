@@ -78,7 +78,7 @@ const AdminDashboard: React.FC = () => {
       totalCategories: 8,
       averageRating: realAverageRating || 0
     });
-  }, [applications]);
+  }, []);
 
   // Initialisation des données
   useEffect(() => {
@@ -118,7 +118,7 @@ const AdminDashboard: React.FC = () => {
     // }, 300000); // 5 minutes au lieu de 30 secondes
 
     // return () => clearInterval(interval);
-  }, []);
+  }, [updateStats]);
 
   // Charger les vraies données de vote
   const loadRealVoteData = () => {
