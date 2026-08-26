@@ -69,7 +69,7 @@ const AdminAuth: React.FC<AdminAuthProps> = ({ children }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       {/* Barre de navigation admin avec bouton de déconnexion */}
       <div className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6">

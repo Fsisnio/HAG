@@ -426,4 +426,19 @@ p {
     padding: var(--spacing-sm) var(--spacing-lg);
     font-size: 1rem;
   }
+}
+
+/* Admin: public heading styles must not stretch the layout off-screen */
+.hag-admin-page h1,
+.hag-admin-page h2,
+.hag-admin-page h3,
+.hag-admin-page h4 {
+  text-transform: none;
+  letter-spacing: normal;
+  margin-bottom: 0;
+}
+
+.hag-admin-page p {
+  margin-bottom: 0;
+  font-size: inherit;
 } 

@@ -397,8 +397,8 @@ const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-56px)] bg-gray-50 p-4 lg:p-6">
-      <div className="max-w-[1400px] mx-auto">
+    <div className="hag-admin-page min-h-[calc(100vh-56px)] bg-gray-50 p-4 lg:p-6 overflow-x-hidden">
+      <div className="max-w-[1400px] mx-auto min-w-0">
         {loadError && (
           <div className="mb-4 p-4 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-sm">
             {loadError}
@@ -435,7 +435,7 @@ const AdminDashboard: React.FC = () => {
                 Candidatures, nominés et votes payés · mis à jour {lastUpdate.toLocaleTimeString('fr-FR')}
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 shrink-0">
               <button
                 onClick={refreshData}
                 disabled={isLoading}
@@ -486,7 +486,7 @@ const AdminDashboard: React.FC = () => {
             </div>
           </div>
             
-        <div className="flex flex-col lg:flex-row gap-6">
+        <div className="flex flex-col lg:flex-row gap-6 min-w-0">
           <div className="lg:w-56 flex-shrink-0">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 lg:sticky lg:top-20">
               <nav className="flex lg:flex-col gap-1 overflow-x-auto">
@@ -523,7 +523,7 @@ const AdminDashboard: React.FC = () => {
               </div>
               
           {/* Contenu principal */}
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             {/* Vue d'ensemble */}
             {activeTab === 'overview' && (
               <div className="space-y-6">
@@ -628,13 +628,13 @@ const AdminDashboard: React.FC = () => {
             {/* Catégories */}
             {activeTab === 'categories' && (
               <div className="space-y-6">
-                <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <h2 className="text-2xl font-bold text-blue-dark">Gestion des Catégories</h2>
+                <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
+                    <div className="min-w-0">
+                      <h2 className="text-xl font-bold text-blue-dark">Gestion des Catégories</h2>
                       <p className="text-gray-600">19 prix en 9 catégories officielles HAG 2026</p>
                     </div>
-                    <div className="flex space-x-2">
+                    <div className="flex flex-wrap gap-2 shrink-0">
                       <button
                         onClick={() => exportData('categories', 'csv')}
                         className="bg-gray-600 text-white px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center space-x-2"
@@ -662,8 +662,8 @@ const AdminDashboard: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="mb-6 flex gap-4">
-                    <div className="flex-1">
+                  <div className="mb-6 flex flex-col sm:flex-row gap-3">
+                    <div className="flex-1 min-w-0">
                       <input
                         type="text"
                         placeholder="Rechercher une catégorie..."
@@ -687,8 +687,8 @@ const AdminDashboard: React.FC = () => {
                   {filteredCategories.length === 0 ? (
                     <p className="text-center text-gray-500 py-8">Aucune catégorie trouvée</p>
                   ) : (
-                    <div className="overflow-x-auto">
-                      <table className="w-full">
+                    <div className="overflow-x-auto -mx-4 sm:-mx-6">
+                      <table className="w-full min-w-[720px]">
                         <thead className="bg-gray-50">
                           <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
@@ -727,13 +727,13 @@ const AdminDashboard: React.FC = () => {
             {/* Candidats */}
             {activeTab === 'candidates' && (
               <div className="space-y-6">
-                <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <h2 className="text-2xl font-bold text-blue-dark">Candidatures reçues</h2>
+                <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
+                    <div className="min-w-0">
+                      <h2 className="text-xl font-bold text-blue-dark">Candidatures reçues</h2>
                       <p className="text-gray-600">{visibleApplications.length} affichée(s) · {applications.length} au total</p>
                     </div>
-                    <div className="flex space-x-2">
+                    <div className="flex flex-wrap gap-2 shrink-0">
                       <button
                         onClick={() => exportData('candidates', 'csv')}
                         className="bg-gray-600 text-white px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center space-x-2"
@@ -792,79 +792,80 @@ const AdminDashboard: React.FC = () => {
                       </p>
                     </div>
                   ) : (
-                    <div className="overflow-x-auto">
-                      <table className="w-full">
+                    <div className="overflow-x-auto -mx-4 sm:-mx-6">
+                      <table className="w-full min-w-[920px]">
                         <thead className="bg-gray-50">
                           <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Organisation</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Catégorie</th>
-                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Résumé</th>
-                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                           </tr>
-                         </thead>
-                         <tbody className="bg-white divide-y divide-gray-200">
-                           {visibleApplications.map((app) => (
-                             <tr key={app.id} className="hover:bg-gray-50">
-                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                 {new Date(app.submittedAt).toLocaleString('fr-FR')}
-                               </td>
-                               <td className="px-6 py-4">
-                                 <div className="text-sm font-medium text-gray-900">{app.organizationName}</div>
-                                 <div className="text-xs text-gray-500">{app.website || '—'}</div>
-                               </td>
-                               <td className="px-6 py-4">
-                                 <div className="text-sm text-gray-900">{app.contactPerson}</div>
-                                 <div className="text-xs text-gray-500">{app.email} • {app.phone}</div>
-                               </td>
-                               <td className="px-6 py-4 text-sm text-gray-900">
-                                 <div>{app.category}</div>
-                                 {app.prize && <div className="text-xs text-gray-500">{app.prize}</div>}
-                               </td>
-                               <td className="px-6 py-4 text-sm text-gray-700 max-w-md truncate">
-                                 {app.description}
-                               </td>
-                               <td className="px-6 py-4">
-                                 <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                                   app.status === 'approved' ? 'bg-green-100 text-green-800' :
-                                   app.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                                   'bg-yellow-100 text-yellow-800'
-                                 }`}>
-                                   {app.status === 'approved' ? 'Approuvé' :
-                                    app.status === 'rejected' ? 'Rejeté' : 'En attente'}
-                                 </span>
-                               </td>
-                               <td className="px-6 py-4">
-                                 {app.status === 'pending' ? (
-                                   <div className="flex space-x-2">
-                                     <button
-                                       onClick={() => updateApplicationStatus(app.id, 'approved')}
-                                       disabled={updatingId === app.id}
-                                       className="text-green-600 hover:text-green-800 p-1 disabled:opacity-50"
-                                       title="Approuver"
-                                     >
-                                       <CheckCircle className="w-4 h-4" />
-                                     </button>
-                                     <button
-                                       onClick={() => updateApplicationStatus(app.id, 'rejected')}
-                                       disabled={updatingId === app.id}
-                                       className="text-red-600 hover:text-red-800 p-1 disabled:opacity-50"
-                                       title="Rejeter"
-                                     >
-                                       <XCircle className="w-4 h-4" />
-                                     </button>
-                                   </div>
-                                 ) : (
-                                   <span className="text-xs text-gray-500">
-                                     {app.status === 'approved' ? '✓ Approuvé' : '✗ Rejeté'}
-                                   </span>
-                                 )}
-                               </td>
-                             </tr>
-                           ))}
-                         </tbody>
+                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Organisation</th>
+                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Catégorie</th>
+                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Résumé</th>
+                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                            <th className="sticky right-0 bg-gray-50 px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider shadow-[-8px_0_8px_-8px_rgba(0,0,0,0.12)]">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {visibleApplications.map((app) => (
+                            <tr key={app.id} className="hover:bg-gray-50">
+                              <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-600">
+                                {new Date(app.submittedAt).toLocaleDateString('fr-FR')}
+                              </td>
+                              <td className="px-3 py-3 max-w-[10rem]">
+                                <div className="text-sm font-medium text-gray-900 truncate" title={app.organizationName}>{app.organizationName}</div>
+                                <div className="text-xs text-gray-500 truncate">{app.website || '—'}</div>
+                              </td>
+                              <td className="px-3 py-3 max-w-[12rem]">
+                                <div className="text-sm text-gray-900 truncate">{app.contactPerson}</div>
+                                <div className="text-xs text-gray-500 truncate">{app.email}</div>
+                                <div className="text-xs text-gray-500">{app.phone}</div>
+                              </td>
+                              <td className="px-3 py-3 text-sm text-gray-900 max-w-[11rem]">
+                                <div className="truncate">{app.category}</div>
+                                {app.prize && <div className="text-xs text-gray-500 line-clamp-2">{app.prize}</div>}
+                              </td>
+                              <td className="px-3 py-3 text-sm text-gray-700 max-w-[14rem]">
+                                <span className="line-clamp-2" title={app.description}>{app.description}</span>
+                              </td>
+                              <td className="px-3 py-3 whitespace-nowrap">
+                                <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                                  app.status === 'approved' ? 'bg-green-100 text-green-800' :
+                                  app.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                                  'bg-yellow-100 text-yellow-800'
+                                }`}>
+                                  {app.status === 'approved' ? 'Approuvé' :
+                                   app.status === 'rejected' ? 'Rejeté' : 'En attente'}
+                                </span>
+                              </td>
+                              <td className="sticky right-0 bg-white px-3 py-3 shadow-[-8px_0_8px_-8px_rgba(0,0,0,0.12)]">
+                                {app.status === 'pending' ? (
+                                  <div className="flex space-x-1">
+                                    <button
+                                      onClick={() => updateApplicationStatus(app.id, 'approved')}
+                                      disabled={updatingId === app.id}
+                                      className="text-green-600 hover:text-green-800 p-1 disabled:opacity-50"
+                                      title="Approuver"
+                                    >
+                                      <CheckCircle className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                      onClick={() => updateApplicationStatus(app.id, 'rejected')}
+                                      disabled={updatingId === app.id}
+                                      className="text-red-600 hover:text-red-800 p-1 disabled:opacity-50"
+                                      title="Rejeter"
+                                    >
+                                      <XCircle className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <span className="text-xs text-gray-500">
+                                    {app.status === 'approved' ? '✓ Approuvé' : '✗ Rejeté'}
+                                  </span>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
                       </table>
                     </div>
                   )}
@@ -875,13 +876,13 @@ const AdminDashboard: React.FC = () => {
             {/* Candidats Officiels */}
             {activeTab === 'official-candidates' && (
               <div className="space-y-6">
-                <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <h2 className="text-2xl font-bold text-blue-dark">Candidats Officiels</h2>
+                <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
+                    <div className="min-w-0">
+                      <h2 className="text-xl font-bold text-blue-dark">Candidats Officiels</h2>
                       <p className="text-gray-600">{getAllOfficialCandidates().length} candidat(s) officiel(s) • {getCategoriesWithCandidates().length} catégorie(s)</p>
                     </div>
-                    <div className="flex space-x-2">
+                    <div className="flex flex-wrap gap-2 shrink-0">
                       <button
                         onClick={() => exportData('official-candidates', 'csv')}
                         className="bg-gray-600 text-white px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center space-x-2"
@@ -1004,13 +1005,13 @@ const AdminDashboard: React.FC = () => {
             {/* Votes */}
             {activeTab === 'votes' && (
               <div className="space-y-6">
-                  <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
-                                     <div className="flex items-center justify-between mb-6">
-                     <div>
-                       <h2 className="text-2xl font-bold text-blue-dark">Gestion des Votes</h2>
+                  <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                  <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-4 mb-6">
+                     <div className="min-w-0">
+                       <h2 className="text-xl font-bold text-blue-dark">Gestion des Votes</h2>
                        <p className="text-gray-600">{filteredVotes.length} vote(s) payé(s) • {approvedCandidates.length} candidature(s) approuvée(s)</p>
                      </div>
-                    <div className="flex gap-3">
+                    <div className="flex flex-wrap gap-2 shrink-0">
                       <button
                         onClick={refreshData}
                         disabled={isLoading}
@@ -1048,8 +1049,8 @@ const AdminDashboard: React.FC = () => {
                     </div>
                   </div>
 
-                                     <div className="mb-6 flex gap-4">
-                     <div className="flex-1">
+                                     <div className="mb-6 flex flex-col sm:flex-row gap-3">
+                     <div className="flex-1 min-w-0">
                        <input
                          type="text"
                          placeholder="Rechercher un candidat ou une catégorie..."
@@ -1099,8 +1100,8 @@ const AdminDashboard: React.FC = () => {
                   {filteredVotes.length === 0 ? (
                     <p className="text-center text-gray-500 py-8">Aucun vote payé pour l’instant</p>
                   ) : (
-                    <div className="overflow-x-auto">
-                      <table className="w-full">
+                    <div className="overflow-x-auto -mx-4 sm:-mx-6">
+                      <table className="w-full min-w-[800px]">
                         <thead className="bg-gray-50">
                           <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
