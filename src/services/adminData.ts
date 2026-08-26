@@ -3,7 +3,7 @@ import { supabase, isSupabaseConfigured } from '../lib/supabase';
 export class AdminRpcMissingError extends Error {
   constructor() {
     super(
-      'Les fonctions admin Supabase ne sont pas encore créées. Exécutez le fichier supabase/hag_admin_rpcs.sql dans le SQL Editor (additif, aucune table n’est supprimée).'
+      'Le tableau de bord ne peut pas encore lire les candidatures. Dans Supabase → SQL Editor, exécutez le fichier hag_admin_rpcs.sql (aucune table n’est supprimée).'
     );
     this.name = 'AdminRpcMissingError';
   }
@@ -43,11 +43,15 @@ export interface VoteTotal {
   votes: number;
 }
 
-const isMissingRpc = (message?: string, code?: string) => {
-  const text = (message || '').toLowerCase();
+const rpcErrorText = (error?: { message?: string; details?: string; hint?: string; code?: string }) =>
+  [error?.message, error?.details, error?.hint, error?.code].filter(Boolean).join(' ');
+
+const isMissingRpc = (error?: { message?: string; details?: string; hint?: string; code?: string }) => {
+  const text = rpcErrorText(error).toLowerCase();
+  const code = error?.code || '';
   if (code === 'PGRST202' || code === 'PGRST125' || code === '42883') return true;
   if (text.includes('could not find the function')) return true;
-  if (text.includes('invalid path specified')) return true;
+  if (text.includes('invalid path')) return true;
   if (text.includes('function') && text.includes('does not exist')) return true;
   return false;
 };
@@ -79,7 +83,7 @@ export const fetchAdminApplications = async (): Promise<AdminApplication[]> => {
     return ((rpc.data as Record<string, any>[]) || []).map(mapApplication);
   }
 
-  if (isMissingRpc(rpc.error.message, rpc.error.code)) {
+  if (isMissingRpc(rpc.error)) {
     const fallback = await supabase
       .from('hag_applications')
       .select('*')
@@ -88,11 +92,9 @@ export const fetchAdminApplications = async (): Promise<AdminApplication[]> => {
     if (!fallback.error && fallback.data && fallback.data.length > 0) {
       return fallback.data.map(mapApplication);
     }
-
-    throw new AdminRpcMissingError();
   }
 
-  throw new Error(rpc.error.message);
+  throw new AdminRpcMissingError();
 };
 
 export const setApplicationStatus = async (
@@ -109,10 +111,10 @@ export const setApplicationStatus = async (
   });
 
   if (error) {
-    if (isMissingRpc(error.message, error.code)) {
+    if (isMissingRpc(error)) {
       throw new AdminRpcMissingError();
     }
-    throw new Error(error.message);
+    throw new Error('Impossible de mettre à jour la candidature.');
   }
 
   const row = Array.isArray(data) ? data[0] : data;
@@ -139,10 +141,7 @@ export const fetchAdminPaidVotes = async (): Promise<AdminPaidVote[]> => {
   if (!isSupabaseConfigured || !supabase) return [];
 
   const { data, error } = await supabase.rpc('hag_admin_list_paid_votes');
-  if (error) {
-    if (isMissingRpc(error.message, error.code)) return [];
-    return [];
-  }
+  if (error || !data) return [];
 
   return ((data as Record<string, any>[]) || []).map((row) => ({
     id: row.id,
