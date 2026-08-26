@@ -5,7 +5,6 @@ import {
   Users, 
   Vote, 
   BarChart3, 
-  TrendingUp, 
   CheckCircle,
   XCircle,
   Star,
@@ -13,9 +12,11 @@ import {
   RefreshCw,
   FileText,
   FileSpreadsheet,
-  RotateCcw
+  RotateCcw,
+  Clock,
+  Inbox
 } from 'lucide-react';
-import { officialCategories } from '../data/categories';
+import { officialCategories, categoryGroups } from '../data/categories';
 import { getAllOfficialCandidates, getCandidatesByCategory, getCategoriesWithCandidates } from '../data/officialCandidates';
 import VoteResetModal from '../components/VoteResetModal';
 import { ResetResult } from '../services/voteResetService';
@@ -49,39 +50,38 @@ const buildAnalytics = (
   const votesByCandidate = new Map(totals.map((row) => [row.candidate_id, row.votes]));
   const official = getAllOfficialCandidates();
 
-  const categoryStats = officialCategories.map((cat) => {
-    const categoryApps = apps.filter((app) => app.prize === cat.title || app.category === cat.title);
-    const categoryVotes = paidVotes.filter((vote) => vote.category === cat.title).length;
+  const groupStats = categoryGroups.map((group) => {
+    const prizes = officialCategories.filter((cat) => cat.group === group);
+    const titles = prizes.map((prize) => prize.title);
     return {
-      name: cat.title,
-      candidates: categoryApps.length,
-      votes: categoryVotes,
-      averageRating: 0
+      name: group,
+      prizes: prizes.length,
+      candidates: apps.filter((app) => app.category === group || titles.includes(app.prize || '')).length,
+      votes: paidVotes.filter((vote) => titles.includes(vote.category) || vote.category === group).length
     };
   });
 
   const topPerformers = official
     .map((candidate) => ({
       name: candidate.name,
-      votes: votesByCandidate.get(candidate.id) || 0,
-      rating: 0
+      category: candidate.category,
+      votes: votesByCandidate.get(candidate.id) || 0
     }))
     .filter((candidate) => candidate.votes > 0)
     .sort((a, b) => b.votes - a.votes)
-    .slice(0, 5);
+    .slice(0, 8);
 
-  const monthlyData = Array.from({ length: 12 }, (_, month) => {
+  const monthlyData = [7, 8, 9, 10, 11].map((month) => {
     const monthApps = apps.filter((app) => new Date(app.submittedAt).getMonth() === month);
     const monthVotes = paidVotes.filter((vote) => new Date(vote.submittedAt).getMonth() === month);
     return {
-      month: new Date(2026, month, 1).toLocaleDateString('fr-FR', { month: 'short' }),
+      month: new Date(2026, month, 1).toLocaleDateString('fr-FR', { month: 'long' }),
       candidates: monthApps.length,
-      votes: monthVotes.length,
-      rating: 0
+      votes: monthVotes.length
     };
   });
 
-  return { monthlyData, categoryStats, topPerformers };
+  return { monthlyData, categoryStats: groupStats, topPerformers };
 };
 
 const AdminDashboard: React.FC = () => {
@@ -100,10 +100,13 @@ const AdminDashboard: React.FC = () => {
   const [loadError, setLoadError] = useState('');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
+  const [applicationFilter, setApplicationFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
+
   const [stats, setStats] = useState({
     totalCandidates: 0,
     totalVotes: 0,
-    totalCategories: 9,
+    totalCategories: categoryGroups.length,
+    officialNominees: getAllOfficialCandidates().length,
     pendingApplications: 0,
     approvedApplications: 0
   });
@@ -139,7 +142,8 @@ const AdminDashboard: React.FC = () => {
       setStats({
         totalCandidates: apps.length,
         totalVotes,
-        totalCategories: officialCategories.length,
+        totalCategories: categoryGroups.length,
+        officialNominees: getAllOfficialCandidates().length,
         pendingApplications: pending,
         approvedApplications: approved.length
       });
@@ -190,6 +194,10 @@ const AdminDashboard: React.FC = () => {
     return matchesSearch && matchesCategory;
   });
 
+  const visibleApplications = applications.filter((app) =>
+    applicationFilter === 'all' ? true : app.status === applicationFilter
+  );
+
   // Filtrer les catégories
   const filteredCategories = officialCategories.filter(cat => {
     if (selectedCategory !== 'all' && selectedCategory !== cat.title) return false;
@@ -230,7 +238,7 @@ const AdminDashboard: React.FC = () => {
           { metric: 'Candidatures en attente', value: stats.pendingApplications },
           { metric: 'Candidatures approuvées', value: stats.approvedApplications },
           { metric: 'Votes payés', value: stats.totalVotes },
-          { metric: 'Catégories', value: stats.totalCategories }
+          { metric: 'Nominés officiels', value: stats.officialNominees },
         ];
         filename = 'overview_export';
         break;
@@ -369,18 +377,9 @@ const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-                {/* En-tête */}
-        <div className="mb-8">
-          {loadError && (
-            <div className="mb-4 p-4 rounded-lg bg-red-50 border border-red-200 text-red-800">
-              <p className="font-medium">{loadError}</p>
-            </div>
-          )}
-
-          {/* Message de réinitialisation */}
-          {resetMessage && (
+    <div className="min-h-[calc(100vh-56px)] bg-gray-50 p-4 lg:p-6">
+      <div className="max-w-[1400px] mx-auto">
+        {resetMessage && (
             <div className={`mb-4 p-4 rounded-lg ${
               resetMessageType === 'success' 
                 ? 'bg-green-50 border border-green-200 text-green-800' 
@@ -397,16 +396,20 @@ const AdminDashboard: React.FC = () => {
             </div>
           )}
 
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-blue-dark mb-2">Tableau de Bord Administratif</h1>
-              <p className="text-gray-600">Gestion des Hospitality Awards Guinée</p>
+          {loadError && (
+            <div className="mb-4 p-4 rounded-lg bg-amber-50 border border-amber-200 text-amber-900">
+              <p className="font-medium">{loadError}</p>
             </div>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2 bg-green-50 px-3 py-2 rounded-lg border border-green-200">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-sm text-green-700 font-medium">Système actif</span>
-              </div>
+          )}
+
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+            <div>
+              <h1 className="text-2xl lg:text-3xl font-bold text-blue-dark">Tableau de bord</h1>
+              <p className="text-gray-600 text-sm mt-1">
+                Candidatures, nominés et votes payés · mis à jour {lastUpdate.toLocaleTimeString('fr-FR')}
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={refreshData}
                 disabled={isLoading}
@@ -415,64 +418,53 @@ const AdminDashboard: React.FC = () => {
                 <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
                 <span>Actualiser</span>
               </button>
-              <div className="text-right">
-                <p className="text-xs text-gray-500">Dernière mise à jour</p>
-                <p className="text-sm font-medium text-gray-700">{lastUpdate.toLocaleTimeString('fr-FR')}</p>
-              </div>
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => setShowResetModal(true)}
-                  className="bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center space-x-2"
-                  title="Réinitialiser tous les votes"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                  <span>Reset Votes</span>
-                </button>
-                <button
-                  onClick={() => exportData('overview', 'excel')}
-                  className="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2"
-                  title="Exporter la vue d'ensemble en Excel"
-                >
-                  <FileSpreadsheet className="w-4 h-4" />
-                  <span>Excel</span>
-                </button>
-                <button
-                  onClick={() => exportData('overview', 'pdf')}
-                  className="bg-orange-600 text-white px-3 py-2 rounded-lg hover:bg-orange-700 transition-colors flex items-center space-x-2"
-                  title="Exporter la vue d'ensemble en PDF"
-                >
-                  <FileText className="w-4 h-4" />
-                  <span>PDF</span>
-                </button>
-              </div>
+              <button
+                onClick={() => exportData('candidates', 'csv')}
+                className="bg-white border border-gray-200 text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-50 flex items-center space-x-2"
+              >
+                <Download className="w-4 h-4" />
+                <span>Export</span>
+              </button>
+              <button
+                onClick={() => setShowResetModal(true)}
+                className="bg-white border border-red-200 text-red-700 px-3 py-2 rounded-lg hover:bg-red-50 flex items-center space-x-2"
+              >
+                <RotateCcw className="w-4 h-4" />
+                <span>Reset votes</span>
+              </button>
             </div>
           </div>
-        </div>
             
-        <div className="flex gap-6">
-          {/* Sidebar */}
-          <div className="w-64 flex-shrink-0">
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-4">
-              <nav className="space-y-2">
+        <div className="flex flex-col lg:flex-row gap-6">
+          <div className="lg:w-56 flex-shrink-0">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 lg:sticky lg:top-20">
+              <nav className="flex lg:flex-col gap-1 overflow-x-auto">
                 {[
-                  { id: 'overview', label: 'Vue d\'ensemble', icon: Home },
-                  { id: 'categories', label: 'Catégories', icon: Tag },
-                  { id: 'candidates', label: 'Candidats', icon: Users },
-                  { id: 'official-candidates', label: 'Candidats Officiels', icon: Star },
-                  { id: 'votes', label: 'Votes', icon: Vote },
-                  { id: 'analytics', label: 'Analytics', icon: BarChart3 }
-                ].map(({ id, label, icon: Icon }) => (
+                  { id: 'overview', label: 'Vue d\'ensemble', icon: Home, count: null as number | null },
+                  { id: 'categories', label: 'Catégories', icon: Tag, count: stats.totalCategories },
+                  { id: 'candidates', label: 'Candidatures', icon: Users, count: stats.totalCandidates },
+                  { id: 'official-candidates', label: 'Nominés', icon: Star, count: stats.officialNominees },
+                  { id: 'votes', label: 'Votes', icon: Vote, count: stats.totalVotes },
+                  { id: 'analytics', label: 'Analytics', icon: BarChart3, count: null }
+                ].map(({ id, label, icon: Icon, count }) => (
                   <button
                     key={id}
                     onClick={() => setActiveTab(id)}
-                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-colors ${
+                    className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-left transition-colors whitespace-nowrap ${
                       activeTab === id
                         ? 'bg-blue-600 text-white'
                         : 'text-gray-700 hover:bg-gray-100'
                     }`}
                   >
-                    <Icon className="w-5 h-5" />
-                    <span className="font-medium">{label}</span>
+                    <Icon className="w-4 h-4 flex-shrink-0" />
+                    <span className="font-medium text-sm flex-1">{label}</span>
+                    {count !== null && (
+                      <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                        activeTab === id ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-600'
+                      }`}>
+                        {count}
+                      </span>
+                    )}
                   </button>
                 ))}
               </nav>
@@ -484,172 +476,104 @@ const AdminDashboard: React.FC = () => {
             {/* Vue d'ensemble */}
             {activeTab === 'overview' && (
               <div className="space-y-6">
-                                {/* Statistiques */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">Candidatures reçues</p>
-                        <p className="text-3xl font-bold text-blue-dark">{stats.totalCandidates}</p>
-                        <p className="text-xs text-gray-500 flex items-center mt-1">
-                          Données Supabase
-                        </p>
-                      </div>
-                      <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center animate-bounce">
-                        <Users className="w-6 h-6 text-blue-600" />
-                      </div>
-                    </div>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                    <p className="text-sm font-medium text-gray-600">Candidatures</p>
+                    <p className="text-3xl font-bold text-blue-dark mt-1">{stats.totalCandidates}</p>
+                    <p className="text-xs text-gray-500 mt-1">Formulaires reçus</p>
                   </div>
-
-                  <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">Votes payés</p>
-                        <p className="text-3xl font-bold text-green-600">{stats.totalVotes}</p>
-                        <p className="text-xs text-gray-500 flex items-center mt-1">
-                          Statut FedaPay approved
-                        </p>
-                      </div>
-                      <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center animate-pulse">
-                        <Vote className="w-6 h-6 text-green-600" />
-                      </div>
-                    </div>
+                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                    <p className="text-sm font-medium text-gray-600">En attente</p>
+                    <p className="text-3xl font-bold text-orange-600 mt-1">{stats.pendingApplications}</p>
+                    <p className="text-xs text-gray-500 mt-1">{stats.approvedApplications} approuvée(s)</p>
                   </div>
-
-                  <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">Catégories principales</p>
-                        <p className="text-3xl font-bold text-purple-600">{stats.totalCategories}</p>
-                        <p className="text-xs text-purple-600 flex items-center mt-1">
-                          <Tag className="w-3 h-3 mr-1" />
-                          Toutes actives
-                        </p>
-                      </div>
-                      <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                        <Tag className="w-6 h-6 text-purple-600" />
-                      </div>
-                    </div>
+                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                    <p className="text-sm font-medium text-gray-600">Votes payés</p>
+                    <p className="text-3xl font-bold text-green-600 mt-1">{stats.totalVotes}</p>
+                    <p className="text-xs text-gray-500 mt-1">Après paiement FedaPay</p>
                   </div>
-
-                  <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">En attente</p>
-                        <p className="text-3xl font-bold text-orange-600">{stats.pendingApplications}</p>
-                        <p className="text-xs text-orange-600 flex items-center mt-1">
-                          <Star className="w-3 h-3 mr-1" />
-                          {stats.approvedApplications} approuvée(s)
-                        </p>
-                      </div>
-                      <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center animate-spin">
-                        <Star className="w-6 h-6 text-orange-600" />
-                      </div>
-                    </div>
-                  </div>
-                                </div>
-
-                {/* Métriques en temps réel */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-2xl shadow-lg">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-blue-100">Candidatures en attente</p>
-                        <p className="text-2xl font-bold">{stats.pendingApplications}</p>
-                      </div>
-                      <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
-                        <Users className="w-6 h-6" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-gradient-to-r from-green-500 to-green-600 text-white p-6 rounded-2xl shadow-lg">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-green-100">Candidatures approuvées</p>
-                        <p className="text-2xl font-bold">{stats.approvedApplications}</p>
-                      </div>
-                      <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
-                        <Vote className="w-6 h-6" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-6 rounded-2xl shadow-lg">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-purple-100">Votes payés</p>
-                        <p className="text-2xl font-bold">{stats.totalVotes}</p>
-                      </div>
-                      <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
-                        <TrendingUp className="w-6 h-6" />
-                      </div>
-                    </div>
+                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                    <p className="text-sm font-medium text-gray-600">Nominés officiels</p>
+                    <p className="text-3xl font-bold text-purple-600 mt-1">{stats.officialNominees}</p>
+                    <p className="text-xs text-gray-500 mt-1">{stats.totalCategories} catégories</p>
                   </div>
                 </div>
 
-                {/* Activités récentes */}
-                <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-xl font-bold text-blue-dark">Activités Récentes</h2>
-                    <div className="flex items-center space-x-4">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        <span className="text-xs text-green-600 font-medium">En temps réel</span>
-                      </div>
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => exportData('overview', 'excel')}
-                          className="bg-green-600 text-white px-3 py-1 rounded-lg hover:bg-green-700 transition-colors text-sm flex items-center space-x-1"
-                          title="Exporter en Excel"
-                        >
-                          <FileSpreadsheet className="w-3 h-3" />
-                          <span>Excel</span>
-                        </button>
-                        <button
-                          onClick={() => exportData('overview', 'pdf')}
-                          className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition-colors text-sm flex items-center space-x-1"
-                          title="Exporter en PDF"
-                        >
-                          <FileText className="w-3 h-3" />
-                          <span>PDF</span>
-                        </button>
-                      </div>
-                    </div>
+                    <h2 className="text-lg font-bold text-blue-dark">Activité récente</h2>
+                    <button onClick={() => setActiveTab('candidates')} className="text-sm text-blue-600 hover:underline">
+                      Voir les candidatures
+                    </button>
                   </div>
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {recentActivities.length === 0 ? (
-                      <p className="text-sm text-gray-500 text-center py-4">Aucune activité récente pour l’instant</p>
-                    ) : recentActivities.map((activity, index) => (
+                      <div className="text-center py-10">
+                        <Inbox className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+                        <p className="text-sm text-gray-600 font-medium">Pas encore d’activité</p>
+                        <p className="text-xs text-gray-500 mt-1">Les inscriptions et votes payés apparaîtront ici.</p>
+                      </div>
+                    ) : recentActivities.map((activity) => (
                       <div 
                         key={activity.id} 
-                        className={`flex items-center space-x-3 p-3 bg-gray-50 rounded-lg transition-all duration-300 hover:bg-blue-50 hover:scale-105 ${
-                          index === 0 ? 'border-l-4 border-blue-500 bg-blue-50' : ''
-                        }`}
-                        style={{ animationDelay: `${index * 100}ms` }}
+                        className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg"
                       >
-                        <div className={`w-2 h-2 rounded-full ${
+                        <div className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${
                           activity.type === 'candidate' ? 'bg-blue-500' :
                           activity.type === 'vote' ? 'bg-green-500' :
                           activity.type === 'approval' ? 'bg-purple-500' :
-                          activity.type === 'comment' ? 'bg-orange-500' :
-                          'bg-gray-500'
-                        } animate-pulse`}></div>
-                        <span className="text-sm text-gray-700">{activity.action}</span>
-                        <span className="text-xs text-gray-500 ml-auto">{activity.time}</span>
+                          'bg-gray-400'
+                        }`}></div>
+                        <span className="text-sm text-gray-700 flex-1">{activity.action}</span>
+                        <span className="text-xs text-gray-500 whitespace-nowrap">{activity.time}</span>
                       </div>
                     ))}
                   </div>
-                  <div className="mt-4 pt-4 border-t border-gray-200">
-                    <div className="text-center">
-                      <p className="text-xs text-gray-500 mb-2">Données chargées depuis Supabase</p>
-                      <div className="w-3 h-3 bg-green-500 rounded-full mx-auto animate-pulse"></div>
-                    </div>
+                </div>
+
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-lg font-bold text-blue-dark">Candidatures à traiter</h2>
+                    <span className="text-xs text-orange-700 bg-orange-50 px-2 py-1 rounded-full inline-flex items-center space-x-1">
+                      <Clock className="w-3 h-3" />
+                      <span>{stats.pendingApplications} en attente</span>
+                    </span>
                   </div>
+                  {applications.filter((app) => app.status === 'pending').length === 0 ? (
+                    <p className="text-sm text-gray-500 py-8 text-center">Aucune candidature en attente.</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {applications.filter((app) => app.status === 'pending').slice(0, 5).map((app) => (
+                        <div key={app.id} className="flex items-center justify-between gap-3 p-3 border border-gray-100 rounded-xl">
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium text-gray-900 truncate">{app.organizationName}</p>
+                            <p className="text-xs text-gray-500 truncate">{app.prize || app.category}</p>
+                          </div>
+                          <div className="flex space-x-1 flex-shrink-0">
+                            <button
+                              onClick={() => updateApplicationStatus(app.id, 'approved')}
+                              className="text-green-600 hover:bg-green-50 p-1.5 rounded-lg"
+                              title="Approuver"
+                            >
+                              <CheckCircle className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => updateApplicationStatus(app.id, 'rejected')}
+                              className="text-red-600 hover:bg-red-50 p-1.5 rounded-lg"
+                              title="Rejeter"
+                            >
+                              <XCircle className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 </div>
                   </div>
             )}
-
             {/* Catégories */}
             {activeTab === 'categories' && (
               <div className="space-y-6">
@@ -756,7 +680,7 @@ const AdminDashboard: React.FC = () => {
                   <div className="flex items-center justify-between mb-6">
                     <div>
                       <h2 className="text-2xl font-bold text-blue-dark">Candidatures reçues</h2>
-                      <p className="text-gray-600">{applications.length} candidature(s) dans Supabase</p>
+                      <p className="text-gray-600">{visibleApplications.length} affichée(s) · {applications.length} au total</p>
                     </div>
                     <div className="flex space-x-2">
                       <button
@@ -786,13 +710,35 @@ const AdminDashboard: React.FC = () => {
                     </div>
                   </div>
 
-                  {applications.length === 0 ? (
+                  <div className="mb-6 flex flex-wrap gap-2">
+                    {(['all', 'pending', 'approved', 'rejected'] as const).map((status) => (
+                      <button
+                        key={status}
+                        onClick={() => setApplicationFilter(status)}
+                        className={`px-3 py-1.5 rounded-full text-sm ${
+                          applicationFilter === status
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        {status === 'all' ? 'Toutes' : status === 'pending' ? 'En attente' : status === 'approved' ? 'Approuvées' : 'Rejetées'}
+                      </button>
+                    ))}
+                  </div>
+
+                  {visibleApplications.length === 0 ? (
                     <div className="text-center py-16">
                       <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
                         <Users className="w-12 h-12 text-gray-400" />
                       </div>
-                      <h3 className="text-xl font-semibold text-gray-600 mb-2">Aucune candidature pour l'instant</h3>
-                      <p className="text-gray-500">Les candidatures envoyées via le formulaire apparaîtront automatiquement ici.</p>
+                      <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                        {applications.length === 0 ? 'Aucune candidature pour l’instant' : 'Aucun résultat pour ce filtre'}
+                      </h3>
+                      <p className="text-gray-500">
+                        {applications.length === 0
+                          ? 'Les candidatures envoyées via le formulaire apparaîtront automatiquement ici.'
+                          : 'Changez de filtre pour revoir les autres dossiers.'}
+                      </p>
                     </div>
                   ) : (
                     <div className="overflow-x-auto">
@@ -809,7 +755,7 @@ const AdminDashboard: React.FC = () => {
                            </tr>
                          </thead>
                          <tbody className="bg-white divide-y divide-gray-200">
-                           {applications.map((app) => (
+                           {visibleApplications.map((app) => (
                              <tr key={app.id} className="hover:bg-gray-50">
                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                                  {new Date(app.submittedAt).toLocaleString('fr-FR')}
@@ -1144,157 +1090,76 @@ const AdminDashboard: React.FC = () => {
             {/* Analytics */}
             {activeTab === 'analytics' && (
               <div className="space-y-6">
-                {/* Statistiques générales */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">Candidatures</p>
-                        <p className="text-2xl font-bold text-blue-dark">{stats.totalCandidates}</p>
-                        <p className="text-xs text-gray-500 flex items-center">
-                          Reçues dans Supabase
-                        </p>
-                      </div>
-                      <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                        <Users className="w-6 h-6 text-blue-600" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">Votes payés</p>
-                        <p className="text-2xl font-bold text-green-600">{stats.totalVotes}</p>
-                        <p className="text-xs text-gray-500 flex items-center">
-                          Comptés après paiement
-                        </p>
-                      </div>
-                      <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                        <Vote className="w-6 h-6 text-green-600" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">En attente</p>
-                        <p className="text-2xl font-bold text-orange-600">{stats.pendingApplications}</p>
-                        <p className="text-xs text-orange-600 flex items-center">
-                          À traiter
-                        </p>
-                      </div>
-                      <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
-                        <Star className="w-6 h-6 text-orange-600" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Graphiques et données détaillées */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Performance par catégorie */}
-                  <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
-                                         <div className="flex items-center justify-between mb-6">
-                       <h3 className="text-lg font-semibold text-blue-dark">Performance par Catégorie</h3>
-                       <div className="flex space-x-2">
-                         <button
-                           onClick={() => exportData('analytics', 'csv')}
-                           className="bg-gray-600 text-white px-2 py-1 rounded-lg hover:bg-gray-700 transition-colors text-xs flex items-center space-x-1"
-                           title="Exporter en CSV"
-                         >
-                           <Download className="w-3 h-3" />
-                           <span>CSV</span>
-                         </button>
-                         <button
-                           onClick={() => exportData('analytics', 'excel')}
-                           className="bg-green-600 text-white px-2 py-1 rounded-lg hover:bg-green-700 transition-colors text-xs flex items-center space-x-1"
-                           title="Exporter en Excel"
-                         >
-                           <FileSpreadsheet className="w-3 h-3" />
-                           <span>Excel</span>
-                         </button>
-                         <button
-                           onClick={() => exportData('analytics', 'pdf')}
-                           className="bg-red-600 text-white px-2 py-1 rounded-lg hover:bg-red-700 transition-colors text-xs flex items-center space-x-1"
-                           title="Exporter en PDF"
-                         >
-                           <FileText className="w-3 h-3" />
-                           <span>PDF</span>
-                         </button>
-                       </div>
-                     </div>
-                    <div className="space-y-4">
-                      {analyticsData.categoryStats?.slice(0, 8).map((cat: any, index: number) => {
+                  <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <div className="flex items-center justify-between mb-5">
+                      <h3 className="text-lg font-semibold text-blue-dark">Performance par catégorie</h3>
+                      <button
+                        onClick={() => exportData('analytics', 'csv')}
+                        className="text-xs text-gray-600 border border-gray-200 px-2 py-1 rounded-lg hover:bg-gray-50"
+                      >
+                        Export CSV
+                      </button>
+                    </div>
+                    <div className="space-y-5">
+                      {(analyticsData.categoryStats || []).map((cat: any) => {
                         const maxVotes = Math.max(1, ...((analyticsData.categoryStats || []).map((c: any) => c.votes || 0)));
                         return (
-                        <div key={index} className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center justify-between mb-1">
-                              <span className="text-sm font-medium text-gray-700 truncate">{cat.name}</span>
-                              <span className="text-sm text-gray-500">{cat.votes} votes</span>
+                          <div key={cat.name}>
+                            <p className="text-sm font-medium text-gray-900 leading-snug">{cat.name}</p>
+                            <div className="mt-2 h-2 bg-gray-100 rounded-full overflow-hidden">
+                              <div
+                                className="h-2 bg-blue-600 rounded-full"
+                                style={{ width: `${cat.votes === 0 ? 0 : Math.max(8, (cat.votes / maxVotes) * 100)}%` }}
+                              />
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
-                              <div 
-                                className="bg-blue-600 h-2 rounded-full" 
-                                style={{ width: `${(cat.votes / maxVotes) * 100}%` }}
-                              ></div>
+                            <p className="text-xs text-gray-500 mt-1.5">
+                              {cat.prizes} prix · {cat.candidates} candidature{cat.candidates > 1 ? 's' : ''} · {cat.votes} vote{cat.votes > 1 ? 's' : ''} payé{cat.votes > 1 ? 's' : ''}
+                            </p>
                           </div>
-                            <div className="flex justify-between text-xs text-gray-500 mt-1">
-                              <span>{cat.candidates} candidatures</span>
-                              <span>{cat.votes} votes payés</span>
-                            </div>
-                          </div>
-                        </div>
                         );
                       })}
                     </div>
                   </div>
 
-                  {/* Top performers */}
-                  <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
-                    <h3 className="text-lg font-semibold text-blue-dark mb-6">Top Performers</h3>
-                    <div className="space-y-4">
-                      {(!analyticsData.topPerformers || analyticsData.topPerformers.length === 0) ? (
-                        <p className="text-sm text-gray-500">Aucun vote payé pour l’instant</p>
-                      ) : analyticsData.topPerformers.map((performer: any, index: number) => (
-                        <div key={index} className="flex items-center space-x-4">
-                          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-sm font-bold text-blue-600">
-                            {index + 1}
+                  <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 className="text-lg font-semibold text-blue-dark mb-5">Classement des nominés</h3>
+                    {(!analyticsData.topPerformers || analyticsData.topPerformers.length === 0) ? (
+                      <div className="text-center py-12">
+                        <Inbox className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+                        <p className="text-sm font-medium text-gray-600">Aucun vote payé pour l’instant</p>
+                        <p className="text-xs text-gray-500 mt-1">Le classement apparaîtra dès le premier paiement FedaPay validé.</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {analyticsData.topPerformers.map((performer: any, index: number) => (
+                          <div key={performer.name} className="flex items-start space-x-3 p-3 rounded-xl bg-gray-50">
+                            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-sm font-bold text-blue-700 flex-shrink-0">
+                              {index + 1}
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-sm font-medium text-gray-900">{performer.name}</p>
+                              <p className="text-xs text-gray-500 leading-snug">{performer.category}</p>
+                            </div>
+                            <span className="ml-auto text-sm font-semibold text-blue-700 whitespace-nowrap">{performer.votes}</span>
                           </div>
-                          <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-900">{performer.name}</p>
-                            <span className="text-xs text-gray-500">{performer.votes} votes payés</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                {/* Données mensuelles */}
-                <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
-                  <h3 className="text-lg font-semibold text-blue-dark mb-6">Évolution Mensuelle</h3>
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mois</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidatures</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Votes payés</th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {analyticsData.monthlyData?.map((month: any, index: number) => (
-                          <tr key={index} className="hover:bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{month.month}</td>
-                            <td className="px-6 py-4 text-sm text-gray-600">{month.candidates}</td>
-                            <td className="px-6 py-4 text-sm text-gray-600">{month.votes}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                  <h3 className="text-lg font-semibold text-blue-dark mb-4">Calendrier 2026</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+                    {analyticsData.monthlyData?.map((month: any) => (
+                      <div key={month.month} className="border border-gray-100 rounded-xl p-4 text-center">
+                        <p className="text-sm font-medium text-gray-700 capitalize">{month.month}</p>
+                        <p className="text-xl font-bold text-blue-dark mt-2">{month.candidates}</p>
+                        <p className="text-xs text-gray-500">candidatures</p>
+                        <p className="text-sm font-semibold text-green-700 mt-2">{month.votes} votes</p>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
