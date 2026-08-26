@@ -28,11 +28,10 @@ const Header: React.FC = () => {
     { path: '/', label: 'Accueil' },
     { path: '/a-propos', label: 'À propos' },
     { path: '/categories', label: 'Catégories' },
-    // { path: '/laureats', label: 'Lauréats' }, // Masqué temporairement
-    // { path: '/historique', label: 'Historique' }, // Masqué temporairement
-    // { path: '/blog', label: 'Blog' }, // Masqué temporairement
+    { path: '/laureats', label: 'Lauréats' },
     { path: '/partenaires', label: 'Partenaires' },
     { path: '/equipe', label: 'Équipe' },
+    { path: '/faq', label: 'FAQ' },
     { path: '/contact', label: 'Contact' },
     { path: '/voter', label: 'Voter' },
   ];
@@ -74,7 +73,7 @@ const Header: React.FC = () => {
           </Link>
 
           {/* Navigation Desktop optimisée - tous les éléments sur une ligne */}
-          <nav className="hidden xl:flex items-center space-x-6 flex-1 justify-center">
+          <nav className="hidden xl:flex items-center space-x-4 flex-1 justify-center">
             {navItems.map((item) => (
               <Link
                 key={item.path}

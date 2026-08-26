@@ -44,21 +44,23 @@ const Footer: React.FC = () => {
           {/* Liens rapides */}
           <div className="space-y-4">
             <h4 className="font-heading font-semibold text-gold">Liens rapides</h4>
-                               <ul className="space-y-2">
-                     <li><Link to="/a-propos" className="text-gray-300 hover:text-gold transition-colors">À propos</Link></li>
-                     <li><Link to="/categories" className="text-gray-300 hover:text-gold transition-colors">Catégories</Link></li>
-                     {/* <li><Link to="/laureats" className="text-gray-300 hover:text-gold transition-colors">Lauréats</Link></li> */}
-                     <li><Link to="/candidater" className="text-gray-300 hover:text-gold transition-colors">Candidater</Link></li>
-                     <li><Link to="/voter" className="text-gray-300 hover:text-gold transition-colors">Voter</Link></li>
-                   </ul>
+            <ul className="space-y-2">
+              <li><Link to="/a-propos" className="text-gray-300 hover:text-gold transition-colors">À propos</Link></li>
+              <li><Link to="/categories" className="text-gray-300 hover:text-gold transition-colors">Catégories</Link></li>
+              <li><Link to="/laureats" className="text-gray-300 hover:text-gold transition-colors">Lauréats</Link></li>
+              <li><Link to="/candidater" className="text-gray-300 hover:text-gold transition-colors">Candidater</Link></li>
+              <li><Link to="/voter" className="text-gray-300 hover:text-gold transition-colors">Voter</Link></li>
+            </ul>
           </div>
 
           {/* Informations */}
           <div className="space-y-4">
             <h4 className="font-heading font-semibold text-gold">Informations</h4>
             <ul className="space-y-2">
-              {/* <li><Link to="/historique" className="text-gray-300 hover:text-gold transition-colors">Historique</Link></li> */}
-              {/* <li><Link to="/blog" className="text-gray-300 hover:text-gold transition-colors">Blog</Link></li> */}
+              <li><Link to="/reglement" className="text-gray-300 hover:text-gold transition-colors">Règlement</Link></li>
+              <li><Link to="/faq" className="text-gray-300 hover:text-gold transition-colors">FAQ</Link></li>
+              <li><Link to="/jury" className="text-gray-300 hover:text-gold transition-colors">Jury</Link></li>
+              <li><Link to="/galerie" className="text-gray-300 hover:text-gold transition-colors">Galerie</Link></li>
               <li><Link to="/partenaires" className="text-gray-300 hover:text-gold transition-colors">Partenaires</Link></li>
               <li><Link to="/equipe" className="text-gray-300 hover:text-gold transition-colors">Notre équipe</Link></li>
             </ul>
@@ -116,14 +118,11 @@ const Footer: React.FC = () => {
             © {currentYear} Hospitality Awards Guinée - HAG. Tous droits réservés.
           </div>
           <div className="flex space-x-6 text-sm">
-            <Link to="/mentions-legales" className="text-gray-300 hover:text-gold transition-colors">
-              Mentions légales
+            <Link to="/reglement" className="text-gray-300 hover:text-gold transition-colors">
+              Règlement officiel
             </Link>
-            <Link to="/politique-confidentialite" className="text-gray-300 hover:text-gold transition-colors">
-              Politique de confidentialité
-            </Link>
-            <Link to="/conditions-utilisation" className="text-gray-300 hover:text-gold transition-colors">
-              Conditions d'utilisation
+            <Link to="/faq" className="text-gray-300 hover:text-gold transition-colors">
+              FAQ
             </Link>
           </div>
         </div>

@@ -131,6 +131,17 @@ const Team: React.FC = () => {
       </section>
 
       <section className="section section-alt">
+        <div className="container text-center">
+          <h2 className="mb-4">Le <span className="text-gold">jury</span></h2>
+          <p className="text-gray-600 max-w-2xl mx-auto mb-6">
+            Le jury HAG 2026 sera présenté avec photo, fonction, organisation, domaine d’expertise
+            et biographie professionnelle.
+          </p>
+          <Link to="/jury" className="btn btn-primary">Découvrir le jury</Link>
+        </div>
+      </section>
+
+      <section className="section">
         <div className="container">
           <h2 className="text-center mb-12">
             Nos <span className="text-gold">valeurs</span>

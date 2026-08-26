@@ -219,6 +219,10 @@ const Home: React.FC = () => {
               Revivez la soirée de distinction organisée par Le Groupe LM :
               discours, remise des Étoiles d’Honneur, lauréats et équipe d’accueil.
             </p>
+            <div className="mt-4 flex justify-center gap-4">
+              <Link to="/laureats" className="text-blue-700 font-medium hover:underline">Lauréats</Link>
+              <Link to="/galerie" className="text-blue-700 font-medium hover:underline">Galerie officielle</Link>
+            </div>
           </div>
           <FirstEditionGallery />
         </div>

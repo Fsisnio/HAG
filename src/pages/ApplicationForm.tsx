@@ -1,9 +1,10 @@
 import React, { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Send, CheckCircle, AlertCircle, Upload, FileText, Calendar } from 'lucide-react';
 import { officialCategories, categoryGroups } from '../data/categories';
 import { EVENT_YEAR, EVENT_EDITION, SLOGAN, APPLICATION_START, APPLICATION_END, VOTES_START, VOTES_END, GALA_VENUE, CALENDAR, isApplicationOpen } from '../data/event';
 import { submitApplication } from '../services/applications';
+import { APPLICATION_FORM_ACCEPTANCE } from '../data/reglement';
 
 interface FormData {
   organizationName: string;
@@ -29,13 +30,15 @@ interface FormData {
   socialMedia: string;
   documents: File[];
   authorization: boolean;
+  acceptsRules: boolean;
   declarationName: string;
   declarationFunction: string;
   declarationPlace: string;
 }
 
-type FormErrors = Partial<Record<keyof Omit<FormData, 'documents' | 'authorization'>, string>> & {
+type FormErrors = Partial<Record<keyof Omit<FormData, 'documents' | 'authorization' | 'acceptsRules'>, string>> & {
   authorization?: string;
+  acceptsRules?: string;
 };
 
 const emptyForm: FormData = {
@@ -62,6 +65,7 @@ const emptyForm: FormData = {
   socialMedia: '',
   documents: [],
   authorization: false,
+  acceptsRules: false,
   declarationName: '',
   declarationFunction: '',
   declarationPlace: ''
@@ -125,6 +129,9 @@ const ApplicationForm: React.FC = () => {
     if (!formData.strengths.trim()) newErrors.strengths = 'Les atouts sont requis';
     if (!formData.authorization) {
       newErrors.authorization = 'Vous devez autoriser l’utilisation des éléments de communication';
+    }
+    if (!formData.acceptsRules) {
+      newErrors.acceptsRules = 'Vous devez accepter le règlement officiel des HAG 2026';
     }
     if (!formData.declarationName.trim()) newErrors.declarationName = 'Le nom du déclarant est requis';
 
@@ -616,7 +623,28 @@ const ApplicationForm: React.FC = () => {
               </div>
 
               <div className="mb-10">
-                <h2 className="text-2xl font-bold text-blue-dark mb-6">7. Déclaration du candidat</h2>
+                <h2 className="text-2xl font-bold text-blue-dark mb-4">7. Acceptation du règlement</h2>
+                <label className="flex items-start space-x-3">
+                  <input
+                    type="checkbox"
+                    name="acceptsRules"
+                    checked={formData.acceptsRules}
+                    onChange={handleInputChange}
+                    className="mt-1"
+                  />
+                  <span className="text-sm text-gray-700">
+                    {APPLICATION_FORM_ACCEPTANCE}{' '}
+                    <Link to="/reglement" className="text-blue-700 underline" target="_blank" rel="noreferrer">
+                      Lire le règlement
+                    </Link>
+                    {' '}*
+                  </span>
+                </label>
+                <ErrorText message={errors.acceptsRules} />
+              </div>
+
+              <div className="mb-10">
+                <h2 className="text-2xl font-bold text-blue-dark mb-6">8. Déclaration du candidat</h2>
                 <p className="text-sm text-gray-600 mb-4">
                   Je certifie l’exactitude des informations communiquées et j’accepte le règlement ainsi que
                   les conditions de participation aux Hospitality Awards Guinée {EVENT_YEAR}.
