@@ -2,18 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Send, CheckCircle, AlertCircle, Upload, FileText, Calendar } from 'lucide-react';
 import { officialCategories, categoryGroups } from '../data/categories';
-import {
-  EVENT_EDITION,
-  EVENT_YEAR,
-  SLOGAN,
-  APPLICATION_START,
-  APPLICATION_END,
-  VOTES_START,
-  VOTES_END,
-  GALA_VENUE,
-  CALENDAR,
-  isApplicationOpen
-} from '../data/event';
+import { EVENT_YEAR, EVENT_EDITION, SLOGAN, APPLICATION_START, APPLICATION_END, VOTES_START, VOTES_END, GALA_VENUE, CALENDAR, isApplicationOpen } from '../data/event';
+import { submitApplication } from '../services/applications';
 
 interface FormData {
   organizationName: string;
@@ -83,6 +73,7 @@ const ApplicationForm: React.FC = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const applicationsOpen = isApplicationOpen();
 
   const prizesForCategory = useMemo(
@@ -146,24 +137,18 @@ const ApplicationForm: React.FC = () => {
     if (!validateForm()) return;
 
     setIsSubmitting(true);
+    setSubmitError('');
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1200));
-      const storageKey = 'hag_applications';
-      const existingRaw = localStorage.getItem(storageKey);
-      const existing: any[] = existingRaw ? JSON.parse(existingRaw) : [];
-      const { documents, ...rest } = formData;
-      const newApplication = {
-        id: Date.now(),
-        submittedAt: new Date().toISOString(),
-        edition: EVENT_YEAR,
-        documentNames: documents.map((file) => file.name),
-        ...rest
-      };
-      localStorage.setItem(storageKey, JSON.stringify([newApplication, ...existing]));
+      await submitApplication(formData);
       setIsSubmitted(true);
       setTimeout(() => navigate('/'), 5000);
     } catch (error) {
       console.error('Erreur lors de l’envoi:', error);
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : 'Impossible d’enregistrer la candidature. Réessayez.'
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -685,6 +670,13 @@ const ApplicationForm: React.FC = () => {
                 Votes du public : {VOTES_START.split('-').reverse().join('/')} au {VOTES_END.split('-').reverse().join('/')} •
                 Remise des prix le 11 décembre {EVENT_YEAR} à l’Hôtel Kaloum.
               </p>
+
+              {submitError && (
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm flex items-start">
+                  <AlertCircle className="w-5 h-5 mr-2 flex-shrink-0 mt-0.5" />
+                  <span>{submitError}</span>
+                </div>
+              )}
 
               <div className="text-center">
                 <button
