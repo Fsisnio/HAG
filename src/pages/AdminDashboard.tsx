@@ -399,6 +399,12 @@ const AdminDashboard: React.FC = () => {
   return (
     <div className="min-h-[calc(100vh-56px)] bg-gray-50 p-4 lg:p-6">
       <div className="max-w-[1400px] mx-auto">
+        {loadError && (
+          <div className="mb-4 p-4 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-sm">
+            {loadError}
+          </div>
+        )}
+
         {resetMessage && (
             <div className={`mb-4 p-4 rounded-lg ${
               resetMessageType === 'success' 
