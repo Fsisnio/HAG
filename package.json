@@ -28,7 +28,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "node scripts/with-supabase-env.js",
     "build:render": "node build-render.js",
     "build:prod": "set GENERATE_SOURCEMAP=false && set NODE_ENV=production && react-scripts build",
     "build:unix": "GENERATE_SOURCEMAP=false NODE_ENV=production react-scripts build",
