@@ -45,8 +45,9 @@ export interface VoteTotal {
 
 const isMissingRpc = (message?: string, code?: string) => {
   const text = (message || '').toLowerCase();
-  if (code === 'PGRST202' || code === '42883') return true;
+  if (code === 'PGRST202' || code === 'PGRST125' || code === '42883') return true;
   if (text.includes('could not find the function')) return true;
+  if (text.includes('invalid path specified')) return true;
   if (text.includes('function') && text.includes('does not exist')) return true;
   return false;
 };

@@ -14,7 +14,8 @@ import {
   FileSpreadsheet,
   RotateCcw,
   Clock,
-  Inbox
+  Inbox,
+  ChevronDown
 } from 'lucide-react';
 import { officialCategories, categoryGroups } from '../data/categories';
 import { getAllOfficialCandidates, getCandidatesByCategory, getCategoriesWithCandidates } from '../data/officialCandidates';
@@ -99,6 +100,8 @@ const AdminDashboard: React.FC = () => {
   const [resetMessageType, setResetMessageType] = useState<'success' | 'error' | ''>('');
   const [loadError, setLoadError] = useState('');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [exportMenuOpen, setExportMenuOpen] = useState(false);
+  const [exportNotice, setExportNotice] = useState('');
 
   const [applicationFilter, setApplicationFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
 
@@ -206,57 +209,74 @@ const AdminDashboard: React.FC = () => {
     return categoryTitle.toLowerCase().includes(searchLower);
   });
 
-  // Exporter les données
+  const flattenRows = (rows: any[]) =>
+    (rows || []).map((row) => {
+      const out: Record<string, string | number> = {};
+      Object.entries(row || {}).forEach(([key, value]) => {
+        if (typeof value === 'function' || key === 'icon') return;
+        if (value == null) out[key] = '';
+        else if (Array.isArray(value)) out[key] = value.join(' | ');
+        else if (typeof value === 'object') out[key] = JSON.stringify(value);
+        else out[key] = value as string | number;
+      });
+      return out;
+    });
+
+  const overviewRows = () => [
+    { indicateur: 'Candidatures reçues', valeur: stats.totalCandidates },
+    { indicateur: 'Candidatures en attente', valeur: stats.pendingApplications },
+    { indicateur: 'Candidatures approuvées', valeur: stats.approvedApplications },
+    { indicateur: 'Votes payés', valeur: stats.totalVotes },
+    { indicateur: 'Nominés officiels', valeur: stats.officialNominees },
+    { indicateur: 'Catégories', valeur: stats.totalCategories }
+  ];
+
   const exportData = (type: string, format: 'csv' | 'excel' | 'pdf' = 'csv') => {
     let data: any[] = [];
-    let filename = '';
+    let filename = 'hag_export';
 
     switch (type) {
       case 'votes':
-        data = filteredVotes;
-        filename = 'votes_export';
+        data = flattenRows(filteredVotes);
+        filename = 'hag_votes';
         break;
       case 'candidates':
-        data = applications;
-        filename = 'candidates_export';
+        data = flattenRows(applications);
+        filename = 'hag_candidatures';
         break;
       case 'analytics':
-        data = analyticsData.categoryStats;
-        filename = 'analytics_export';
+        data = flattenRows(analyticsData.categoryStats || []);
+        filename = 'hag_analytics';
         break;
       case 'categories':
-        data = officialCategories;
-        filename = 'categories_export';
+        data = flattenRows(officialCategories);
+        filename = 'hag_categories';
         break;
       case 'official-candidates':
-        data = getAllOfficialCandidates();
-        filename = 'official_candidates_export';
+        data = flattenRows(getAllOfficialCandidates());
+        filename = 'hag_nomines';
         break;
-      case 'overview':
-        data = [
-          { metric: 'Candidatures reçues', value: stats.totalCandidates },
-          { metric: 'Candidatures en attente', value: stats.pendingApplications },
-          { metric: 'Candidatures approuvées', value: stats.approvedApplications },
-          { metric: 'Votes payés', value: stats.totalVotes },
-          { metric: 'Nominés officiels', value: stats.officialNominees },
-        ];
-        filename = 'overview_export';
+      default:
+        data = overviewRows();
+        filename = 'hag_vue_ensemble';
         break;
     }
 
-    if (data.length === 0) return;
-
-    switch (format) {
-      case 'csv':
-        exportToCSV(data, `${filename}.csv`);
-        break;
-      case 'excel':
-        exportToExcelSimple(data, `${filename}.xlsx`);
-        break;
-      case 'pdf':
-        exportToPDFSimple(data, `${filename}.pdf`);
-        break;
+    if (!data.length) {
+      data = overviewRows();
+      filename = 'hag_vue_ensemble';
+      setExportNotice('Aucune ligne dans cette vue : export de la synthèse.');
+      setTimeout(() => setExportNotice(''), 4000);
+    } else {
+      setExportNotice(`Fichier téléchargé : ${filename}.${format === 'excel' ? 'tsv' : format === 'pdf' ? 'html' : 'csv'}`);
+      setTimeout(() => setExportNotice(''), 4000);
     }
+
+    setExportMenuOpen(false);
+
+    if (format === 'excel') exportToExcelSimple(data, `${filename}.xlsx`);
+    else if (format === 'pdf') exportToPDFSimple(data, `${filename}.pdf`);
+    else exportToCSV(data, `${filename}.csv`);
   };
 
   // Exporter en CSV
@@ -396,9 +416,9 @@ const AdminDashboard: React.FC = () => {
             </div>
           )}
 
-          {loadError && (
-            <div className="mb-4 p-4 rounded-lg bg-amber-50 border border-amber-200 text-amber-900">
-              <p className="font-medium">{loadError}</p>
+          {exportNotice && (
+            <div className="mb-4 p-3 rounded-lg bg-green-50 border border-green-200 text-green-800 text-sm">
+              {exportNotice}
             </div>
           )}
 
@@ -418,13 +438,38 @@ const AdminDashboard: React.FC = () => {
                 <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
                 <span>Actualiser</span>
               </button>
-              <button
-                onClick={() => exportData('candidates', 'csv')}
-                className="bg-white border border-gray-200 text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-50 flex items-center space-x-2"
-              >
-                <Download className="w-4 h-4" />
-                <span>Export</span>
-              </button>
+              <div className="relative">
+                <button
+                  onClick={() => setExportMenuOpen((open) => !open)}
+                  className="bg-white border border-gray-200 text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-50 flex items-center space-x-2"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Export</span>
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+                {exportMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-100 rounded-xl shadow-lg z-30 py-1">
+                    <button type="button" className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50" onClick={() => exportData('overview', 'csv')}>
+                      Vue d’ensemble
+                    </button>
+                    <button type="button" className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50" onClick={() => exportData('official-candidates', 'csv')}>
+                      Nominés officiels
+                    </button>
+                    <button type="button" className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50" onClick={() => exportData('categories', 'csv')}>
+                      Catégories
+                    </button>
+                    <button type="button" className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50" onClick={() => exportData('candidates', 'csv')}>
+                      Candidatures
+                    </button>
+                    <button type="button" className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50" onClick={() => exportData('votes', 'csv')}>
+                      Votes payés
+                    </button>
+                    <button type="button" className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50" onClick={() => exportData('analytics', 'csv')}>
+                      Analytics
+                    </button>
+                  </div>
+                )}
+              </div>
               <button
                 onClick={() => setShowResetModal(true)}
                 className="bg-white border border-red-200 text-red-700 px-3 py-2 rounded-lg hover:bg-red-50 flex items-center space-x-2"
