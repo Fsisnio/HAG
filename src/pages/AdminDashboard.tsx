@@ -19,6 +19,70 @@ import { officialCategories } from '../data/categories';
 import { getAllOfficialCandidates, getCandidatesByCategory, getCategoriesWithCandidates } from '../data/officialCandidates';
 import VoteResetModal from '../components/VoteResetModal';
 import { ResetResult } from '../services/voteResetService';
+import {
+  fetchAdminApplications,
+  fetchAdminPaidVotes,
+  fetchVoteTotals,
+  setApplicationStatus,
+  AdminApplication,
+  AdminPaidVote,
+  VoteTotal
+} from '../services/adminData';
+
+const formatRelativeTime = (iso: string) => {
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return '';
+  const mins = Math.max(0, Math.round((Date.now() - then) / 60000));
+  if (mins < 1) return 'À l’instant';
+  if (mins < 60) return `Il y a ${mins} min`;
+  const hours = Math.round(mins / 60);
+  if (hours < 24) return `Il y a ${hours} h`;
+  const days = Math.round(hours / 24);
+  return `Il y a ${days} j`;
+};
+
+const buildAnalytics = (
+  apps: AdminApplication[],
+  paidVotes: AdminPaidVote[],
+  totals: VoteTotal[]
+) => {
+  const votesByCandidate = new Map(totals.map((row) => [row.candidate_id, row.votes]));
+  const official = getAllOfficialCandidates();
+
+  const categoryStats = officialCategories.map((cat) => {
+    const categoryApps = apps.filter((app) => app.prize === cat.title || app.category === cat.title);
+    const categoryVotes = paidVotes.filter((vote) => vote.category === cat.title).length;
+    return {
+      name: cat.title,
+      candidates: categoryApps.length,
+      votes: categoryVotes,
+      averageRating: 0
+    };
+  });
+
+  const topPerformers = official
+    .map((candidate) => ({
+      name: candidate.name,
+      votes: votesByCandidate.get(candidate.id) || 0,
+      rating: 0
+    }))
+    .filter((candidate) => candidate.votes > 0)
+    .sort((a, b) => b.votes - a.votes)
+    .slice(0, 5);
+
+  const monthlyData = Array.from({ length: 12 }, (_, month) => {
+    const monthApps = apps.filter((app) => new Date(app.submittedAt).getMonth() === month);
+    const monthVotes = paidVotes.filter((vote) => new Date(vote.submittedAt).getMonth() === month);
+    return {
+      month: new Date(2026, month, 1).toLocaleDateString('fr-FR', { month: 'short' }),
+      candidates: monthApps.length,
+      votes: monthVotes.length,
+      rating: 0
+    };
+  });
+
+  return { monthlyData, categoryStats, topPerformers };
+};
 
 const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -26,185 +90,92 @@ const AdminDashboard: React.FC = () => {
   const [lastUpdate, setLastUpdate] = useState(new Date());
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [applications, setApplications] = useState<any[]>([]);
-  const [votes, setVotes] = useState<any[]>([]);
+  const [applications, setApplications] = useState<AdminApplication[]>([]);
+  const [votes, setVotes] = useState<AdminPaidVote[]>([]);
   const [analyticsData, setAnalyticsData] = useState<any>({});
-  const [approvedCandidates, setApprovedCandidates] = useState<any[]>([]);
+  const [approvedCandidates, setApprovedCandidates] = useState<AdminApplication[]>([]);
   const [showResetModal, setShowResetModal] = useState(false);
   const [resetMessage, setResetMessage] = useState<string>('');
   const [resetMessageType, setResetMessageType] = useState<'success' | 'error' | ''>('');
+  const [loadError, setLoadError] = useState('');
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  // Données simulées pour les statistiques
   const [stats, setStats] = useState({
     totalCandidates: 0,
     totalVotes: 0,
     totalCategories: 9,
-    averageRating: 0
+    pendingApplications: 0,
+    approvedApplications: 0
   });
 
   const [recentActivities, setRecentActivities] = useState<any[]>([]);
 
-  // Mettre à jour les statistiques
-  const updateStats = useCallback(() => {
-    const officialCandidates = getAllOfficialCandidates();
-    
-    // Récupérer les vraies données de vote depuis localStorage
-    let realVotes = 0;
-    let realAverageRating = 0;
-    
+  const loadDashboardData = useCallback(async () => {
+    setIsLoading(true);
+    setLoadError('');
     try {
-      const savedVotes = localStorage.getItem('hag_candidates_votes');
-      const savedRatings = localStorage.getItem('hag_candidates_ratings');
+      const [appsResult, paidVotes, totals] = await Promise.all([
+        fetchAdminApplications().then(
+          (apps) => ({ apps, error: '' }),
+          (error) => ({
+            apps: [] as AdminApplication[],
+            error: error instanceof Error ? error.message : 'Impossible de charger les candidatures.'
+          })
+        ),
+        fetchAdminPaidVotes(),
+        fetchVoteTotals()
+      ]);
 
-      if (savedVotes) {
-        const votes = JSON.parse(savedVotes);
-        realVotes = votes.length;
-      }
+      const apps = appsResult.apps;
+      if (appsResult.error) setLoadError(appsResult.error);
 
-      if (savedRatings) {
-        const ratings = JSON.parse(savedRatings);
-        const ratingsArray = Object.values(ratings) as number[];
-        if (ratingsArray.length > 0) {
-          realAverageRating = ratingsArray.reduce((acc: number, curr: number) => acc + curr, 0) / ratingsArray.length;
-        }
-      }
+      const pending = apps.filter((app) => app.status === 'pending').length;
+      const approved = apps.filter((app) => app.status === 'approved');
+      const totalVotes = totals.reduce((sum, row) => sum + (row.votes || 0), 0);
+
+      setApplications(apps);
+      setVotes(paidVotes);
+      setApprovedCandidates(approved);
+      setStats({
+        totalCandidates: apps.length,
+        totalVotes,
+        totalCategories: officialCategories.length,
+        pendingApplications: pending,
+        approvedApplications: approved.length
+      });
+      setAnalyticsData(buildAnalytics(apps, paidVotes, totals));
+
+      const activities = [
+        ...apps.slice(0, 6).map((app) => ({
+          id: `app-${app.id}`,
+          action: `Candidature ${app.status === 'approved' ? 'approuvée' : app.status === 'rejected' ? 'rejetée' : 'reçue'} — ${app.organizationName}`,
+          time: formatRelativeTime(app.submittedAt),
+          type: app.status === 'approved' ? 'approval' : 'candidate',
+          at: app.submittedAt
+        })),
+        ...paidVotes.slice(0, 6).map((vote) => ({
+          id: `vote-${vote.id}`,
+          action: `Vote payé pour ${vote.candidate}`,
+          time: formatRelativeTime(vote.submittedAt),
+          type: 'vote',
+          at: vote.submittedAt
+        }))
+      ]
+        .sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime())
+        .slice(0, 8);
+
+      setRecentActivities(activities);
+      setLastUpdate(new Date());
     } catch (error) {
-      console.error('Erreur lors de la récupération des données de vote:', error);
+      setLoadError(error instanceof Error ? error.message : 'Impossible de charger le tableau de bord.');
+    } finally {
+      setIsLoading(false);
     }
-    
-    setStats({
-      totalCandidates: officialCandidates.length,
-      totalVotes: realVotes,
-      totalCategories: 9,
-      averageRating: realAverageRating || 0
-    });
   }, []);
 
-  // Initialisation des données
   useEffect(() => {
-    // Charger les candidatures depuis localStorage
-    try {
-      const raw = localStorage.getItem('hag_applications');
-      const parsed = raw ? JSON.parse(raw) : [];
-      setApplications(parsed);
-    } catch {}
-
-    // Charger les candidats approuvés depuis localStorage
-    try {
-      const approvedRaw = localStorage.getItem('hag_approved_candidates');
-      const approvedParsed = approvedRaw ? JSON.parse(approvedRaw) : [];
-      setApprovedCandidates(approvedParsed);
-    } catch {}
-
-    // Charger les vraies données de vote depuis localStorage
-    loadRealVoteData();
-
-    // Générer des données analytics simulées
-    const simulatedAnalytics = generateSimulatedAnalytics();
-    setAnalyticsData(simulatedAnalytics);
-
-    // Initialiser les activités récentes
-    updateRecentActivities();
-
-    // Mettre à jour les statistiques
-    updateStats();
-
-    // Optionnel : mettre à jour les données toutes les 5 minutes (au lieu de 30 secondes)
-    // const interval = setInterval(() => {
-    //   loadRealVoteData();
-    //   updateRecentActivities();
-    //   updateStats();
-    //   setLastUpdate(new Date());
-    // }, 300000); // 5 minutes au lieu de 30 secondes
-
-    // return () => clearInterval(interval);
-  }, [updateStats]);
-
-  // Charger les vraies données de vote
-  const loadRealVoteData = () => {
-    try {
-      const savedVotes = localStorage.getItem('hag_candidates_votes');
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const savedRatings = localStorage.getItem('hag_candidates_ratings');
-      
-      if (savedVotes) {
-        const votesData = JSON.parse(savedVotes);
-        // Convertir les données de vote en format compatible avec l'affichage
-        const realVotes = votesData
-          .filter((candidate: any) => candidate.isVoted)
-          .map((candidate: any, index: number) => ({
-            id: index + 1,
-            candidate: candidate.name,
-            category: candidate.category,
-            voter: `Votant ${index + 1}`,
-            voteType: 'online',
-            rating: candidate.userRating || 4,
-            comment: `Vote pour ${candidate.name}`,
-            status: 'approved',
-            submittedAt: new Date().toISOString()
-          }));
-        
-        setVotes(realVotes);
-      }
-    } catch (error) {
-      console.error('Erreur lors du chargement des données de vote:', error);
-    }
-  };
-
-  // Générer des votes simulés
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const generateSimulatedVotes = () => {
-    const voteTypes = ['online', 'jury', 'public'];
-    const statuses = ['pending', 'approved', 'rejected'];
-    const candidates = [
-      'Hôtel Mariador Palace',
-      'Restaurant Le Palais',
-      'Agence Tourisme Guinée',
-      'Guide Touristique Conakry',
-      'Hôtel Riviera',
-      'Restaurant La Terrasse'
-    ];
-
-    return Array.from({ length: 25 }, (_, i) => ({
-      id: i + 1,
-      candidate: candidates[Math.floor(Math.random() * candidates.length)],
-      category: officialCategories[Math.floor(Math.random() * officialCategories.length)].title,
-      voter: `Votant ${i + 1}`,
-      voteType: voteTypes[Math.floor(Math.random() * voteTypes.length)],
-      rating: Math.floor(Math.random() * 5) + 1,
-      comment: Math.random() > 0.5 ? `Commentaire ${i + 1} sur la qualité du service` : '',
-      status: statuses[Math.floor(Math.random() * statuses.length)],
-      submittedAt: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString()
-    }));
-  };
-
-  // Générer des données analytics simulées
-  const generateSimulatedAnalytics = () => {
-    const categories = officialCategories.map(cat => cat.title);
-    const monthlyData = Array.from({ length: 12 }, (_, month) => ({
-      month: new Date(2024, month, 1).toLocaleDateString('fr-FR', { month: 'short' }),
-      candidates: Math.floor(Math.random() * 20) + 5,
-      votes: Math.floor(Math.random() * 100) + 20,
-      rating: Math.random() * 2 + 3
-    }));
-
-    const categoryStats = categories.map(cat => ({
-      name: cat,
-      candidates: Math.floor(Math.random() * 8) + 2,
-      votes: Math.floor(Math.random() * 50) + 10,
-      averageRating: Math.random() * 2 + 3
-    }));
-
-    return {
-      monthlyData,
-      categoryStats,
-      topPerformers: [
-        { name: 'Hôtel Mariador Palace', rating: 4.8, votes: 156 },
-        { name: 'Restaurant Le Palais', rating: 4.6, votes: 142 },
-        { name: 'Agence Tourisme Guinée', rating: 4.5, votes: 128 }
-      ]
-    };
-  };
+    loadDashboardData();
+  }, [loadDashboardData]);
 
 
   // Filtrer les votes
@@ -255,10 +226,11 @@ const AdminDashboard: React.FC = () => {
         break;
       case 'overview':
         data = [
-          { metric: 'Total Candidats', value: stats.totalCandidates },
-          { metric: 'Total Votes', value: stats.totalVotes },
-          { metric: 'Total Catégories', value: stats.totalCategories },
-          { metric: 'Note Moyenne', value: stats.averageRating }
+          { metric: 'Candidatures reçues', value: stats.totalCandidates },
+          { metric: 'Candidatures en attente', value: stats.pendingApplications },
+          { metric: 'Candidatures approuvées', value: stats.approvedApplications },
+          { metric: 'Votes payés', value: stats.totalVotes },
+          { metric: 'Catégories', value: stats.totalCategories }
         ];
         filename = 'overview_export';
         break;
@@ -362,107 +334,21 @@ const AdminDashboard: React.FC = () => {
 
 
 
-  // Mettre à jour le statut d'un vote
-  const updateVoteStatus = (voteId: number, newStatus: string) => {
-    setVotes(prev => prev.map(vote => 
-      vote.id === voteId ? { ...vote, status: newStatus } : vote
-    ));
+  const updateApplicationStatus = async (applicationId: string, status: 'approved' | 'rejected') => {
+    setUpdatingId(applicationId);
+    setLoadError('');
+    try {
+      await setApplicationStatus(applicationId, status);
+      await loadDashboardData();
+    } catch (error) {
+      setLoadError(error instanceof Error ? error.message : 'Impossible de mettre à jour la candidature.');
+    } finally {
+      setUpdatingId(null);
+    }
   };
 
-  // Mettre à jour les activités récentes
-  const updateRecentActivities = () => {
-    const activities = [
-      { id: 1, action: 'Nouvelle candidature reçue', time: 'Il y a 2 minutes', type: 'candidate' },
-      { id: 2, action: 'Vote enregistré pour Hôtel Mariador', time: 'Il y a 5 minutes', type: 'vote' },
-      { id: 3, action: 'Candidature approuvée - Restaurant Le Palais', time: 'Il y a 1 heure', type: 'approval' },
-      { id: 4, action: 'Nouveau commentaire sur Guide Touristique', time: 'Il y a 2 heures', type: 'comment' }
-    ];
-
-    // Ajouter des activités aléatoires pour rendre plus dynamique
-    const randomActivities = [
-      'Nouveau visiteur sur la page des catégories',
-      'Export de données effectué',
-      'Filtre de recherche utilisé',
-      'Statistiques consultées',
-      'Candidat ajouté à la liste des favoris',
-      'Vote premium enregistré',
-      'Rapport analytics généré',
-      'Notification envoyée aux candidats'
-    ];
-
-    const randomActivity = randomActivities[Math.floor(Math.random() * randomActivities.length)];
-    const randomTime = Math.floor(Math.random() * 10) + 1;
-    
-    activities.unshift({
-      id: Date.now(),
-      action: randomActivity,
-      time: `Il y a ${randomTime} minute${randomTime > 1 ? 's' : ''}`,
-      type: 'system'
-    });
-
-    setRecentActivities(activities.slice(0, 5));
-  };
-
-  // Approuver une candidature
-  const approveApplication = (applicationId: number) => {
-    const application = applications.find(app => app.id === applicationId);
-    if (!application) return;
-
-    // Ajouter aux candidats approuvés
-    const approvedCandidate = {
-      ...application,
-      approvedAt: new Date().toISOString(),
-      status: 'approved'
-    };
-    
-    const newApprovedCandidates = [...approvedCandidates, approvedCandidate];
-    setApprovedCandidates(newApprovedCandidates);
-    localStorage.setItem('hag_approved_candidates', JSON.stringify(newApprovedCandidates));
-
-    // Mettre à jour le statut de la candidature
-    setApplications(prev => prev.map(app => 
-      app.id === applicationId ? { ...app, status: 'approved' } : app
-    ));
-
-    // Ajouter des votes simulés pour ce candidat approuvé
-    const newVotes = generateVotesForCandidate(approvedCandidate);
-    setVotes(prev => [...newVotes, ...prev]);
-  };
-
-  // Rejeter une candidature
-  const rejectApplication = (applicationId: number) => {
-    setApplications(prev => prev.map(app => 
-      app.id === applicationId ? { ...app, status: 'rejected' } : app
-    ));
-  };
-
-  // Générer des votes pour un candidat approuvé
-  const generateVotesForCandidate = (candidate: any) => {
-    const voteTypes = ['online', 'jury', 'public'];
-    const numVotes = Math.floor(Math.random() * 10) + 5; // 5-15 votes
-
-    return Array.from({ length: numVotes }, (_, i) => ({
-      id: Date.now() + i,
-      candidate: candidate.organizationName,
-      category: candidate.category,
-      voter: `Votant ${Math.floor(Math.random() * 1000) + 1}`,
-      voteType: voteTypes[Math.floor(Math.random() * voteTypes.length)],
-      rating: Math.floor(Math.random() * 3) + 3, // 3-5 étoiles
-      comment: Math.random() > 0.7 ? `Excellent service de ${candidate.organizationName}` : '',
-      status: 'pending',
-      submittedAt: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString()
-    }));
-  };
-
-  // Actualiser les données
   const refreshData = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      loadRealVoteData();
-      updateStats();
-      setLastUpdate(new Date());
-      setIsLoading(false);
-    }, 1000);
+    loadDashboardData();
   };
 
   // Gérer la réinitialisation des votes
@@ -487,6 +373,12 @@ const AdminDashboard: React.FC = () => {
       <div className="max-w-7xl mx-auto">
                 {/* En-tête */}
         <div className="mb-8">
+          {loadError && (
+            <div className="mb-4 p-4 rounded-lg bg-red-50 border border-red-200 text-red-800">
+              <p className="font-medium">{loadError}</p>
+            </div>
+          )}
+
           {/* Message de réinitialisation */}
           {resetMessage && (
             <div className={`mb-4 p-4 rounded-lg ${
@@ -516,12 +408,7 @@ const AdminDashboard: React.FC = () => {
                 <span className="text-sm text-green-700 font-medium">Système actif</span>
               </div>
               <button
-                onClick={() => {
-                  loadRealVoteData();
-                  updateStats();
-                  updateRecentActivities();
-                  setLastUpdate(new Date());
-                }}
+                onClick={refreshData}
                 disabled={isLoading}
                 className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 disabled:opacity-50"
               >
@@ -602,11 +489,10 @@ const AdminDashboard: React.FC = () => {
                   <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-600">Récompenses officielles</p>
-                        <p className="text-3xl font-bold text-blue-dark animate-pulse">{stats.totalCandidates}</p>
-                        <p className="text-xs text-green-600 flex items-center mt-1">
-                          <TrendingUp className="w-3 h-3 mr-1" />
-                          +{Math.floor(Math.random() * 5) + 1} ce mois
+                        <p className="text-sm font-medium text-gray-600">Candidatures reçues</p>
+                        <p className="text-3xl font-bold text-blue-dark">{stats.totalCandidates}</p>
+                        <p className="text-xs text-gray-500 flex items-center mt-1">
+                          Données Supabase
                         </p>
                       </div>
                       <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center animate-bounce">
@@ -618,11 +504,10 @@ const AdminDashboard: React.FC = () => {
                   <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-600">Total Votes</p>
-                        <p className="text-3xl font-bold text-green-600 animate-pulse">{stats.totalVotes}</p>
-                        <p className="text-xs text-green-600 flex items-center mt-1">
-                          <TrendingUp className="w-3 h-3 mr-1" />
-                          +{Math.floor(Math.random() * 20) + 5} aujourd'hui
+                        <p className="text-sm font-medium text-gray-600">Votes payés</p>
+                        <p className="text-3xl font-bold text-green-600">{stats.totalVotes}</p>
+                        <p className="text-xs text-gray-500 flex items-center mt-1">
+                          Statut FedaPay approved
                         </p>
                       </div>
                       <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center animate-pulse">
@@ -650,11 +535,11 @@ const AdminDashboard: React.FC = () => {
                   <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-600">Note Moyenne</p>
-                        <p className="text-3xl font-bold text-orange-600 animate-pulse">{stats.averageRating}</p>
+                        <p className="text-sm font-medium text-gray-600">En attente</p>
+                        <p className="text-3xl font-bold text-orange-600">{stats.pendingApplications}</p>
                         <p className="text-xs text-orange-600 flex items-center mt-1">
                           <Star className="w-3 h-3 mr-1" />
-                          Sur 5 étoiles
+                          {stats.approvedApplications} approuvée(s)
                         </p>
                       </div>
                       <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center animate-spin">
@@ -669,8 +554,8 @@ const AdminDashboard: React.FC = () => {
                   <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-2xl shadow-lg">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-blue-100">Visiteurs aujourd'hui</p>
-                        <p className="text-2xl font-bold">{Math.floor(Math.random() * 100) + 50}</p>
+                        <p className="text-sm text-blue-100">Candidatures en attente</p>
+                        <p className="text-2xl font-bold">{stats.pendingApplications}</p>
                       </div>
                       <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
                         <Users className="w-6 h-6" />
@@ -681,8 +566,8 @@ const AdminDashboard: React.FC = () => {
                   <div className="bg-gradient-to-r from-green-500 to-green-600 text-white p-6 rounded-2xl shadow-lg">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-green-100">Votes cette heure</p>
-                        <p className="text-2xl font-bold">{Math.floor(Math.random() * 20) + 5}</p>
+                        <p className="text-sm text-green-100">Candidatures approuvées</p>
+                        <p className="text-2xl font-bold">{stats.approvedApplications}</p>
                       </div>
                       <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
                         <Vote className="w-6 h-6" />
@@ -693,8 +578,8 @@ const AdminDashboard: React.FC = () => {
                   <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-6 rounded-2xl shadow-lg">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-purple-100">Taux de conversion</p>
-                        <p className="text-2xl font-bold">{Math.floor(Math.random() * 20) + 15}%</p>
+                        <p className="text-sm text-purple-100">Votes payés</p>
+                        <p className="text-2xl font-bold">{stats.totalVotes}</p>
                       </div>
                       <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
                         <TrendingUp className="w-6 h-6" />
@@ -733,7 +618,9 @@ const AdminDashboard: React.FC = () => {
                     </div>
                   </div>
                   <div className="space-y-3">
-                    {recentActivities.map((activity, index) => (
+                    {recentActivities.length === 0 ? (
+                      <p className="text-sm text-gray-500 text-center py-4">Aucune activité récente pour l’instant</p>
+                    ) : recentActivities.map((activity, index) => (
                       <div 
                         key={activity.id} 
                         className={`flex items-center space-x-3 p-3 bg-gray-50 rounded-lg transition-all duration-300 hover:bg-blue-50 hover:scale-105 ${
@@ -755,7 +642,7 @@ const AdminDashboard: React.FC = () => {
                   </div>
                   <div className="mt-4 pt-4 border-t border-gray-200">
                     <div className="text-center">
-                      <p className="text-xs text-gray-500 mb-2">Mise à jour automatique toutes les 30 secondes</p>
+                      <p className="text-xs text-gray-500 mb-2">Données chargées depuis Supabase</p>
                       <div className="w-3 h-3 bg-green-500 rounded-full mx-auto animate-pulse"></div>
                     </div>
                   </div>
@@ -869,7 +756,7 @@ const AdminDashboard: React.FC = () => {
                   <div className="flex items-center justify-between mb-6">
                     <div>
                       <h2 className="text-2xl font-bold text-blue-dark">Candidatures reçues</h2>
-                      <p className="text-gray-600">{applications.length} candidature(s) sauvegardée(s)</p>
+                      <p className="text-gray-600">{applications.length} candidature(s) dans Supabase</p>
                     </div>
                     <div className="flex space-x-2">
                       <button
@@ -935,7 +822,10 @@ const AdminDashboard: React.FC = () => {
                                  <div className="text-sm text-gray-900">{app.contactPerson}</div>
                                  <div className="text-xs text-gray-500">{app.email} • {app.phone}</div>
                                </td>
-                               <td className="px-6 py-4 text-sm text-gray-900">{app.category}</td>
+                               <td className="px-6 py-4 text-sm text-gray-900">
+                                 <div>{app.category}</div>
+                                 {app.prize && <div className="text-xs text-gray-500">{app.prize}</div>}
+                               </td>
                                <td className="px-6 py-4 text-sm text-gray-700 max-w-md truncate">
                                  {app.description}
                                </td>
@@ -950,25 +840,26 @@ const AdminDashboard: React.FC = () => {
                                  </span>
                                </td>
                                <td className="px-6 py-4">
-                                 {!app.status && (
+                                 {app.status === 'pending' ? (
                                    <div className="flex space-x-2">
                                      <button
-                                       onClick={() => approveApplication(app.id)}
-                                       className="text-green-600 hover:text-green-800 p-1"
+                                       onClick={() => updateApplicationStatus(app.id, 'approved')}
+                                       disabled={updatingId === app.id}
+                                       className="text-green-600 hover:text-green-800 p-1 disabled:opacity-50"
                                        title="Approuver"
                                      >
                                        <CheckCircle className="w-4 h-4" />
                                      </button>
                                      <button
-                                       onClick={() => rejectApplication(app.id)}
-                                       className="text-red-600 hover:text-red-800 p-1"
+                                       onClick={() => updateApplicationStatus(app.id, 'rejected')}
+                                       disabled={updatingId === app.id}
+                                       className="text-red-600 hover:text-red-800 p-1 disabled:opacity-50"
                                        title="Rejeter"
                                      >
                                        <XCircle className="w-4 h-4" />
                                      </button>
                                    </div>
-                                 )}
-                                 {app.status && (
+                                 ) : (
                                    <span className="text-xs text-gray-500">
                                      {app.status === 'approved' ? '✓ Approuvé' : '✗ Rejeté'}
                                    </span>
@@ -1120,7 +1011,7 @@ const AdminDashboard: React.FC = () => {
                                      <div className="flex items-center justify-between mb-6">
                      <div>
                        <h2 className="text-2xl font-bold text-blue-dark">Gestion des Votes</h2>
-                       <p className="text-gray-600">{filteredVotes.length} vote(s) enregistré(s) • {approvedCandidates.length} candidat(s) approuvé(s)</p>
+                       <p className="text-gray-600">{filteredVotes.length} vote(s) payé(s) • {approvedCandidates.length} candidature(s) approuvée(s)</p>
                      </div>
                     <div className="flex gap-3">
                       <button
@@ -1196,7 +1087,7 @@ const AdminDashboard: React.FC = () => {
                            </div>
                            <p className="text-xs text-blue-700 mb-2">{candidate.contactPerson}</p>
                            <div className="text-xs text-blue-600">
-                             Approuvé le {new Date(candidate.approvedAt).toLocaleDateString('fr-FR')}
+                             {candidate.email}
                            </div>
                          </div>
                        ))}
@@ -1209,7 +1100,7 @@ const AdminDashboard: React.FC = () => {
                    </div>
 
                   {filteredVotes.length === 0 ? (
-                    <p className="text-center text-gray-500 py-8">Aucun vote trouvé</p>
+                    <p className="text-center text-gray-500 py-8">Aucun vote payé pour l’instant</p>
                   ) : (
                     <div className="overflow-x-auto">
                       <table className="w-full">
@@ -1219,10 +1110,9 @@ const AdminDashboard: React.FC = () => {
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidat</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Catégorie</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Votant</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Note</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Montant</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Transaction</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                           </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -1234,49 +1124,12 @@ const AdminDashboard: React.FC = () => {
                               <td className="px-6 py-4 text-sm font-medium text-gray-900">{vote.candidate}</td>
                               <td className="px-6 py-4 text-sm text-gray-700">{vote.category}</td>
                               <td className="px-6 py-4 text-sm text-gray-600">{vote.voter}</td>
+                              <td className="px-6 py-4 text-sm text-gray-900">{vote.amount} GNF</td>
+                              <td className="px-6 py-4 text-sm text-gray-500">{vote.transactionId || '—'}</td>
                               <td className="px-6 py-4">
-                                <div className="flex items-center space-x-1">
-                                  <span className="text-sm font-medium text-gray-900">{vote.rating}</span>
-                                  <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                                </div>
-                              </td>
-                              <td className="px-6 py-4">
-                                <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                                  vote.voteType === 'online' ? 'bg-blue-100 text-blue-800' :
-                                  vote.voteType === 'jury' ? 'bg-purple-100 text-purple-800' :
-                                  'bg-green-100 text-green-800'
-                                }`}>
-                                  {vote.voteType === 'online' ? 'En ligne' :
-                                   vote.voteType === 'jury' ? 'Jury' : 'Public'}
+                                <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
+                                  Payé
                                 </span>
-                              </td>
-                              <td className="px-6 py-4">
-                                <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                                  vote.status === 'approved' ? 'bg-green-100 text-green-800' :
-                                  vote.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                                  'bg-yellow-100 text-yellow-800'
-                                }`}>
-                                  {vote.status === 'approved' ? 'Approuvé' :
-                                   vote.status === 'rejected' ? 'Rejeté' : 'En attente'}
-                                </span>
-                              </td>
-                              <td className="px-6 py-4">
-                                <div className="flex space-x-2">
-                                  <button
-                                    onClick={() => updateVoteStatus(vote.id, 'approved')}
-                                    className="text-green-600 hover:text-green-800"
-                                    title="Approuver"
-                                  >
-                                    <CheckCircle className="w-4 h-4" />
-                                  </button>
-                                  <button
-                                    onClick={() => updateVoteStatus(vote.id, 'rejected')}
-                                    className="text-red-600 hover:text-red-800"
-                                    title="Rejeter"
-                                  >
-                                    <XCircle className="w-4 h-4" />
-                                  </button>
-                                </div>
                               </td>
                             </tr>
                           ))}
@@ -1296,11 +1149,10 @@ const AdminDashboard: React.FC = () => {
                   <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-600">Tendance des candidatures</p>
-                        <p className="text-2xl font-bold text-blue-dark">+12%</p>
-                        <p className="text-xs text-green-600 flex items-center">
-                          <TrendingUp className="w-3 h-3 mr-1" />
-                          Ce mois
+                        <p className="text-sm font-medium text-gray-600">Candidatures</p>
+                        <p className="text-2xl font-bold text-blue-dark">{stats.totalCandidates}</p>
+                        <p className="text-xs text-gray-500 flex items-center">
+                          Reçues dans Supabase
                         </p>
                       </div>
                       <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
@@ -1312,11 +1164,10 @@ const AdminDashboard: React.FC = () => {
                   <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-600">Tendance des votes</p>
-                        <p className="text-2xl font-bold text-green-600">+8%</p>
-                        <p className="text-xs text-green-600 flex items-center">
-                          <TrendingUp className="w-3 h-3 mr-1" />
-                          Ce mois
+                        <p className="text-sm font-medium text-gray-600">Votes payés</p>
+                        <p className="text-2xl font-bold text-green-600">{stats.totalVotes}</p>
+                        <p className="text-xs text-gray-500 flex items-center">
+                          Comptés après paiement
                         </p>
                       </div>
                       <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
@@ -1328,11 +1179,10 @@ const AdminDashboard: React.FC = () => {
                   <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-600">Note moyenne</p>
-                        <p className="text-2xl font-bold text-orange-600">4.2</p>
+                        <p className="text-sm font-medium text-gray-600">En attente</p>
+                        <p className="text-2xl font-bold text-orange-600">{stats.pendingApplications}</p>
                         <p className="text-xs text-orange-600 flex items-center">
-                          <Star className="w-3 h-3 mr-1" />
-                          Sur 5
+                          À traiter
                         </p>
                       </div>
                       <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
@@ -1376,26 +1226,29 @@ const AdminDashboard: React.FC = () => {
                        </div>
                      </div>
                     <div className="space-y-4">
-                      {analyticsData.categoryStats?.slice(0, 8).map((cat: any, index: number) => (
+                      {analyticsData.categoryStats?.slice(0, 8).map((cat: any, index: number) => {
+                        const maxVotes = Math.max(1, ...((analyticsData.categoryStats || []).map((c: any) => c.votes || 0)));
+                        return (
                         <div key={index} className="flex items-center justify-between">
                           <div className="flex-1">
                             <div className="flex items-center justify-between mb-1">
                               <span className="text-sm font-medium text-gray-700 truncate">{cat.name}</span>
-                              <span className="text-sm text-gray-500">{cat.averageRating.toFixed(1)}/5</span>
+                              <span className="text-sm text-gray-500">{cat.votes} votes</span>
                             </div>
                             <div className="w-full bg-gray-200 rounded-full h-2">
                               <div 
                                 className="bg-blue-600 h-2 rounded-full" 
-                                style={{ width: `${(cat.averageRating / 5) * 100}%` }}
+                                style={{ width: `${(cat.votes / maxVotes) * 100}%` }}
                               ></div>
                           </div>
                             <div className="flex justify-between text-xs text-gray-500 mt-1">
-                              <span>{cat.candidates} candidats</span>
-                              <span>{cat.votes} votes</span>
+                              <span>{cat.candidates} candidatures</span>
+                              <span>{cat.votes} votes payés</span>
                             </div>
                           </div>
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
 
@@ -1403,21 +1256,16 @@ const AdminDashboard: React.FC = () => {
                   <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
                     <h3 className="text-lg font-semibold text-blue-dark mb-6">Top Performers</h3>
                     <div className="space-y-4">
-                      {analyticsData.topPerformers?.map((performer: any, index: number) => (
+                      {(!analyticsData.topPerformers || analyticsData.topPerformers.length === 0) ? (
+                        <p className="text-sm text-gray-500">Aucun vote payé pour l’instant</p>
+                      ) : analyticsData.topPerformers.map((performer: any, index: number) => (
                         <div key={index} className="flex items-center space-x-4">
                           <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-sm font-bold text-blue-600">
                             {index + 1}
                           </div>
                           <div className="flex-1">
                             <p className="text-sm font-medium text-gray-900">{performer.name}</p>
-                            <div className="flex items-center space-x-2">
-                              <div className="flex items-center space-x-1">
-                                <span className="text-sm text-gray-600">{performer.rating}</span>
-                                <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                              </div>
-                              <span className="text-xs text-gray-500">•</span>
-                              <span className="text-xs text-gray-500">{performer.votes} votes</span>
-                            </div>
+                            <span className="text-xs text-gray-500">{performer.votes} votes payés</span>
                           </div>
                         </div>
                       ))}
@@ -1433,9 +1281,8 @@ const AdminDashboard: React.FC = () => {
                       <thead className="bg-gray-50">
                         <tr>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mois</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidats</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Votes</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Note Moyenne</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidatures</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Votes payés</th>
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
@@ -1444,7 +1291,6 @@ const AdminDashboard: React.FC = () => {
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{month.month}</td>
                             <td className="px-6 py-4 text-sm text-gray-600">{month.candidates}</td>
                             <td className="px-6 py-4 text-sm text-gray-600">{month.votes}</td>
-                            <td className="px-6 py-4 text-sm text-gray-600">{month.rating.toFixed(1)}/5</td>
                           </tr>
                         ))}
                       </tbody>
