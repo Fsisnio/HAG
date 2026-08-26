@@ -38,7 +38,7 @@ const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState({
     totalCandidates: 0,
     totalVotes: 0,
-    totalCategories: 8,
+    totalCategories: 9,
     averageRating: 0
   });
 
@@ -75,7 +75,7 @@ const AdminDashboard: React.FC = () => {
     setStats({
       totalCandidates: officialCandidates.length,
       totalVotes: realVotes,
-      totalCategories: 8,
+      totalCategories: 9,
       averageRating: realAverageRating || 0
     });
   }, []);
@@ -770,7 +770,7 @@ const AdminDashboard: React.FC = () => {
                   <div className="flex items-center justify-between mb-6">
                     <div>
                       <h2 className="text-2xl font-bold text-blue-dark">Gestion des Catégories</h2>
-                      <p className="text-gray-600">19 prix en 8 catégories officielles HAG 2026</p>
+                      <p className="text-gray-600">19 prix en 9 catégories officielles HAG 2026</p>
                     </div>
                     <div className="flex space-x-2">
                       <button

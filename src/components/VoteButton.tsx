@@ -9,7 +9,7 @@ interface VoteButtonProps {
   candidateCategory: string;
   isVoted: boolean;
   isVoting: boolean;
-  onVote: (candidateId: number, candidateName: string, candidateCategory: string) => void;
+  onVote?: (candidateId: number, candidateName: string, candidateCategory: string) => void;
   disabled?: boolean;
   voteAmount?: number; // Prix du vote
   enablePayment?: boolean; // Activer le système de paiement
@@ -41,7 +41,7 @@ const VoteButton: React.FC<VoteButtonProps> = ({
       setShowPaymentModal(true);
     } else {
       // Vote gratuit (ancien système)
-      onVote(candidateId, candidateName, candidateCategory);
+      onVote?.(candidateId, candidateName, candidateCategory);
     }
   };
 
@@ -118,7 +118,6 @@ const VoteButton: React.FC<VoteButtonProps> = ({
           candidateName={candidateName}
           candidateCategory={candidateCategory}
           voteAmount={voteAmount}
-          onPaymentConfirmed={() => onVote(candidateId, candidateName, candidateCategory)}
         />
       )}
     </>

@@ -5,7 +5,8 @@ export const SLOGAN =
   "Célébrer l'excellence • Valoriser les talents • Promouvoir l'hospitalité guinéenne";
 
 export const APPLICATION_START = '2026-08-25';
-export const APPLICATION_END = '2026-09-25';
+export const APPLICATION_END = '2026-09-20';
+export const APPLICATION_PERIOD_LABEL = 'Inscriptions du 25 août au 20 septembre 2026';
 export const VOTES_START = '2026-09-25';
 export const VOTES_END = '2026-12-04';
 export const CARNAVAL_DATE = '2026-12-09';
@@ -16,13 +17,13 @@ export const GALA_VENUE = 'Hôtel Kaloum, Conakry – Guinée';
 export const GALA_ISO = '2026-12-11T17:00:00+00:00';
 
 export const VOTE_AMOUNT_GNF = 5000;
-export const ORANGE_MONEY_NUMBER = '626 93 04 83';
-export const ORANGE_MONEY_TEL = '+224626930483';
+export const FEDAPAY_PAYMENT_URL = 'https://me.fedapay.com/HAG-Award';
+export const FEDAPAY_RETURN_PATH = '/voter';
 
 export const CONTACT = {
   email: 'groupelmcontact@gmail.com',
   phones: [
-    { display: '+224 626 93 04 83', tel: '+224626930483', label: 'Orange Money / Votes' },
+    { display: '+224 626 93 04 83', tel: '+224626930483', label: 'Téléphone' },
     { display: '+224 666 63 76 62', tel: '+224666637662', label: 'Contact' },
     { display: '+224 622 58 62 53', tel: '+224622586253', label: 'Contact' }
   ]
@@ -38,7 +39,7 @@ export const TICKETS = [
 
 export const CALENDAR = [
   { label: 'Ouverture des inscriptions', date: '25 août 2026' },
-  { label: 'Clôture des inscriptions', date: '25 septembre 2026' },
+  { label: 'Clôture des inscriptions', date: '20 septembre 2026' },
   { label: 'Ouverture des votes', date: '25 septembre 2026' },
   { label: 'Clôture des votes', date: '4 décembre 2026' },
   { label: 'Carnaval', date: '9 décembre 2026' },
@@ -48,6 +49,26 @@ export const CALENDAR = [
 
 export const formatGnf = (amount: number): string =>
   `${amount.toLocaleString('fr-FR')} GNF`;
+
+export const buildFedaPayCheckoutUrl = (voter: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  callbackUrl?: string;
+}): string => {
+  const url = new URL(FEDAPAY_PAYMENT_URL);
+  url.searchParams.set('firstname', voter.firstName);
+  url.searchParams.set('lastname', voter.lastName);
+  url.searchParams.set('email', voter.email);
+  url.searchParams.set('phone', voter.phone);
+  url.searchParams.set('amount', String(VOTE_AMOUNT_GNF));
+  if (voter.callbackUrl) {
+    url.searchParams.set('callback_url', voter.callbackUrl);
+    url.searchParams.set('return_url', voter.callbackUrl);
+  }
+  return url.toString();
+};
 
 const startOfDay = (isoDate: string) => new Date(`${isoDate}T00:00:00+00:00`);
 const endOfDay = (isoDate: string) => new Date(`${isoDate}T23:59:59+00:00`);

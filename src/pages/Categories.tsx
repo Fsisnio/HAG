@@ -48,17 +48,10 @@ const Categories: React.FC = () => {
           </div>
           
           {/* Affichage par groupes */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-16">
+          <div className="max-w-4xl mx-auto mb-16">
             <a href="/hag-categories-2026.png" target="_blank" rel="noreferrer" className="block bg-white rounded-3xl shadow-lg overflow-hidden border border-gray-100">
               <img
                 src="/hag-categories-2026.png"
-                alt={`Affiche officielle des catégories et prix HAG ${EVENT_YEAR}`}
-                className="w-full h-auto"
-              />
-            </a>
-            <a href="/hag-categories-liste-2026.png" target="_blank" rel="noreferrer" className="block bg-white rounded-3xl shadow-lg overflow-hidden border border-gray-100">
-              <img
-                src="/hag-categories-liste-2026.png"
                 alt={`Liste officielle des catégories et prix HAG ${EVENT_YEAR}`}
                 className="w-full h-auto"
               />
@@ -201,7 +194,7 @@ const Categories: React.FC = () => {
           </h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
             Choisissez votre prix parmi nos {getTotalCategoriesCount()} récompenses officielles et soumettez votre candidature pour
-            les Hospitality Awards Guinée {EVENT_YEAR}. Les inscriptions sont ouvertes du 25 août au 25 septembre.
+            Les inscriptions sont ouvertes du 25 août au 20 septembre.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/candidater" className="btn btn-primary btn-large">

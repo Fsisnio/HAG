@@ -30,105 +30,109 @@ const candidate = (
   isVoted: false
 });
 
+const FORMATION = 'Prix du Meilleur Etablissement de Formation aux métiers de l’hospitalité';
+const SUPERIEUR = 'Prix du Meilleur Etablissement d’Enseignement Supérieur';
+const GUIDE = 'Prix du Meilleur Guide Touristique';
+const AGENCE = 'Prix de la Meilleure Agence de Voyage';
+const AMBASSADEUR = 'Prix Meilleur(e) Ambassadeur (rice) de la Destination Guinée';
+const INNOVATION = 'Prix de l’Innovation Digitale dans les métiers de l’Hospitalité';
+const ECO = 'Prix de la Meilleure Initiative Eco-Responsable';
+const ACCUEIL = 'Prix d’Excellence en Accueil, Service et Expérience Client';
+const BARTENDER = 'Prix du Bartender de l’Année';
+const CULINAIRE = 'Prix de la Création Culinaire Guinéenne';
+const CHAINE = 'Prix de la Meilleure Chaîne de Restauration';
+const RESTAURANT = 'Prix du Meilleur Restaurant de l’année';
+const DIVERTISSEMENT = 'Prix de la Meilleure Experience de divertissement';
+const LOISIRS = 'Prix de la Meilleure Experience de Loisirs';
+const COUP_DE_COEUR = 'Prix Coup de Cœur du Public – Hôtel & performance globale';
+
 export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] } = {
-  'Prix du Meilleur Etablissement de Formation professionnelle et Technique': [
-    candidate(1, 'Institut Gastronomique le Chef', 'Prix du Meilleur Etablissement de Formation professionnelle et Technique', 'Établissement de formation gastronomique'),
-    candidate(2, 'Institut de Formation Professionnelle Amadou Dieng (IFPAD)', 'Prix du Meilleur Etablissement de Formation professionnelle et Technique', 'Institut de formation professionnelle'),
-    candidate(3, 'ISTHOG', 'Prix du Meilleur Etablissement de Formation professionnelle et Technique', 'Institut supérieur de tourisme et d’hôtellerie'),
-    candidate(4, 'Nako Diabaté', 'Prix du Meilleur Etablissement de Formation professionnelle et Technique', 'Établissement de formation professionnelle'),
-    candidate(5, 'Billy Ecole', 'Prix du Meilleur Etablissement de Formation professionnelle et Technique', 'École de formation professionnelle'),
-    candidate(6, 'CENFORTH', 'Prix du Meilleur Etablissement de Formation professionnelle et Technique', 'Centre de formation en tourisme et hôtellerie')
+  [FORMATION]: [
+    candidate(1, 'Institut Gastronomique le Chef', FORMATION, 'Établissement de formation gastronomique'),
+    candidate(2, 'Institut de Formation Professionnelle Amadou Dieng (IFPAD)', FORMATION, 'Institut de formation professionnelle'),
+    candidate(3, 'ISTHOG', FORMATION, 'Institut supérieur de tourisme et d’hôtellerie'),
+    candidate(4, 'Nako Diabaté', FORMATION, 'Établissement de formation professionnelle'),
+    candidate(5, 'Billy Ecole', FORMATION, 'École de formation professionnelle'),
+    candidate(6, 'CENFORTH', FORMATION, 'Centre de formation en tourisme et hôtellerie')
   ],
-  'Prix du Meilleur Etablissement d’Enseignement Supérieur': [
-    candidate(7, 'École Supérieure de Tourisme et de l’Hotellerie (ESTH)', 'Prix du Meilleur Etablissement d’Enseignement Supérieur', 'École supérieure spécialisée tourisme et hôtellerie'),
-    candidate(8, 'Université Koffi', 'Prix du Meilleur Etablissement d’Enseignement Supérieur', 'Établissement d’enseignement supérieur')
+  [SUPERIEUR]: [
+    candidate(7, 'École Supérieure de Tourisme et de l’Hotellerie (ESTH)', SUPERIEUR, 'École supérieure spécialisée tourisme et hôtellerie'),
+    candidate(8, 'Université Koffi', SUPERIEUR, 'Établissement d’enseignement supérieur')
   ],
-  'Prix du Meilleur Guide Touristique': [
-    candidate(9, 'M. Hassan Bah', 'Prix du Meilleur Guide Touristique', 'Guide touristique'),
-    candidate(10, 'M. Taibou', 'Prix du Meilleur Guide Touristique', 'Guide touristique'),
-    candidate(11, 'M. Oumar', 'Prix du Meilleur Guide Touristique', 'Guide touristique'),
-    candidate(12, 'M. Kolié', 'Prix du Meilleur Guide Touristique', 'Guide touristique'),
-    candidate(13, 'M. Fernand Léno', 'Prix du Meilleur Guide Touristique', 'Guide touristique')
+  [GUIDE]: [
+    candidate(9, 'M. Hassan Bah', GUIDE, 'Guide touristique'),
+    candidate(10, 'M. Taibou', GUIDE, 'Guide touristique'),
+    candidate(11, 'M. Oumar', GUIDE, 'Guide touristique'),
+    candidate(12, 'M. Kolié', GUIDE, 'Guide touristique'),
+    candidate(13, 'M. Fernand Léno', GUIDE, 'Guide touristique')
   ],
-  'Prix de la Meilleure Agence de Voyage': [
-    candidate(14, 'Mondial Express', 'Prix de la Meilleure Agence de Voyage', 'Agence de voyage'),
-    candidate(15, 'Dounia Voyage', 'Prix de la Meilleure Agence de Voyage', 'Agence de voyage'),
-    candidate(16, 'Mondial Tour', 'Prix de la Meilleure Agence de Voyage', 'Agence de voyage')
+  [AGENCE]: [
+    candidate(14, 'Mondial Express', AGENCE, 'Agence de voyage'),
+    candidate(15, 'Dounia Voyage', AGENCE, 'Agence de voyage'),
+    candidate(16, 'Mondial Tour', AGENCE, 'Agence de voyage')
   ],
-  'Meilleur Ambassadeur (rice) de la Destination Guinée': [
-    candidate(17, 'Abdoulaye M’baye', 'Meilleur Ambassadeur (rice) de la Destination Guinée', 'Ambassadeur de la destination Guinée'),
-    candidate(18, 'Takana Zion', 'Meilleur Ambassadeur (rice) de la Destination Guinée', 'Ambassadeur de la destination Guinée'),
-    candidate(19, 'Serhou Guirassy', 'Meilleur Ambassadeur (rice) de la Destination Guinée', 'Ambassadeur de la destination Guinée'),
-    candidate(20, 'Jupiter Devibe', 'Meilleur Ambassadeur (rice) de la Destination Guinée', 'Ambassadeur de la destination Guinée'),
-    candidate(21, 'Naby Keita', 'Meilleur Ambassadeur (rice) de la Destination Guinée', 'Ambassadeur de la destination Guinée'),
-    candidate(22, 'Djelikaba Bintou', 'Meilleur Ambassadeur (rice) de la Destination Guinée', 'Ambassadrice de la destination Guinée'),
-    candidate(23, 'Iya Traoré', 'Meilleur Ambassadeur (rice) de la Destination Guinée', 'Ambassadeur de la destination Guinée'),
-    candidate(24, 'Saïfon Baldé', 'Meilleur Ambassadeur (rice) de la Destination Guinée', 'Ambassadeur de la destination Guinée')
+  [AMBASSADEUR]: [
+    candidate(17, 'Abdoulaye M’baye', AMBASSADEUR, 'Ambassadeur de la destination Guinée'),
+    candidate(18, 'Takana Zion', AMBASSADEUR, 'Ambassadeur de la destination Guinée'),
+    candidate(19, 'Serhou Guirassy', AMBASSADEUR, 'Ambassadeur de la destination Guinée'),
+    candidate(20, 'Jupiter Devibe', AMBASSADEUR, 'Ambassadeur de la destination Guinée'),
+    candidate(21, 'Naby Keita', AMBASSADEUR, 'Ambassadeur de la destination Guinée'),
+    candidate(22, 'Djelikaba Bintou', AMBASSADEUR, 'Ambassadrice de la destination Guinée'),
+    candidate(23, 'Iya Traoré', AMBASSADEUR, 'Ambassadeur de la destination Guinée'),
+    candidate(24, 'Saïfon Baldé', AMBASSADEUR, 'Ambassadeur de la destination Guinée')
   ],
-  'Prix de la Meilleure Destination Touristique': [
-    candidate(25, 'La voile de la Marié', 'Prix de la Meilleure Destination Touristique', 'Destination touristique'),
-    candidate(26, 'Les Eaux de Kilissi', 'Prix de la Meilleure Destination Touristique', 'Destination touristique'),
-    candidate(27, 'Le Pont de Liane', 'Prix de la Meilleure Destination Touristique', 'Destination touristique')
+  [INNOVATION]: [
+    candidate(25, 'AphoGest-Visit Guinea', INNOVATION, 'Solution digitale pour l’hospitalité'),
+    candidate(26, 'OBS Technologie', INNOVATION, 'Innovation digitale'),
+    candidate(27, 'Zaly Meirveille', INNOVATION, 'Innovation digitale')
   ],
-  'Prix Meilleur Événement Touristique': [
-    candidate(28, 'La Saison Touristique', 'Prix Meilleur Événement Touristique', 'Événement touristique'),
-    candidate(29, 'Festival des Arts et de la Culture', 'Prix Meilleur Événement Touristique', 'Événement touristique et culturel')
+  [ECO]: [
+    candidate(28, 'Palmeraie Lodge', ECO, 'Initiative éco-responsable'),
+    candidate(29, 'Maf Village', ECO, 'Initiative éco-responsable'),
+    candidate(30, 'Jardin D’Eden', ECO, 'Initiative éco-responsable'),
+    candidate(31, 'Beau Village de YARAYA', ECO, 'Initiative éco-responsable')
   ],
-  'Prix de la Meilleure Initiative Eco-Responsable': [
-    candidate(30, 'Palmeraie Lodge', 'Prix de la Meilleure Initiative Eco-Responsable', 'Initiative éco-responsable'),
-    candidate(31, 'Maf Village', 'Prix de la Meilleure Initiative Eco-Responsable', 'Initiative éco-responsable'),
-    candidate(32, 'Jardin D’Eden', 'Prix de la Meilleure Initiative Eco-Responsable', 'Initiative éco-responsable'),
-    candidate(33, 'Beau Village de YARAYA', 'Prix de la Meilleure Initiative Eco-Responsable', 'Initiative éco-responsable')
+  [ACCUEIL]: [
+    candidate(32, 'Souaré Premium Hôtel', ACCUEIL, 'Hôtel – accueil et service client'),
+    candidate(33, 'Hôtel ONOMO', ACCUEIL, 'Hôtel – accueil et service client'),
+    candidate(34, 'Atlantic View Hôtel', ACCUEIL, 'Hôtel – accueil et service client'),
+    candidate(35, 'Riviera Taouyah', ACCUEIL, 'Hôtel – accueil et service client')
   ],
-  'Prix de l’Innovation Digital dans l’Hospitalité': [
-    candidate(34, 'AphoGest-Visit Guinea', 'Prix de l’Innovation Digital dans l’Hospitalité', 'Solution digitale pour l’hospitalité'),
-    candidate(35, 'OBS Technologie', 'Prix de l’Innovation Digital dans l’Hospitalité', 'Innovation digitale'),
-    candidate(36, 'Zaly Meirveille', 'Prix de l’Innovation Digital dans l’Hospitalité', 'Innovation digitale')
+  [BARTENDER]: [
+    candidate(36, 'Jean Sivily Koivogui', BARTENDER, 'Bartender'),
+    candidate(37, 'Emmanuel Koivogui', BARTENDER, 'Bartender')
   ],
-  'Prix de l’Excellence en Accueil et Service Client': [
-    candidate(37, 'Souaré Premium Hôtel', 'Prix de l’Excellence en Accueil et Service Client', 'Hôtel – accueil et service client'),
-    candidate(38, 'Hôtel ONOMO', 'Prix de l’Excellence en Accueil et Service Client', 'Hôtel – accueil et service client'),
-    candidate(39, 'Atlantic View Hôtel', 'Prix de l’Excellence en Accueil et Service Client', 'Hôtel – accueil et service client'),
-    candidate(40, 'Riviera Taouyah', 'Prix de l’Excellence en Accueil et Service Client', 'Hôtel – accueil et service client')
+  [CULINAIRE]: [
+    candidate(38, 'Le Jacquier', CULINAIRE, 'Création culinaire guinéenne')
   ],
-  'Prix du Bartender de l’Année': [
-    candidate(41, 'Jean Sivily Koivogui', 'Prix du Bartender de l’Année', 'Bartender'),
-    candidate(42, 'Emmanuel Koivogui', 'Prix du Bartender de l’Année', 'Bartender')
+  [CHAINE]: [
+    candidate(39, 'Big FATAYA', CHAINE, 'Chaîne de restauration'),
+    candidate(40, 'Heroes Coffee', CHAINE, 'Chaîne de restauration'),
+    candidate(41, 'RFC', CHAINE, 'Chaîne de restauration'),
+    candidate(42, 'SLM', CHAINE, 'Chaîne de restauration')
   ],
-  'Prix de l’Excellence Food & Beverage': [
-    candidate(43, 'M. Mohamed Firas Challoub', 'Prix de l’Excellence Food & Beverage', 'Professionnel Food & Beverage')
+  [RESTAURANT]: [
+    candidate(43, 'G. BARISTA', RESTAURANT, 'Restaurant'),
+    candidate(44, 'Avenue', RESTAURANT, 'Restaurant'),
+    candidate(45, 'Aquarium', RESTAURANT, 'Restaurant'),
+    candidate(46, 'Istanbul', RESTAURANT, 'Restaurant')
   ],
-  'Prix de la Création Culinaire Guinéenne': [
-    candidate(44, 'Le Jacquier', 'Prix de la Création Culinaire Guinéenne', 'Création culinaire guinéenne')
+  [DIVERTISSEMENT]: [
+    candidate(47, 'Plage Camayenne', DIVERTISSEMENT, 'Expérience de divertissement'),
+    candidate(48, 'Iles de Los', DIVERTISSEMENT, 'Expérience de divertissement'),
+    candidate(49, 'Plage de Tayaki', DIVERTISSEMENT, 'Expérience de divertissement'),
+    candidate(50, 'Jardin du 2 Octobre', DIVERTISSEMENT, 'Expérience de divertissement')
   ],
-  'Prix de la Meilleure Chaîne de Restauration': [
-    candidate(45, 'Big FATAYA', 'Prix de la Meilleure Chaîne de Restauration', 'Chaîne de restauration'),
-    candidate(46, 'Heroes Coffee', 'Prix de la Meilleure Chaîne de Restauration', 'Chaîne de restauration'),
-    candidate(47, 'RFC', 'Prix de la Meilleure Chaîne de Restauration', 'Chaîne de restauration'),
-    candidate(48, 'SLM', 'Prix de la Meilleure Chaîne de Restauration', 'Chaîne de restauration')
+  [LOISIRS]: [
+    candidate(51, 'Le Baron', LOISIRS, 'Expérience de loisirs'),
+    candidate(52, 'Boulevard Select', LOISIRS, 'Expérience de loisirs')
   ],
-  'Prix du Meilleur Restaurant': [
-    candidate(49, 'G. BARISTA', 'Prix du Meilleur Restaurant', 'Restaurant'),
-    candidate(50, 'Avenue', 'Prix du Meilleur Restaurant', 'Restaurant'),
-    candidate(51, 'Aquarium', 'Prix du Meilleur Restaurant', 'Restaurant'),
-    candidate(52, 'Istanbul', 'Prix du Meilleur Restaurant', 'Restaurant')
-  ],
-  'Prix de la Meilleure Experience de divertissement': [
-    candidate(53, 'Plage Camayenne', 'Prix de la Meilleure Experience de divertissement', 'Expérience de divertissement'),
-    candidate(54, 'Iles de Los', 'Prix de la Meilleure Experience de divertissement', 'Expérience de divertissement'),
-    candidate(55, 'Plage de Tayaki', 'Prix de la Meilleure Experience de divertissement', 'Expérience de divertissement'),
-    candidate(56, 'Jardin du 2 Octobre', 'Prix de la Meilleure Experience de divertissement', 'Expérience de divertissement')
-  ],
-  'Prix de la Meilleure Experience de Loisirs': [
-    candidate(57, 'Le Baron', 'Prix de la Meilleure Experience de Loisirs', 'Expérience de loisirs'),
-    candidate(58, 'Boulevard Select', 'Prix de la Meilleure Experience de Loisirs', 'Expérience de loisirs')
-  ],
-  'Prix Coup de Cœur du Public – Hôtels': [
-    candidate(59, 'Noom Hôtel', 'Prix Coup de Cœur du Public – Hôtels', 'Hôtel – coup de cœur du public'),
-    candidate(60, 'PalmCamayenne Hôtel', 'Prix Coup de Cœur du Public – Hôtels', 'Hôtel – coup de cœur du public'),
-    candidate(61, 'Hôtel Kaloum', 'Prix Coup de Cœur du Public – Hôtels', 'Hôtel – coup de cœur du public'),
-    candidate(62, 'Riviera Royal Hôtel', 'Prix Coup de Cœur du Public – Hôtels', 'Hôtel – coup de cœur du public'),
-    candidate(63, 'Radisson Blu Hôtel Conakry', 'Prix Coup de Cœur du Public – Hôtels', 'Hôtel – coup de cœur du public')
+  [COUP_DE_COEUR]: [
+    candidate(53, 'Noom Hôtel', COUP_DE_COEUR, 'Hôtel – coup de cœur du public'),
+    candidate(54, 'PalmCamayenne Hôtel', COUP_DE_COEUR, 'Hôtel – coup de cœur du public'),
+    candidate(55, 'Hôtel Kaloum', COUP_DE_COEUR, 'Hôtel – coup de cœur du public'),
+    candidate(56, 'Riviera Royal Hôtel', COUP_DE_COEUR, 'Hôtel – coup de cœur du public'),
+    candidate(57, 'Radisson Blu Hôtel Conakry', COUP_DE_COEUR, 'Hôtel – coup de cœur du public')
   ]
 };
 

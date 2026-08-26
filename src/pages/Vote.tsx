@@ -4,9 +4,10 @@ import VoteStats from '../components/VoteStats';
 import VoteButton from '../components/VoteButton';
 import { officialCategories } from '../data/categories';
 import { getAllOfficialCandidates, getCandidatesByCategory } from '../data/officialCandidates';
-import { validateVote, validateCandidatesUniqueness } from '../utils/voteValidation';
+import { validateCandidatesUniqueness } from '../utils/voteValidation';
 import votePaymentHandler from '../services/votePaymentHandler';
-import { formatGnf, isVotingOpen, ORANGE_MONEY_NUMBER, VOTE_AMOUNT_GNF, VOTES_END, VOTES_START } from '../data/event';
+import { formatGnf, isVotingOpen, FEDAPAY_PAYMENT_URL, VOTE_AMOUNT_GNF, VOTES_END, VOTES_START } from '../data/event';
+import { voteStore } from '../services/voteStore';
 
 // Composant pour l'affichage des étoiles de notation
 const StarRating: React.FC<{
@@ -76,34 +77,20 @@ const VotePage: React.FC = () => {
   const [paymentMessage, setPaymentMessage] = useState<string>('');
   const [paymentMessageType, setPaymentMessageType] = useState<'success' | 'error' | ''>('');
 
-  // Vérifier les retours de paiement
+  // Vérifier les retours de paiement FedaPay (?id=&status=approved)
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const handlePaymentReturn = async () => {
-      const success = await votePaymentHandler.handlePaymentReturn(urlParams);
-      
-      if (success) {
-        setPaymentMessage('Paiement confirmé ! Votre vote a été enregistré avec succès.');
-        setPaymentMessageType('success');
-        // Nettoyer l'URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-      } else if (urlParams.get('payment') === 'cancelled') {
-        setPaymentMessage('Paiement annulé. Votre vote n\'a pas été enregistré.');
-        setPaymentMessageType('error');
-        // Nettoyer l'URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-      }
-      
-      // Masquer le message après 5 secondes
-      if (success || urlParams.get('payment') === 'cancelled') {
-        setTimeout(() => {
-          setPaymentMessage('');
-          setPaymentMessageType('');
-        }, 5000);
-      }
-    };
+    const result = votePaymentHandler.handlePaymentReturn(urlParams);
 
-    handlePaymentReturn();
+    if (result.message) {
+      setPaymentMessage(result.message);
+      setPaymentMessageType(result.success ? 'success' : 'error');
+      window.history.replaceState({}, document.title, window.location.pathname);
+      setTimeout(() => {
+        setPaymentMessage('');
+        setPaymentMessageType('');
+      }, 6000);
+    }
   }, []);
 
   // Charger les candidats officiels
@@ -115,19 +102,9 @@ const VotePage: React.FC = () => {
       // Charger les candidats officiels
       const officialCandidates = getAllOfficialCandidates();
       
-      // Charger seulement les votes sauvegardés (pas les ratings)
-      const savedVotes = localStorage.getItem('hag_candidates_votes');
-      
-      const votesData = savedVotes ? JSON.parse(savedVotes) : [];
-      
-      // Convertir au format attendu et utiliser les nouvelles données (rating: 0)
+      const paidCounts = voteStore.getPaidCountsByCandidate();
+
       const formattedCandidates = officialCandidates.map(candidate => {
-        const savedVote = votesData.find((c: any) => c.id === candidate.id);
-        
-        // Validation des données de vote sauvegardées
-        const votes = savedVote?.votes !== undefined ? savedVote.votes : (candidate.votes || 0);
-        const isVoted = savedVote?.isVoted === true ? true : (candidate.isVoted || false);
-        
         return {
           id: candidate.id,
           name: candidate.name,
@@ -135,8 +112,8 @@ const VotePage: React.FC = () => {
           category: candidate.category,
           description: candidate.description || 'Candidat officiel des Hospitality Awards Guinée',
           image: '/placeholder-hotel.jpg',
-          votes: Math.max(0, votes), // S'assurer que les votes ne sont pas négatifs
-          isVoted: isVoted,
+          votes: paidCounts[candidate.id] || 0,
+          isVoted: false,
           rating: candidate.rating || 0, // Utiliser les nouvelles données (0)
           totalRatings: candidate.totalRatings || 0, // Utiliser les nouvelles données (0)
           userRating: undefined // Pas de rating utilisateur au début
@@ -159,9 +136,7 @@ const VotePage: React.FC = () => {
   }, []);
 
   const [sortBy, setSortBy] = useState<'votes' | 'name'>('votes');
-  const [showVoteSuccess, setShowVoteSuccess] = useState(false);
-  const [votedCandidate, setVotedCandidate] = useState<string>('');
-  const [votingInProgress, setVotingInProgress] = useState<Set<number>>(new Set());
+  const [votingInProgress] = useState<Set<number>>(new Set());
 
 
   // Fonction pour sélectionner une catégorie
@@ -174,80 +149,6 @@ const VotePage: React.FC = () => {
   const handleBackToCategories = () => {
     setCurrentView('categories');
     setSelectedCategory('');
-  };
-
-  const handleVote = (candidateId: number, candidateName: string, candidateCategory: string) => {
-    console.log('🔄 Vote pour:', candidateName, 'ID:', candidateId, 'Catégorie:', candidateCategory);
-    
-    // Validation complète du vote
-    const validation = validateVote(candidateId, candidateName, candidateCategory, candidates);
-    
-    if (!validation.isValid) {
-      console.error('❌ Validation échouée:', validation.errors);
-      return;
-    }
-    
-    if (validation.warnings.length > 0) {
-      console.warn('⚠️ Avertissements:', validation.warnings);
-    }
-    
-    // Trouver le candidat
-    const candidate = candidates.find(c => c.id === candidateId);
-    if (!candidate) {
-      console.error('❌ Candidat non trouvé:', candidateId);
-      return;
-    }
-    
-    // Vérifier si déjà voté
-    if (candidate.isVoted) {
-      console.warn('⚠️ Déjà voté pour:', candidate.name);
-      return;
-    }
-    
-    // Vérifier si vote en cours
-    if (votingInProgress.has(candidateId)) {
-      console.warn('⚠️ Vote en cours pour:', candidate.name);
-      return;
-    }
-
-    // Marquer comme en cours
-    setVotingInProgress(prev => new Set(prev).add(candidateId));
-
-    // Simuler un délai de traitement
-    setTimeout(() => {
-      // Mettre à jour le candidat
-      setCandidates(prev => {
-        const updated = prev.map(c => 
-          c.id === candidateId 
-            ? { ...c, votes: c.votes + 1, isVoted: true }
-            : c
-        );
-        
-        // Sauvegarder seulement les données de vote (pas tout l'objet candidat)
-        const voteData = updated.map(c => ({
-          id: c.id,
-          votes: c.votes,
-          isVoted: c.isVoted
-        }));
-        localStorage.setItem('hag_candidates_votes', JSON.stringify(voteData));
-        
-        return updated;
-      });
-
-      // Afficher succès
-      setVotedCandidate(candidate.name);
-      setShowVoteSuccess(true);
-      
-      // Masquer le message après 3 secondes
-      setTimeout(() => setShowVoteSuccess(false), 3000);
-      
-      // Retirer du vote en cours
-      setVotingInProgress(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(candidateId);
-        return newSet;
-      });
-    }, 500);
   };
 
   // Gérer la notation avec des étoiles
@@ -306,14 +207,20 @@ const VotePage: React.FC = () => {
           <div className="text-center">
             <h1 className="text-4xl font-bold mb-4">Votez pour l'Excellence</h1>
             <p className="text-xl text-blue-100 max-w-3xl mx-auto">
-              Chaque vote payant coûte {formatGnf(VOTE_AMOUNT_GNF)}, à envoyer par Orange Money au {ORANGE_MONEY_NUMBER}.
-              Votes ouverts du {VOTES_START.split('-').reverse().join('/')} au {VOTES_END.split('-').reverse().join('/')}.
+              Chaque vote coûte {formatGnf(VOTE_AMOUNT_GNF)} et n’est validé qu’après un paiement effectif
+              via FedaPay. Votes ouverts du {VOTES_START.split('-').reverse().join('/')} au {VOTES_END.split('-').reverse().join('/')}.
             </p>
             {!isVotingOpen() && (
               <p className="mt-4 text-gold font-semibold">
                 La période officielle de vote n’est pas encore ouverte. Vous pouvez déjà découvrir les nominés.
               </p>
             )}
+            <p className="mt-4 text-sm text-blue-100">
+              Paiement sécurisé :{' '}
+              <a href={FEDAPAY_PAYMENT_URL} className="underline text-gold" target="_blank" rel="noreferrer">
+                me.fedapay.com/HAG-Award
+              </a>
+            </p>
             </div>
           </div>
         </div>
@@ -430,13 +337,6 @@ const VotePage: React.FC = () => {
             </div>
 
             {/* Message de succès */}
-            {showVoteSuccess && (
-              <div className="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center space-x-2">
-                <CheckCircle className="w-5 h-5" />
-                <span>Vote enregistré pour {votedCandidate} !</span>
-              </div>
-            )}
-
             {/* Liste des candidats */}
             {sortedCandidates.length === 0 ? (
               <div className="text-center py-16">
@@ -451,7 +351,6 @@ const VotePage: React.FC = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {sortedCandidates.map((candidate) => {
-                  console.log('🎨 Rendu du candidat:', { id: candidate.id, name: candidate.name, isVoted: candidate.isVoted });
                   return (
                   <div key={candidate.id} className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow">
                     {/* Image du candidat */}
@@ -509,7 +408,6 @@ const VotePage: React.FC = () => {
                           candidateCategory={candidate.category}
                           isVoted={candidate.isVoted}
                           isVoting={votingInProgress.has(candidate.id)}
-                          onVote={handleVote}
                           disabled={false}
                           enablePayment={true}
                           voteAmount={VOTE_AMOUNT_GNF}
@@ -539,8 +437,8 @@ const VotePage: React.FC = () => {
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <VoteIcon className="w-8 h-8 text-blue-600" />
               </div>
-              <h3 className="text-lg font-semibold text-blue-900 mb-2">2. Votez</h3>
-              <p className="text-blue-700">Envoyez {formatGnf(VOTE_AMOUNT_GNF)} par Orange Money au {ORANGE_MONEY_NUMBER}</p>
+              <h3 className="text-lg font-semibold text-blue-900 mb-2">2. Payez</h3>
+              <p className="text-blue-700">Payez {formatGnf(VOTE_AMOUNT_GNF)} sur FedaPay. Le vote n’est compté qu’après paiement effectif.</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">

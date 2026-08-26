@@ -49,7 +49,7 @@ const Contact: React.FC = () => {
     },
     {
       icon: Phone,
-      title: 'Orange Money / Votes',
+      title: 'Téléphone',
       value: '+224 626 93 04 83',
       link: 'tel:+224626930483'
     },
@@ -300,9 +300,9 @@ const Contact: React.FC = () => {
                   Quelles sont les dates importantes ?
                 </h3>
                 <p className="text-gray-600 leading-relaxed text-lg">
-                  Les inscriptions sont ouvertes du 25 août au 25 septembre 2026.
+                  Les inscriptions sont ouvertes du 25 août au 20 septembre 2026.
                   Les votes du public se déroulent du 25 septembre au 4 décembre 2026
-                  (5 000 GNF par vote via Orange Money au 626 93 04 83).
+                  (5 000 GNF par vote, paiement via FedaPay — un vote n’est valide qu’après paiement effectif).
                   La soirée de remise des prix a lieu le 11 décembre 2026 à 17h00 à l’Hôtel Kaloum.
                 </p>
               </div>

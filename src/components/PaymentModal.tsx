@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { X, Smartphone, CheckCircle, AlertCircle, Copy } from 'lucide-react';
-import { formatGnf, ORANGE_MONEY_NUMBER, ORANGE_MONEY_TEL, VOTE_AMOUNT_GNF } from '../data/event';
+import { X, CreditCard, AlertCircle, ExternalLink } from 'lucide-react';
+import { buildFedaPayCheckoutUrl, FEDAPAY_PAYMENT_URL, FEDAPAY_RETURN_PATH, formatGnf, VOTE_AMOUNT_GNF } from '../data/event';
+import { voteStore } from '../services/voteStore';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -9,7 +10,6 @@ interface PaymentModalProps {
   candidateName: string;
   candidateCategory: string;
   voteAmount?: number;
-  onPaymentConfirmed?: () => void;
 }
 
 const PaymentModal: React.FC<PaymentModalProps> = ({
@@ -18,52 +18,37 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   candidateId,
   candidateName,
   candidateCategory,
-  voteAmount = VOTE_AMOUNT_GNF,
-  onPaymentConfirmed
+  voteAmount = VOTE_AMOUNT_GNF
 }) => {
-  const [voterName, setVoterName] = useState('');
-  const [voterPhone, setVoterPhone] = useState('');
-  const [transactionId, setTransactionId] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [error, setError] = useState('');
-  const [copied, setCopied] = useState(false);
 
-  const copyNumber = async () => {
-    try {
-      await navigator.clipboard.writeText(ORANGE_MONEY_TEL.replace('+', ''));
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      setCopied(false);
-    }
-  };
-
-  const handleConfirm = () => {
-    if (!voterName.trim() || !voterPhone.trim()) {
-      setError('Indiquez votre nom et le numéro qui a envoyé le paiement.');
+  const handlePay = () => {
+    if (!lastName.trim() || !firstName.trim() || !email.trim() || !phone.trim()) {
+      setError('Renseignez nom, prénom, e-mail et téléphone pour continuer.');
       return;
     }
 
-    const confirmedVote = {
+    voteStore.createPendingVote({
       candidateId,
       candidateName,
       candidateCategory,
-      voterName,
-      voterPhone,
-      transactionId,
-      amount: voteAmount,
-      method: 'Orange Money',
-      orangeMoneyNumber: ORANGE_MONEY_NUMBER,
-      timestamp: new Date().toISOString(),
-      status: 'reported'
-    };
+      voterLastName: lastName,
+      voterFirstName: firstName,
+      voterEmail: email,
+      voterPhone: phone
+    });
 
-    const existingRaw = localStorage.getItem('hag_orange_money_votes');
-    const existing = existingRaw ? JSON.parse(existingRaw) : [];
-    localStorage.setItem('hag_orange_money_votes', JSON.stringify([confirmedVote, ...existing]));
-    localStorage.setItem('hag_pending_vote', JSON.stringify(confirmedVote));
-
-    onPaymentConfirmed?.();
-    onClose();
+    window.location.href = buildFedaPayCheckoutUrl({
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      email: email.trim(),
+      phone: phone.trim(),
+      callbackUrl: `${window.location.origin}${FEDAPAY_RETURN_PATH}`
+    });
   };
 
   if (!isOpen) return null;
@@ -72,7 +57,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl max-w-md w-full mx-auto shadow-2xl">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-blue-dark">Vote payant</h2>
+          <h2 className="text-xl font-bold text-blue-dark">Payer pour voter</h2>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
             <X className="w-5 h-5" />
           </button>
@@ -83,65 +68,56 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
             <h3 className="font-semibold text-blue-dark mb-1">{candidateName}</h3>
             <p className="text-sm text-gray-600">{candidateCategory}</p>
             <div className="mt-3 flex items-center justify-between">
-              <span className="text-sm font-medium text-blue-dark">Prix du vote</span>
+              <span className="text-sm font-medium text-blue-dark">Montant du vote</span>
               <span className="text-lg font-bold text-gold">{formatGnf(voteAmount)}</span>
             </div>
           </div>
 
-          <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
-            <div className="flex items-center space-x-2 mb-2">
-              <Smartphone className="w-5 h-5 text-orange-600" />
-              <span className="font-semibold text-orange-800">Orange Money</span>
-            </div>
-            <p className="text-sm text-orange-900 mb-3">
-              Envoyez <strong>{formatGnf(voteAmount)}</strong> au numéro ci-dessous, puis confirmez votre vote.
-            </p>
-            <div className="flex items-center justify-between bg-white rounded-lg px-3 py-2">
-              <a href={`tel:${ORANGE_MONEY_TEL}`} className="font-bold text-blue-dark text-lg">
-                {ORANGE_MONEY_NUMBER}
-              </a>
-              <button
-                type="button"
-                onClick={copyNumber}
-                className="text-sm text-gold font-semibold flex items-center space-x-1"
-              >
-                {copied ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                <span>{copied ? 'Copié' : 'Copier'}</span>
-              </button>
-            </div>
-          </div>
+          <p className="text-sm text-gray-600">
+            Un vote n’est valide que lorsque le paiement FedaPay est effectif.
+            Vous serez redirigé vers la page sécurisée{' '}
+            <a href={FEDAPAY_PAYMENT_URL} className="text-gold font-medium" target="_blank" rel="noreferrer">
+              me.fedapay.com/HAG-Award
+            </a>
+            .
+          </p>
 
           <div className="space-y-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Votre nom *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Nom *</label>
               <input
                 type="text"
-                value={voterName}
-                onChange={(e) => setVoterName(e.target.value)}
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Téléphone Orange Money *
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Prénom(s) *</label>
+              <input
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">E-mail *</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Téléphone *</label>
               <input
                 type="tel"
-                value={voterPhone}
-                onChange={(e) => setVoterPhone(e.target.value)}
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
                 placeholder="6XX XX XX XX"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Référence de transaction (optionnel)
-              </label>
-              <input
-                type="text"
-                value={transactionId}
-                onChange={(e) => setTransactionId(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
               />
             </div>
           </div>
@@ -162,11 +138,12 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
             Annuler
           </button>
           <button
-            onClick={handleConfirm}
-            className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-gold text-blue-dark rounded-lg hover:bg-yellow-400"
+            onClick={handlePay}
+            className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-gold text-blue-dark rounded-lg hover:bg-yellow-400 font-semibold"
           >
-            <CheckCircle className="w-5 h-5" />
-            <span>J’ai envoyé {formatGnf(voteAmount)}</span>
+            <CreditCard className="w-5 h-5" />
+            <span>Payer {formatGnf(voteAmount)}</span>
+            <ExternalLink className="w-4 h-4" />
           </button>
         </div>
       </div>

@@ -4,20 +4,20 @@ import {
   User,
   Plane,
   Globe,
-  MapPin,
-  Calendar,
   Leaf,
   Smartphone,
   Headphones,
   Wine,
-  Utensils,
   ChefHat,
   Store,
   Coffee,
   Music,
   Palmtree,
   Heart,
-  Trophy
+  Trophy,
+  Lightbulb,
+  Briefcase,
+  Star
 } from 'lucide-react';
 
 export interface Category {
@@ -32,22 +32,23 @@ export interface Category {
 }
 
 export const categoryGroups = [
-  'Formation professionnelle et Enseignement Supérieur',
-  'Tourisme',
-  'Innovation',
-  'Accueil et Service',
-  'Restauration',
-  'Divertissement et Loisirs',
+  'Formation & Développement des Compétences',
+  'Tourisme & Destination Guinée',
+  'Innovation & Développement Durable',
+  'Accueil, Service & Expérience Client',
+  'Restauration & Chaîne',
+  'Management & Leadership',
+  'Divertissement & Loisirs',
   'Coup de Cœur du Public',
-  'Grand Prix Hospitality Awards Guinée 2026'
+  'Grand Prix Hospitality Award Guinée 2026'
 ];
 
 export const officialCategories: Category[] = [
   {
     id: 1,
     icon: GraduationCap,
-    title: 'Prix du Meilleur Etablissement de Formation professionnelle et Technique',
-    description: 'Récompense l’établissement qui excelle dans la formation professionnelle et technique liée à l’hospitalité.',
+    title: 'Prix du Meilleur Etablissement de Formation aux métiers de l’hospitalité',
+    description: 'Récompense l’établissement qui forme le mieux aux métiers de l’hospitalité.',
     criteria: [
       'Qualité de la formation et des programmes',
       'Insertion professionnelle des diplômés',
@@ -55,10 +56,24 @@ export const officialCategories: Category[] = [
       'Partenariats avec le secteur',
       'Impact sur les compétences du métier'
     ],
-    group: 'Formation professionnelle et Enseignement Supérieur'
+    group: 'Formation & Développement des Compétences'
   },
   {
     id: 2,
+    icon: Lightbulb,
+    title: 'Prix de la Meilleure Initiative de Developpement des Compétences',
+    description: 'Récompense une initiative qui développe concrètement les compétences du secteur.',
+    criteria: [
+      'Pertinence de l’initiative',
+      'Nombre de personnes formées ou accompagnées',
+      'Qualité pédagogique',
+      'Partenariats et ancrage local',
+      'Résultats mesurables'
+    ],
+    group: 'Formation & Développement des Compétences'
+  },
+  {
+    id: 3,
     icon: BookOpen,
     title: 'Prix du Meilleur Etablissement d’Enseignement Supérieur',
     description: 'Récompense l’établissement d’enseignement supérieur qui forme les futurs cadres de l’hospitalité et du tourisme.',
@@ -69,10 +84,10 @@ export const officialCategories: Category[] = [
       'Ouverture internationale',
       'Employabilité des diplômés'
     ],
-    group: 'Formation professionnelle et Enseignement Supérieur'
+    group: 'Formation & Développement des Compétences'
   },
   {
-    id: 3,
+    id: 4,
     icon: User,
     title: 'Prix du Meilleur Guide Touristique',
     description: 'Récompense le guide qui incarne la passion, le savoir et l’art de transmettre la destination Guinée.',
@@ -83,10 +98,10 @@ export const officialCategories: Category[] = [
       'Sécurité et organisation des visites',
       'Retours positifs des voyageurs'
     ],
-    group: 'Tourisme'
+    group: 'Tourisme & Destination Guinée'
   },
   {
-    id: 4,
+    id: 5,
     icon: Plane,
     title: 'Prix de la Meilleure Agence de Voyage',
     description: 'Récompense l’agence qui se distingue par la qualité de son offre et de son accompagnement.',
@@ -97,12 +112,12 @@ export const officialCategories: Category[] = [
       'Promotion de la destination Guinée',
       'Satisfaction des voyageurs'
     ],
-    group: 'Tourisme'
+    group: 'Tourisme & Destination Guinée'
   },
   {
-    id: 5,
+    id: 6,
     icon: Globe,
-    title: 'Meilleur Ambassadeur (rice) de la Destination Guinée',
+    title: 'Prix Meilleur(e) Ambassadeur (rice) de la Destination Guinée',
     description: 'Récompense une personnalité qui promeut et rayonne pour la destination Guinée.',
     criteria: [
       'Rayonnement national et international',
@@ -111,35 +126,21 @@ export const officialCategories: Category[] = [
       'Influence et capacité d’inspiration',
       'Contribution à l’attractivité du pays'
     ],
-    group: 'Tourisme'
-  },
-  {
-    id: 6,
-    icon: MapPin,
-    title: 'Prix de la Meilleure Destination Touristique',
-    description: 'Récompense le site ou la destination qui offre la plus belle expérience de visite.',
-    criteria: [
-      'Attractivité et unicité du site',
-      'Accueil et aménagements',
-      'Préservation du patrimoine',
-      'Expérience visiteur',
-      'Potentiel de développement touristique'
-    ],
-    group: 'Tourisme'
+    group: 'Tourisme & Destination Guinée'
   },
   {
     id: 7,
-    icon: Calendar,
-    title: 'Prix Meilleur Événement Touristique',
-    description: 'Récompense l’événement qui dynamise le tourisme et valorise la culture guinéenne.',
+    icon: Smartphone,
+    title: 'Prix de l’Innovation Digitale dans les métiers de l’Hospitalité',
+    description: 'Récompense une solution digitale qui transforme les métiers de l’hospitalité.',
     criteria: [
-      'Originalité et attractivité',
-      'Organisation et fréquentation',
-      'Impact économique et médiatique',
-      'Rayonnement de la destination',
-      'Pérennité et vision'
+      'Innovation technologique',
+      'Utilité pour les professionnels ou les voyageurs',
+      'Qualité de l’expérience utilisateur',
+      'Impact mesurable',
+      'Potentiel de déploiement'
     ],
-    group: 'Tourisme'
+    group: 'Innovation & Développement Durable'
   },
   {
     id: 8,
@@ -153,27 +154,13 @@ export const officialCategories: Category[] = [
       'Intégration communautaire',
       'Innovation éco-responsable'
     ],
-    group: 'Tourisme'
+    group: 'Innovation & Développement Durable'
   },
   {
     id: 9,
-    icon: Smartphone,
-    title: 'Prix de l’Innovation Digital dans l’Hospitalité',
-    description: 'Récompense une solution digitale qui transforme l’expérience ou la gestion de l’hospitalité.',
-    criteria: [
-      'Innovation technologique',
-      'Utilité pour les professionnels ou les voyageurs',
-      'Qualité de l’expérience utilisateur',
-      'Impact mesurable',
-      'Potentiel de déploiement'
-    ],
-    group: 'Innovation'
-  },
-  {
-    id: 10,
     icon: Headphones,
-    title: 'Prix de l’Excellence en Accueil et Service Client',
-    description: 'Récompense l’établissement qui offre un accueil et un service client d’exception.',
+    title: 'Prix d’Excellence en Accueil, Service et Expérience Client',
+    description: 'Récompense l’établissement qui offre un accueil, un service et une expérience client d’exception.',
     criteria: [
       'Qualité de l’accueil',
       'Personnalisation du service',
@@ -181,10 +168,10 @@ export const officialCategories: Category[] = [
       'Satisfaction client',
       'Constante dans l’excellence'
     ],
-    group: 'Accueil et Service'
+    group: 'Accueil, Service & Expérience Client'
   },
   {
-    id: 11,
+    id: 10,
     icon: Wine,
     title: 'Prix du Bartender de l’Année',
     description: 'Récompense le bartender qui se distingue par sa créativité, sa technique et son sens du service.',
@@ -195,24 +182,10 @@ export const officialCategories: Category[] = [
       'Hygiène et professionnalisme',
       'Contribution à l’expérience de l’établissement'
     ],
-    group: 'Accueil et Service'
+    group: 'Accueil, Service & Expérience Client'
   },
   {
-    id: 12,
-    icon: Utensils,
-    title: 'Prix de l’Excellence Food & Beverage',
-    description: 'Récompense l’excellence dans la restauration et le service Food & Beverage.',
-    criteria: [
-      'Qualité de l’offre F&B',
-      'Cohérence du service',
-      'Innovation et présentation',
-      'Standards d’hygiène',
-      'Expérience client'
-    ],
-    group: 'Accueil et Service'
-  },
-  {
-    id: 13,
+    id: 11,
     icon: ChefHat,
     title: 'Prix de la Création Culinaire Guinéenne',
     description: 'Récompense une création qui sublime et modernise la gastronomie guinéenne.',
@@ -223,10 +196,10 @@ export const officialCategories: Category[] = [
       'Présentation et signature',
       'Contribution à la cuisine nationale'
     ],
-    group: 'Restauration'
+    group: 'Restauration & Chaîne'
   },
   {
-    id: 14,
+    id: 12,
     icon: Store,
     title: 'Prix de la Meilleure Chaîne de Restauration',
     description: 'Récompense la chaîne qui allie qualité, consistance et développement.',
@@ -237,13 +210,13 @@ export const officialCategories: Category[] = [
       'Expansion et impact',
       'Satisfaction client'
     ],
-    group: 'Restauration'
+    group: 'Restauration & Chaîne'
   },
   {
-    id: 15,
+    id: 13,
     icon: Coffee,
-    title: 'Prix du Meilleur Restaurant',
-    description: 'Récompense le restaurant qui offre la meilleure expérience gastronomique.',
+    title: 'Prix du Meilleur Restaurant de l’année',
+    description: 'Récompense le restaurant qui offre la meilleure expérience gastronomique de l’année.',
     criteria: [
       'Excellence culinaire',
       'Qualité du service',
@@ -251,7 +224,35 @@ export const officialCategories: Category[] = [
       'Rapport qualité-prix',
       'Réputation et fidélisation'
     ],
-    group: 'Restauration'
+    group: 'Restauration & Chaîne'
+  },
+  {
+    id: 14,
+    icon: Star,
+    title: 'Prix du jeune Talent de l’Hospitalité',
+    description: 'Récompense un jeune professionnel prometteur du secteur de l’hospitalité.',
+    criteria: [
+      'Potentiel et parcours',
+      'Innovation et créativité',
+      'Engagement et professionnalisme',
+      'Impact malgré le jeune âge',
+      'Vision pour le secteur'
+    ],
+    group: 'Management & Leadership'
+  },
+  {
+    id: 15,
+    icon: Briefcase,
+    title: 'Prix du Meilleur Manager Hôtelier de l’Année',
+    description: 'Récompense le manager hôtelier qui se distingue par son leadership et ses résultats.',
+    criteria: [
+      'Leadership et gestion d’équipe',
+      'Performance de l’établissement',
+      'Qualité de service',
+      'Innovation managériale',
+      'Reconnaissance des équipes et des clients'
+    ],
+    group: 'Management & Leadership'
   },
   {
     id: 16,
@@ -265,7 +266,7 @@ export const officialCategories: Category[] = [
       'Sécurité et confort',
       'Satisfaction du public'
     ],
-    group: 'Divertissement et Loisirs'
+    group: 'Divertissement & Loisirs'
   },
   {
     id: 17,
@@ -279,18 +280,18 @@ export const officialCategories: Category[] = [
       'Innovation dans l’offre',
       'Fidélisation de la clientèle'
     ],
-    group: 'Divertissement et Loisirs'
+    group: 'Divertissement & Loisirs'
   },
   {
     id: 18,
     icon: Heart,
-    title: 'Prix Coup de Cœur du Public – Hôtels',
+    title: 'Prix Coup de Cœur du Public – Hôtel & performance globale',
     description: 'Récompense l’hôtel plébiscité par le public. Attribution 100 % par vote du public.',
     criteria: [
       'Nombre de votes du public',
       'Popularité et notoriété',
+      'Performance globale de l’établissement',
       'Connexion émotionnelle avec le public',
-      'Engagement des supporters',
       'Image et rayonnement'
     ],
     group: 'Coup de Cœur du Public',
@@ -299,7 +300,7 @@ export const officialCategories: Category[] = [
   {
     id: 19,
     icon: Trophy,
-    title: 'Grand prix National d’Excellence de l’Hospitalité',
+    title: 'Grand prix National d’Excellence dans l’Hospitalité',
     description: 'Plus haute distinction des HAG 2026, attribuée par le jury et un comité spécial de professionnels reconnus.',
     criteria: [
       'Excellence globale',
@@ -308,7 +309,7 @@ export const officialCategories: Category[] = [
       'Innovation et vision',
       'Contribution au rayonnement de l’hospitalité guinéenne'
     ],
-    group: 'Grand Prix Hospitality Awards Guinée 2026'
+    group: 'Grand Prix Hospitality Award Guinée 2026'
   }
 ];
 

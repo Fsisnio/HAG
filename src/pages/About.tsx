@@ -1,37 +1,43 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Target, Users, Globe, Award, Quote, Compass } from 'lucide-react';
+import { Target, Users, Globe, Award, Quote, Compass, TrendingUp, GraduationCap } from 'lucide-react';
+import FirstEditionGallery from '../components/FirstEditionGallery';
 
 const About: React.FC = () => {
   const objectives = [
     {
-      icon: Target,
-      title: 'Valoriser les talents',
-      description: 'Reconnaître et récompenser l\'excellence dans le secteur de l\'hospitalité guinéenne'
+      icon: Award,
+      title: 'Premièrement',
+      description: 'Reconnaître les talents et les efforts des professionnels qui travaillent chaque jour pour améliorer la qualité des services.'
+    },
+    {
+      icon: TrendingUp,
+      title: 'Deuxièmement',
+      description: 'Encourager les établissements à progresser en matière d’accueil, de confort, de qualité et d’expérience client.'
     },
     {
       icon: Users,
-      title: 'Encourager l\'innovation',
-      description: 'Promouvoir les nouvelles approches et technologies dans le tourisme'
+      title: 'Troisièmement',
+      description: 'Créer une émulation positive entre les acteurs du secteur afin que chacun cherche à atteindre de meilleurs standards.'
+    },
+    {
+      icon: GraduationCap,
+      title: 'Quatrièmement',
+      description: 'Promouvoir les métiers de l’hospitalité auprès des jeunes et montrer qu’il s’agit de véritables opportunités de carrière et d’entrepreneuriat.'
     },
     {
       icon: Globe,
-      title: 'Renforcer la visibilité',
-      description: 'Mettre en valeur le potentiel touristique de la Guinée sur la scène internationale'
-    },
-    {
-      icon: Award,
-      title: 'Fédérer les acteurs',
-      description: 'Créer une communauté soudée autour de l\'excellence en hospitalité'
+      title: 'Enfin',
+      description: 'Créer un espace de rencontre entre les professionnels, les investisseurs, les institutions et les partenaires qui souhaitent contribuer au développement du tourisme en Guinée.'
     }
   ];
 
   const values = [
-    'Excellence et qualité de service',
-    'Innovation et créativité',
-    'Durabilité et responsabilité',
-    'Inclusion et diversité',
-    'Transparence et équité'
+    'L’excellence',
+    'Le professionnalisme',
+    'La formation',
+    'L’innovation',
+    'La satisfaction du client'
   ];
 
   return (
@@ -61,17 +67,30 @@ const About: React.FC = () => {
           <div className="grid grid-2 gap-12 items-center">
             <div>
               <h2 className="mb-6">
-                Notre <span className="text-gold">mission</span>
+                Notre <span className="text-gold">vision</span>
               </h2>
               <p className="text-lg mb-6">
-                Promouvoir et valoriser l'excellence dans le secteur de l'hospitalité 
-                en Guinée en récompensant les initiatives innovantes, les services 
-                de qualité et les talents exceptionnels.
+                Notre vision est de contribuer à faire de la Guinée une destination reconnue
+                pour la qualité de son accueil et de ses services.
               </p>
+              <p className="mb-4">
+                Nous voulons construire une culture de l’hospitalité basée sur :
+              </p>
+              <ul className="space-y-2 mb-6">
+                {values.map((value) => (
+                  <li key={value} className="flex items-center space-x-3">
+                    <span className="w-2.5 h-2.5 bg-gold rounded-full flex-shrink-0"></span>
+                    <span className="text-lg">{value}{value === 'La satisfaction du client' ? '.' : ' ;'}</span>
+                  </li>
+                ))}
+              </ul>
               <p className="mb-6">
-                Nous nous engageons à créer une plateforme qui encourage la 
-                collaboration, partage les bonnes pratiques et contribue au 
-                développement durable du tourisme guinéen.
+                Notre ambition est que chaque visiteur qui arrive en Guinée reparte avec
+                une image positive de notre pays grâce à la qualité de l’accueil qu’il aura reçu.
+              </p>
+              <p>
+                À travers les Hospitality Awards Guinée, nous voulons créer un mouvement
+                durable qui accompagne la transformation du secteur.
               </p>
             </div>
             <div className="relative">
@@ -100,7 +119,7 @@ const About: React.FC = () => {
               Nos <span className="text-gold">objectifs</span>
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Des objectifs clairs pour un impact maximal sur le secteur de l'hospitalité
+              Les Hospitality Awards Guinée poursuivent plusieurs objectifs.
             </p>
           </div>
           
@@ -172,13 +191,27 @@ const About: React.FC = () => {
         </div>
       </section>
 
+      <section className="section">
+        <div className="container">
+          <div className="text-center mb-12">
+            <h2 className="mb-4">
+              La <span className="text-gold">1ère édition</span>
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Quelques images de la première soirée de distinction des Hospitality Awards Guinée.
+            </p>
+          </div>
+          <FirstEditionGallery />
+        </div>
+      </section>
+
       <section className="section section-alt">
         <div className="container text-center">
           <h2 className="mb-6">
             Édition <span className="text-gold">2026</span>
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-8">
-            Les inscriptions sont ouvertes du 25 août au 25 septembre 2026. La soirée de remise des prix
+            Les inscriptions sont ouvertes du 25 août au 20 septembre 2026. La soirée de remise des prix
             et le dîner gala se tiendront le 11 décembre 2026 à 17h00 à l’Hôtel Kaloum, Conakry.
           </p>
         </div>

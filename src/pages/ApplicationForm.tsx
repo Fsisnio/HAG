@@ -214,7 +214,7 @@ const ApplicationForm: React.FC = () => {
           </h1>
           <p className="text-xl max-w-3xl mx-auto leading-relaxed mb-4">{SLOGAN}</p>
           <p className="text-white/80">
-            Période des candidatures : 25 août – 25 septembre {EVENT_YEAR}
+            Période des candidatures : 25 août – 20 septembre {EVENT_YEAR}
           </p>
         </div>
       </section>
@@ -228,7 +228,7 @@ const ApplicationForm: React.FC = () => {
                 <div>
                   <h2 className="text-lg font-bold text-blue-dark">Calendrier officiel {EVENT_YEAR}</h2>
                   <p className="text-sm text-gray-600">
-                    Inscriptions du 25 août au 25 septembre • Gala le 11 décembre à l’{GALA_VENUE}
+                    Inscriptions du 25 août au 20 septembre • Gala le 11 décembre à l’{GALA_VENUE}
                   </p>
                 </div>
               </div>

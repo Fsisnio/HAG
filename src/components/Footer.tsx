@@ -37,7 +37,7 @@ const Footer: React.FC = () => {
               </div>
             </div>
             <p className="text-gray-300 text-sm leading-relaxed">
-              Innovation et proximité – Célébrons l'excellence en hospitalité en Guinée.
+              Innovation et proximité – Célébrons l’excellence de l'hospitalité guinéenne.
             </p>
           </div>
 

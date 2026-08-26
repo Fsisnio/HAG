@@ -1,0 +1,1 @@
+-- Voir supabase/hag_schema.sql (script complet pour un projet Supabase existant).

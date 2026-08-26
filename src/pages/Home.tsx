@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Star, Award, Users, Calendar } from 'lucide-react';
 import Countdown from '../components/Countdown';
 import { getTotalCategoriesCount, getGroupsCount } from '../data/categories';
-import { EVENT_YEAR, SLOGAN, CALENDAR, TICKETS, formatGnf, GALA_VENUE } from '../data/event';
+import FirstEditionGallery from '../components/FirstEditionGallery';
+import { EVENT_YEAR, SLOGAN, CALENDAR, TICKETS, formatGnf, GALA_VENUE, APPLICATION_PERIOD_LABEL } from '../data/event';
 
 const Home: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -50,18 +51,15 @@ const Home: React.FC = () => {
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Image de couverture en arrière-plan */}
         <div 
-          className="absolute inset-0 bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: 'url(/couverture.jpg)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center 42%',
-            transform: isMobile ? 'scale(1.55)' : 'scale(1.45)',
-            transformOrigin: 'center center'
+            backgroundImage: 'url(/couverture-hag.png)',
+            backgroundAttachment: isMobile ? 'scroll' : 'fixed'
           }}
         ></div>
         
         {/* Overlay sombre pour améliorer la lisibilité */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-dark/80 via-blue-deep/70 to-blue-dark/80"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-dark/55 via-blue-deep/45 to-blue-dark/65"></div>
         
         {/* Motif de grille subtil */}
         <div className="absolute inset-0 opacity-3">
@@ -156,17 +154,27 @@ const Home: React.FC = () => {
           <div className="grid grid-2 items-center gap-12">
             <div>
               <h2 className="mb-6">
-                Célébrons l'<span className="text-gold">excellence</span> en hospitalité
+                CÉLÉBRONS L’<span className="text-gold">EXCELLENCE</span> DE L'HOSPITALITÉ GUINÉENNE
               </h2>
-              <p className="text-lg mb-6">
-                Les Hospitality Awards Guinée (HAG) sont l'événement de référence pour 
-                récompenser et valoriser les talents du secteur touristique et hôtelier guinéen avec 
-                {getTotalCategoriesCount()} prix organisés en {getGroupsCount()} catégories officielles.
+              <p className="text-lg mb-4">
+                Les Hospitality Awards Guinée sont une initiative qui vise à célébrer, reconnaître
+                et encourager l’excellence dans les métiers de l’hospitalité.
+              </p>
+              <p className="mb-4">
+                Quand nous parlons d’hospitalité, nous parlons de toutes les activités liées à l’art
+                d’accueillir et de servir : les hôtels, les restaurants, les agences de voyages, les
+                guides touristiques, les centres de loisirs, les professionnels de l’accueil et toutes
+                les personnes qui contribuent à offrir une expérience mémorable aux clients et aux visiteurs.
+              </p>
+              <p className="mb-4">
+                Concrètement, les Hospitality Awards Guinée sont une grande plateforme de reconnaissance
+                qui met en lumière les professionnels, les entreprises et les initiatives qui contribuent
+                au développement du secteur.
               </p>
               <p className="mb-8">
-                Notre mission est de promouvoir l'innovation, encourager l'excellence 
-                et renforcer la visibilité du tourisme guinéen sur la scène internationale à travers 
-                une reconnaissance complète de tous les secteurs de l'hospitalité.
+                Ce n’est donc pas seulement une cérémonie de remise de trophées. C’est un rendez-vous
+                qui rassemble les acteurs du secteur autour de la qualité, du professionnalisme et de
+                l’innovation.
               </p>
               <Link to="/a-propos" className="btn btn-primary">
                 En savoir plus
@@ -201,8 +209,23 @@ const Home: React.FC = () => {
         </div>
       </section>
 
+      <section className="section section-alt">
+        <div className="container">
+          <div className="text-center mb-12">
+            <h2 className="mb-4">
+              Souvenirs de la <span className="text-gold">1ère édition</span>
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Revivez la soirée de distinction organisée par Le Groupe LM :
+              discours, remise des Étoiles d’Honneur, lauréats et équipe d’accueil.
+            </p>
+          </div>
+          <FirstEditionGallery />
+        </div>
+      </section>
+
       {/* Section Fonctionnalités */}
-      <section className="section section-alt relative overflow-hidden">
+      <section className="section relative overflow-hidden">
         {/* Motif de fond */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-0 right-0 w-96 h-96 bg-gold rounded-full blur-3xl"></div>
@@ -244,7 +267,7 @@ const Home: React.FC = () => {
             <h2 className="mb-4">
               Calendrier <span className="text-gold">HAG {EVENT_YEAR}</span>
             </h2>
-            <p className="text-gray-600">Inscriptions du 25 août au 25 septembre • Gala à l’{GALA_VENUE}</p>
+            <p className="text-gray-600">{APPLICATION_PERIOD_LABEL} • Gala à l’{GALA_VENUE}</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
             {CALENDAR.map((item) => (
