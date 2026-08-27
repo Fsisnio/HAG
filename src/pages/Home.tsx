@@ -82,6 +82,42 @@ const Home: React.FC = () => {
         </div>
       </section>
 
+      {/* Haut patronage */}
+      <section className="section section-alt">
+        <div className="container">
+          <div className="grid grid-2 items-center gap-12">
+            <div className="overflow-hidden rounded-2xl shadow-xl bg-white">
+              <img
+                src="/patronage/moussa-moise-sylla.png"
+                alt="Son Excellence Monsieur Moussa Moïse Sylla, Ministre de la Culture, du Tourisme et de l’Artisanat"
+                className="w-full h-auto block object-cover"
+              />
+            </div>
+            <div>
+              <p className="text-sm uppercase tracking-[0.2em] text-gold font-semibold mb-4">
+                Haut patronage
+              </p>
+              <h2 className="mb-6 normal-case tracking-normal text-2xl md:text-3xl leading-snug">
+                Sous le Haut Patronage de Son Excellence Monsieur{' '}
+                <span className="text-gold">Moussa Moïse Sylla</span>, Ministre de la Culture, du
+                Tourisme et de l’Artisanat
+              </h2>
+              <p className="text-lg text-gray-700 mb-6 leading-relaxed">
+                Le Groupe LM, en collaboration avec le Ministère de la Culture, du Tourisme et de
+                l’Artisanat et le Guinea Development Board (GDB), à travers la Direction Générale en
+                charge de l’attractivité et du rayonnement de la Guinée, présente la deuxième
+                édition des Hospitality Awards Guinée.
+              </p>
+              <p className="text-gray-600 mb-2">Placée sous le thème :</p>
+              <p className="text-xl md:text-2xl font-heading font-bold text-blue-dark italic">
+                « Célébrons l’Excellence de l’
+                <span className="text-gold">Hospitalité Guinéenne</span> »
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Section À propos */}
       <section className="section">
         <div className="container">
