@@ -20,6 +20,7 @@ import Reglement from './pages/Reglement';
 import FAQ from './pages/FAQ';
 import Jury from './pages/Jury';
 import Galerie from './pages/Galerie';
+import Tickets from './pages/Tickets';
 
 const App: React.FC = () => {
   const location = useLocation();
@@ -40,6 +41,7 @@ const App: React.FC = () => {
           <Route path="/galerie" element={<Galerie />} />
           <Route path="/reglement" element={<Reglement />} />
           <Route path="/faq" element={<FAQ />} />
+          <Route path="/tickets" element={<Tickets />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/candidater" element={<ApplicationForm />} />
           <Route path="/voter" element={<VotePage />} />

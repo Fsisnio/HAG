@@ -4,7 +4,7 @@ import { ArrowRight, Star, Award, Users, Calendar } from 'lucide-react';
 import Countdown from '../components/Countdown';
 import { getTotalCategoriesCount, getGroupsCount } from '../data/categories';
 import FirstEditionGallery from '../components/FirstEditionGallery';
-import { EVENT_YEAR, SLOGAN, CALENDAR, TICKETS, formatGnf, GALA_VENUE, APPLICATION_PERIOD_LABEL } from '../data/event';
+import { EVENT_YEAR, SLOGAN, CALENDAR, GALA_VENUE, APPLICATION_PERIOD_LABEL } from '../data/event';
 
 const Home: React.FC = () => {
   const stats = [
@@ -226,27 +226,11 @@ const Home: React.FC = () => {
             </h2>
             <p className="text-gray-600">{APPLICATION_PERIOD_LABEL} • Gala à l’{GALA_VENUE}</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {CALENDAR.map((item) => (
               <div key={item.label} className="bg-white rounded-2xl shadow-lg p-5 border border-gray-100">
                 <div className="text-sm text-gold font-semibold mb-1">{item.label}</div>
                 <div className="text-blue-dark font-bold">{item.date}</div>
-              </div>
-            ))}
-          </div>
-
-          <div className="text-center mb-10">
-            <h2 className="mb-4">
-              Tickets du <span className="text-gold">dîner gala</span>
-            </h2>
-            <p className="text-gray-600">Soirée de remise des prix le 11 décembre 2026 à l’Hôtel Kaloum</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            {TICKETS.map((ticket) => (
-              <div key={ticket.name} className="bg-blue-dark text-white rounded-2xl p-5 text-center">
-                <div className="text-gold font-bold mb-2">{ticket.name}</div>
-                <div className="text-xl font-heading mb-2">{formatGnf(ticket.price)}</div>
-                <p className="text-sm text-white/80">{ticket.description}</p>
               </div>
             ))}
           </div>
