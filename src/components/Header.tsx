@@ -27,6 +27,9 @@ const Header: React.FC = () => {
   const navItems = [
     { path: '/', label: 'Accueil' },
     { path: '/a-propos', label: 'À propos' },
+    { path: '/souvenirs', label: 'Souvenirs' },
+    { path: '/pourquoi-participer', label: 'Pourquoi HAG' },
+    { path: '/calendrier', label: 'Calendrier' },
     { path: '/categories', label: 'Catégories' },
     { path: '/laureats', label: 'Lauréats' },
     { path: '/partenaires', label: 'Partenaires' },
@@ -74,7 +77,7 @@ const Header: React.FC = () => {
           </Link>
 
           {/* Navigation Desktop optimisée - tous les éléments sur une ligne */}
-          <nav className="hidden xl:flex items-center space-x-4 flex-1 justify-center">
+          <nav className="hidden xl:flex items-center space-x-3 flex-1 justify-center">
             {navItems.map((item) => (
               <Link
                 key={item.path}

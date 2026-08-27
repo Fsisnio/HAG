@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Star, Award, Users, Calendar } from 'lucide-react';
 import Countdown from '../components/Countdown';
 import { getTotalCategoriesCount, getGroupsCount } from '../data/categories';
-import FirstEditionGallery from '../components/FirstEditionGallery';
-import { EVENT_YEAR, SLOGAN, CALENDAR, GALA_VENUE, APPLICATION_PERIOD_LABEL } from '../data/event';
+import { EVENT_YEAR, SLOGAN } from '../data/event';
 
 const Home: React.FC = () => {
   const stats = [
@@ -12,24 +11,6 @@ const Home: React.FC = () => {
     { icon: Star, value: getGroupsCount().toString(), label: 'Catégories principales' },
     { icon: Users, value: '250+', label: 'Candidats attendus' },
     { icon: Calendar, value: String(EVENT_YEAR), label: 'Édition HAG' }
-  ];
-
-  const features = [
-    {
-      icon: Award,
-      title: 'Reconnaissance d\'excellence',
-      description: 'Valorisez vos talents et innovations dans le secteur de l\'hospitalité'
-    },
-    {
-      icon: Users,
-      title: 'Réseau professionnel',
-      description: 'Rejoignez une communauté d\'experts et de passionnés du tourisme'
-    },
-    {
-      icon: Star,
-      title: 'Visibilité nationale',
-      description: 'Bénéficiez d\'une exposition médiatique et d\'une reconnaissance officielle'
-    }
   ];
 
   return (
@@ -106,23 +87,20 @@ const Home: React.FC = () => {
         <div className="container">
           <div className="grid grid-2 items-center gap-12">
             <div>
-              <h2 className="mb-6">
-                CÉLÉBRONS L’<span className="text-gold">EXCELLENCE</span> DE L'HOSPITALITÉ GUINÉENNE
+              <h2 className="mb-6 normal-case tracking-normal text-3xl md:text-4xl leading-snug">
+                Et si nous commencions enfin à célébrer celles et ceux qui font rayonner l’
+                <span className="text-gold">hospitalité guinéenne</span> ?
               </h2>
               <p className="text-lg mb-4">
                 Les <strong>Hospitality Awards Guinée</strong> sont bien plus qu’une cérémonie de remise de prix.
-                C’est une initiative qui vise à{' '}
-                <strong>
-                  mettre en lumière, valoriser et célébrer les talents, les entreprises et les initiatives
-                  qui contribuent chaque jour au développement de l’hospitalité en Guinée.
-                </strong>
+                C’est une initiative qui vise à mettre en lumière, valoriser et célébrer les talents, les
+                entreprises et les initiatives qui contribuent chaque jour au développement de l’hospitalité
+                en Guinée.
               </p>
               <p className="mb-8">
-                Hôtellerie, restauration, tourisme, formation, culture, artisanat, innovation et expérience client :
-                les Hospitality Awards Guinée créent un espace où{' '}
-                <strong>
-                  l’excellence, le savoir-faire et l’innovation sont reconnus et récompensés.
-                </strong>
+                Hôtellerie, restauration, tourisme, formation, culture, artisanat, innovation et expérience
+                client : les Hospitality Awards Guinée créent un espace où l’excellence, le savoir-faire et
+                l’innovation sont reconnus et récompensés.
               </p>
               <Link to="/a-propos" className="btn btn-primary">
                 En savoir plus
@@ -153,81 +131,6 @@ const Home: React.FC = () => {
                 <Star className="w-16 h-16 text-gold" />
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="section section-alt">
-        <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="mb-4">
-              Souvenirs de la <span className="text-gold">1ère édition</span>
-            </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Revivez la soirée de distinction organisée par Le Groupe LM :
-              discours, remise des Étoiles d’Honneur, lauréats et équipe d’accueil.
-            </p>
-            <div className="mt-4 flex justify-center gap-4">
-              <Link to="/laureats" className="text-blue-700 font-medium hover:underline">Lauréats</Link>
-              <Link to="/galerie" className="text-blue-700 font-medium hover:underline">Galerie officielle</Link>
-            </div>
-          </div>
-          <FirstEditionGallery />
-        </div>
-      </section>
-
-      {/* Section Fonctionnalités */}
-      <section className="section relative overflow-hidden">
-        {/* Motif de fond */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-gold rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-dark rounded-full blur-3xl"></div>
-        </div>
-        
-        <div className="container relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-blue-dark mb-6">
-              Pourquoi participer aux <span className="text-gold">HAG</span> ?
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Découvrez les avantages uniques de participer aux Hospitality Awards Guinée
-            </p>
-          </div>
-          
-          <div className="grid grid-3 gap-8">
-            {features.map((feature, index) => (
-              <div key={index} className="group">
-                <div className="bg-white p-8 rounded-3xl shadow-lg text-center hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100">
-                  <div className="w-20 h-20 bg-gradient-to-br from-gold to-yellow-500 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                    <feature.icon className="w-10 h-10 text-blue-dark" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-blue-dark mb-4 group-hover:text-gold transition-colors">{feature.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{feature.description}</p>
-                  
-                  {/* Ligne décorative */}
-                  <div className="w-16 h-1 bg-gradient-to-r from-gold to-yellow-500 mx-auto mt-6 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="mb-4">
-              Calendrier <span className="text-gold">HAG {EVENT_YEAR}</span>
-            </h2>
-            <p className="text-gray-600">{APPLICATION_PERIOD_LABEL} • Gala à l’{GALA_VENUE}</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {CALENDAR.map((item) => (
-              <div key={item.label} className="bg-white rounded-2xl shadow-lg p-5 border border-gray-100">
-                <div className="text-sm text-gold font-semibold mb-1">{item.label}</div>
-                <div className="text-blue-dark font-bold">{item.date}</div>
-              </div>
-            ))}
           </div>
         </div>
       </section>

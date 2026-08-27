@@ -11,6 +11,7 @@ export interface Partner {
   description: string;
   logo?: string;
   website?: string;
+  wide?: boolean;
 }
 
 export interface PartnerGroup {
@@ -25,7 +26,33 @@ export const partnerGroups: PartnerGroup[] = [
     id: 'institutionnels',
     title: 'Partenaires institutionnels',
     intro: 'Institutions publiques et organismes qui accompagnent la reconnaissance de l’hospitalité guinéenne.',
-    partners: []
+    partners: [
+      {
+        name: 'Ministère de la Culture, du Tourisme et de l’Artisanat',
+        description:
+          'Institution de tutelle du secteur culturel, touristique et artisanal de la République de Guinée (MCTA).',
+        logo: '/partenaires/logo-mcta.png'
+      },
+      {
+        name: 'Guinea Development Board',
+        description:
+          'Agence Guinéenne de Développement (GDB), partenaire du développement économique et de la promotion de la destination Guinée.',
+        logo: '/partenaires/logo-gdb.png'
+      },
+      {
+        name: 'Marque Guinée',
+        description:
+          'Marque nationale de la République de Guinée, symbole de l’identité, de la culture et de l’attractivité du pays.',
+        logo: '/partenaires/logo-guinee.png'
+      },
+      {
+        name: 'Programme Simandou 2040',
+        description:
+          'Initiative nationale « Un pont vers la prospérité », autour de l’agriculture, l’éducation, les infrastructures, l’économie et la santé. Avec Simandou Academy.',
+        logo: '/partenaires/logo-simandou-2040.png',
+        wide: true
+      }
+    ]
   },
   {
     id: 'sponsors',
@@ -58,3 +85,7 @@ export const partnerGroups: PartnerGroup[] = [
     partners: []
   }
 ];
+
+export const partnersWithLogos: Array<Partner & { logo: string }> = partnerGroups.flatMap((group) =>
+  group.partners.filter((partner): partner is Partner & { logo: string } => Boolean(partner.logo))
+);

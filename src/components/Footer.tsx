@@ -46,6 +46,9 @@ const Footer: React.FC = () => {
             <h4 className="font-heading font-semibold text-gold">Liens rapides</h4>
             <ul className="space-y-2">
               <li><Link to="/a-propos" className="text-gray-300 hover:text-gold transition-colors">À propos</Link></li>
+              <li><Link to="/souvenirs" className="text-gray-300 hover:text-gold transition-colors">Souvenirs</Link></li>
+              <li><Link to="/pourquoi-participer" className="text-gray-300 hover:text-gold transition-colors">Pourquoi HAG</Link></li>
+              <li><Link to="/calendrier" className="text-gray-300 hover:text-gold transition-colors">Calendrier</Link></li>
               <li><Link to="/categories" className="text-gray-300 hover:text-gold transition-colors">Catégories</Link></li>
               <li><Link to="/laureats" className="text-gray-300 hover:text-gold transition-colors">Lauréats</Link></li>
               <li><Link to="/candidater" className="text-gray-300 hover:text-gold transition-colors">Candidater</Link></li>

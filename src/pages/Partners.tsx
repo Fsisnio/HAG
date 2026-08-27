@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Award, Building2, Mail, Phone, Star } from 'lucide-react';
-import { partnerGroups } from '../data/partners';
+import { partnerGroups, partnersWithLogos } from '../data/partners';
 import { CONTACT } from '../data/event';
 
 const sponsorshipLevels = [
@@ -42,6 +42,54 @@ const Partners: React.FC = () => {
         </div>
       </section>
 
+      {partnersWithLogos.length > 0 && (
+        <section className="section section-alt" id="logos">
+          <div className="container">
+            <div className="text-center max-w-3xl mx-auto mb-10">
+              <h2 className="text-3xl font-bold text-blue-dark mb-3">
+                Ils <span className="text-gold">accompagnent</span> HAG 2026
+              </h2>
+              <p className="text-gray-600">
+                Institutions et marques nationales associées à la reconnaissance de l’excellence
+                hôtelière, touristique et gastronomique en Guinée.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+              {partnersWithLogos
+                .filter((partner) => !partner.wide)
+                .map((partner) => (
+                  <a
+                    key={partner.name}
+                    href="#institutionnels"
+                    className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 min-h-[180px] flex items-center justify-center hover:shadow-md hover:-translate-y-0.5 transition-all"
+                  >
+                    <img
+                      src={partner.logo}
+                      alt={`Logo ${partner.name}`}
+                      className="max-h-32 max-w-full object-contain"
+                    />
+                  </a>
+                ))}
+            </div>
+            {partnersWithLogos
+              .filter((partner) => partner.wide)
+              .map((partner) => (
+                <a
+                  key={partner.name}
+                  href="#institutionnels"
+                  className="mt-5 bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex items-center justify-center hover:shadow-md transition-all"
+                >
+                  <img
+                    src={partner.logo}
+                    alt={`Logo ${partner.name}`}
+                    className="w-full max-h-72 object-contain"
+                  />
+                </a>
+              ))}
+          </div>
+        </section>
+      )}
+
       {partnerGroups.map((group) => (
         <section key={group.id} className="section" id={group.id}>
           <div className="container">
@@ -63,7 +111,25 @@ const Partners: React.FC = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {group.partners.map((partner) => (
-                  <article key={partner.name} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                  <article
+                    key={partner.name}
+                    className={`bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col ${
+                      partner.wide ? 'md:col-span-2 lg:col-span-3' : ''
+                    }`}
+                  >
+                    {partner.logo && (
+                      <div
+                        className={`mb-5 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center p-5 ${
+                          partner.wide ? 'min-h-[240px]' : 'h-40'
+                        }`}
+                      >
+                        <img
+                          src={partner.logo}
+                          alt={`Logo ${partner.name}`}
+                          className={`max-w-full object-contain ${partner.wide ? 'max-h-56' : 'max-h-full'}`}
+                        />
+                      </div>
+                    )}
                     <h3 className="text-xl font-bold text-blue-dark">{partner.name}</h3>
                     <p className="text-sm text-gray-600 mt-2">{partner.description}</p>
                     {partner.website && (

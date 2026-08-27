@@ -21,6 +21,9 @@ import FAQ from './pages/FAQ';
 import Jury from './pages/Jury';
 import Galerie from './pages/Galerie';
 import Tickets from './pages/Tickets';
+import Souvenirs from './pages/Souvenirs';
+import PourquoiParticiper from './pages/PourquoiParticiper';
+import Calendrier from './pages/Calendrier';
 
 const App: React.FC = () => {
   const location = useLocation();
@@ -33,6 +36,9 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/a-propos" element={<About />} />
+          <Route path="/souvenirs" element={<Souvenirs />} />
+          <Route path="/pourquoi-participer" element={<PourquoiParticiper />} />
+          <Route path="/calendrier" element={<Calendrier />} />
           <Route path="/categories" element={<Categories />} />
           <Route path="/laureats" element={<Laureates />} />
           <Route path="/partenaires" element={<Partners />} />
