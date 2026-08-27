@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Target, Users, Globe, Award, Quote, Compass, TrendingUp, GraduationCap } from 'lucide-react';
-import FirstEditionGallery from '../components/FirstEditionGallery';
 
 const About: React.FC = () => {
   const objectives = [
@@ -49,8 +48,10 @@ const About: React.FC = () => {
             À propos des <span className="text-gold">HAG</span>
           </h1>
           <p className="text-xl max-w-3xl mx-auto leading-relaxed">
-            Les Hospitality Awards Guinée (HAG) sont l'événement de référence pour 
-            célébrer l'excellence et l'innovation dans le secteur de l'hospitalité guinéenne.
+            Les <strong>Hospitality Awards Guinée</strong> sont bien plus qu’une cérémonie de remise de prix.
+            C’est une initiative qui vise à{' '}
+            <strong>mettre en lumière, valoriser et célébrer les talents, les entreprises et les initiatives</strong>
+            {' '}qui contribuent chaque jour au développement de l’hospitalité en Guinée.
           </p>
         </div>
       </section>
@@ -191,20 +192,6 @@ const About: React.FC = () => {
         </div>
       </section>
 
-      <section className="section">
-        <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="mb-4">
-              La <span className="text-gold">1ère édition</span>
-            </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Quelques images de la première soirée de distinction des Hospitality Awards Guinée.
-            </p>
-          </div>
-          <FirstEditionGallery />
-        </div>
-      </section>
-
       <section className="section section-alt">
         <div className="container text-center">
           <h2 className="mb-6">
@@ -214,6 +201,9 @@ const About: React.FC = () => {
             Les inscriptions sont ouvertes du 25 août au 20 septembre 2026. La soirée de remise des prix
             et le dîner gala se tiendront le 11 décembre 2026 à 17h00 à l’Hôtel Kaloum, Conakry.
           </p>
+          <Link to="/calendrier" className="btn btn-primary">
+            Voir le calendrier
+          </Link>
         </div>
       </section>
 
