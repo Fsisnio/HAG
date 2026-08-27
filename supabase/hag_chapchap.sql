@@ -13,7 +13,9 @@ create index if not exists hag_votes_chapchap_order_idx
 alter table public.hag_votes
   alter column payment_provider set default 'chapchap';
 
-create or replace function public.hag_admin_list_paid_votes()
+drop function if exists public.hag_admin_list_paid_votes();
+
+create function public.hag_admin_list_paid_votes()
 returns table (
   id uuid,
   candidate_id integer,
@@ -50,3 +52,5 @@ as $$
   where v.status = 'paid'
   order by coalesce(v.paid_at, v.created_at) desc;
 $$;
+
+grant execute on function public.hag_admin_list_paid_votes() to anon, authenticated;
