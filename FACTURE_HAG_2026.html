@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facture HAG-2026-001 — SpparoW</title>
+    <style>
+        :root {
+            --black: #0b0b0b;
+            --copper: #c45c32;
+            --copper-dark: #a44a28;
+            --bronze: #6b4a32;
+            --ink: #1a1a1a;
+            --muted: #5c5c5c;
+            --line: #e6e0d8;
+            --paper: #faf7f2;
+            --white: #ffffff;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 28px 16px 80px;
+            font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+            background: #ece7e0;
+            color: var(--ink);
+            line-height: 1.45;
+        }
+
+        .toolbar {
+            position: sticky;
+            top: 12px;
+            z-index: 10;
+            max-width: 900px;
+            margin: 0 auto 16px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn {
+            background: var(--copper);
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn:hover { background: var(--copper-dark); }
+
+        .invoice {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--white);
+            border: 1px solid #d9d1c7;
+            box-shadow: 0 18px 40px rgba(11, 11, 11, 0.12);
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--white);
+            padding: 28px 40px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .logo {
+            height: 72px;
+            width: auto;
+            max-width: 340px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .header-meta {
+            text-align: right;
+            color: var(--ink);
+        }
+
+        .header-meta .label {
+            letter-spacing: 0.28em;
+            font-size: 11px;
+            color: var(--copper);
+            font-weight: 700;
+        }
+
+        .header-meta h1 {
+            margin: 6px 0 4px;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--ink);
+        }
+
+        .header-meta p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .accent-bar {
+            height: 6px;
+            background: linear-gradient(90deg, var(--copper), #8a3d22);
+        }
+
+        .content { padding: 32px 40px 40px; }
+
+        .parties {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin-bottom: 28px;
+        }
+
+        .card {
+            background: var(--paper);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 18px 20px;
+        }
+
+        .card h3 {
+            margin: 0 0 10px;
+            font-size: 12px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--copper);
+        }
+
+        .card p { margin: 4px 0; font-size: 14px; }
+        .card strong { color: var(--ink); }
+
+        .meta-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .meta-item {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 12px 14px;
+        }
+
+        .meta-item span {
+            display: block;
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .meta-item strong {
+            display: block;
+            margin-top: 4px;
+            font-size: 14px;
+        }
+
+        .intro {
+            margin: 0 0 22px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13.5px;
+        }
+
+        th {
+            text-align: left;
+            background: var(--black);
+            color: #fff;
+            padding: 12px 12px;
+            font-weight: 600;
+            font-size: 12px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        th:last-child, td:last-child { text-align: right; }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--line);
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) td { background: #fcfaf7; }
+
+        .svc { font-weight: 700; }
+        .desc { color: var(--muted); font-size: 12.5px; margin-top: 3px; }
+        .amt { font-weight: 700; white-space: nowrap; }
+
+        .totals-wrap {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 18px;
+        }
+
+        .totals {
+            width: 340px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .totals .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 16px;
+            font-size: 14px;
+        }
+
+        .totals .row.total {
+            background: var(--black);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .totals .row.total span:last-child { color: var(--copper); }
+
+        .words {
+            margin-top: 14px;
+            font-size: 13px;
+            color: var(--muted);
+            font-style: italic;
+        }
+
+        .notes {
+            margin-top: 28px;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 18px;
+        }
+
+        .box {
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 16px 18px;
+        }
+
+        .box h3 {
+            margin: 0 0 10px;
+            color: var(--copper);
+            font-size: 14px;
+        }
+
+        .box ul { margin: 0; padding-left: 18px; }
+        .box li { margin: 5px 0; font-size: 13px; }
+
+        .footer {
+            background: var(--black);
+            color: #d7cfc6;
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            font-size: 12px;
+        }
+
+        .footer strong { color: #fff; }
+        .footer .copper { color: var(--copper); }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .toolbar { display: none; }
+            .invoice { box-shadow: none; border: none; max-width: none; }
+            .header, .footer { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            th, .totals .row.total, .accent-bar { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+
+        @page { size: A4; margin: 10mm; }
+
+        @media (max-width: 720px) {
+            .header, .parties, .meta-row, .notes, .footer {
+                display: block;
+            }
+            .header-meta { text-align: left; margin-top: 16px; }
+            .content { padding: 22px; }
+            .totals { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <button class="btn" onclick="window.print()">Imprimer / Enregistrer en PDF</button>
+    </div>
+
+    <div class="invoice">
+        <header class="header">
+            <img class="logo" src="public/logo-spparow.png" alt="SpparoW" onerror="this.onerror=null;this.src='logo-spparow.png'">
+            <div class="header-meta">
+                <div class="label">FACTURE</div>
+                <h1>HAG-2026-001</h1>
+                <p>Développement du site Hospitality Awards Guinée</p>
+            </div>
+        </header>
+        <div class="accent-bar"></div>
+
+        <div class="content">
+            <div class="parties">
+                <div class="card">
+                    <h3>Prestataire</h3>
+                    <p><strong>SpparoW</strong></p>
+                    <p>Better decisions. Smarter operations. Greater impact.</p>
+                    <p>Email : info@spparow.org</p>
+                    <p>Tél. : +221 773 542 551</p>
+                    <p>Adresse : Thiès, Sénégal</p>
+                    <p>Web : spparow.org</p>
+                </div>
+                <div class="card">
+                    <h3>Client</h3>
+                    <p><strong>Hospitality Awards Guinée (HAG)</strong></p>
+                    <p>Organisation des prix d’excellence</p>
+                    <p>Hôtellerie &amp; tourisme</p>
+                    <p>Conakry, Guinée</p>
+                    <p>Email : groupelmcontact@gmail.com</p>
+                </div>
+            </div>
+
+            <div class="meta-row">
+                <div class="meta-item">
+                    <span>Date</span>
+                    <strong>27 août 2026</strong>
+                </div>
+                <div class="meta-item">
+                    <span>N° facture</span>
+                    <strong>HAG-2026-001</strong>
+                </div>
+                <div class="meta-item">
+                    <span>Objet</span>
+                    <strong>Site web HAG 2026</strong>
+                </div>
+                <div class="meta-item">
+                    <span>Devise</span>
+                    <strong>GNF (francs guinéens)</strong>
+                </div>
+            </div>
+
+            <p class="intro">
+                Facture forfaitaire pour la conception, le développement et la livraison du site officiel
+                Hospitality Awards Guinée 2026, y compris le vote, la billetterie, l’administration et les paiements.
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 58%;">Prestation</th>
+                        <th>Qté</th>
+                        <th>Montant (GNF)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="svc">Design &amp; interface utilisateur</div>
+                            <div class="desc">Identité HAG 2026, pages responsive, animations et charte or &amp; bleu</div>
+                        </td>
+                        <td>1</td>
+                        <td class="amt">5 000 000</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="svc">Architecture &amp; configuration</div>
+                            <div class="desc">React, TypeScript, structure modulaire, environnement et déploiement</div>
+                        </td>
+                        <td>1</td>
+                        <td class="amt">4 000 000</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="svc">Système de catégories</div>
+                            <div class="desc">Récompenses officielles, groupes, filtres et pages dédiées</div>
+                        </td>
+                        <td>1</td>
+                        <td class="amt">6 000 000</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="svc">Système de vote</div>
+                            <div class="desc">Vote public, suivi des voix, validations et statistiques</div>
+                        </td>
+                        <td>1</td>
+                        <td class="amt">8 000 000</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="svc">Billetterie en ligne</div>
+                            <div class="desc">Tickets Standard, VIP, VVIP, tables entreprise et prestige</div>
+                        </td>
+                        <td>1</td>
+                        <td class="amt">6 000 000</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="svc">Pages du site</div>
+                            <div class="desc">Accueil, à propos, candidature, jury, lauréats, galerie, FAQ, règlement, partenaires</div>
+                        </td>
+                        <td>1</td>
+                        <td class="amt">7 000 000</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="svc">Espace administrateur</div>
+                            <div class="desc">Tableau de bord, gestion des votes, tickets, exports et accès sécurisé</div>
+                        </td>
+                        <td>1</td>
+                        <td class="amt">7 000 000</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="svc">Intégration paiements ChapChap</div>
+                            <div class="desc">Paiement mobile, webhooks, confirmations vote et billetterie</div>
+                        </td>
+                        <td>1</td>
+                        <td class="amt">6 000 000</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="svc">Responsive, tests &amp; documentation</div>
+                            <div class="desc">Adaptation mobile, recette fonctionnelle, guides et code source</div>
+                        </td>
+                        <td>1</td>
+                        <td class="amt">8 000 000</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="svc">Support &amp; formation</div>
+                            <div class="desc">Formation de l’équipe et assistance technique après livraison</div>
+                        </td>
+                        <td>1</td>
+                        <td class="amt">3 000 000</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="totals-wrap">
+                <div class="totals">
+                    <div class="row">
+                        <span>Sous-total</span>
+                        <span>60 000 000 GNF</span>
+                    </div>
+                    <div class="row">
+                        <span>TVA</span>
+                        <span>Incluse / forfait TTC</span>
+                    </div>
+                    <div class="row total">
+                        <span>Total à payer</span>
+                        <span>60 000 000 GNF</span>
+                    </div>
+                </div>
+            </div>
+            <p class="words">Arrêté la présente facture à la somme de : <strong>soixante millions de francs guinéens (60 000 000 GNF)</strong>.</p>
+
+            <div class="notes">
+                <div class="box">
+                    <h3>Conditions</h3>
+                    <ul>
+                        <li>Montant forfaitaire convenu pour le site HAG 2026 : <strong>60 000 000 GNF</strong></li>
+                        <li>50 % à la commande : 30 000 000 GNF</li>
+                        <li>50 % à la livraison : 30 000 000 GNF</li>
+                        <li>Moyens : virement bancaire ou Mobile Money</li>
+                        <li>Support technique : 30 jours après mise en ligne</li>
+                    </ul>
+                </div>
+                <div class="box">
+                    <h3>Livrables</h3>
+                    <ul>
+                        <li>Site public HAG 2026</li>
+                        <li>Vote &amp; billetterie en ligne</li>
+                        <li>Paiements ChapChap</li>
+                        <li>Back-office administrateur</li>
+                        <li>Formation de 2 heures</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div>
+                <strong>SpparoW</strong><br>
+                <span class="copper">Building Success, Sparking Growth</span>
+            </div>
+            <div>info@spparow.org · +221 773 542 551 · Thiès, Sénégal</div>
+        </footer>
+    </div>
+</body>
+</html>

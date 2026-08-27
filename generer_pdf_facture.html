@@ -76,7 +76,7 @@
     <div class="container">
         <h1>📄 Générateur PDF Facture</h1>
         <p style="font-size: 1.2em; margin-bottom: 30px;">
-            Facture HAG-2025-009 - SpparoW
+            Facture HAG-2026-001 — 60 000 000 GNF — SpparoW
         </p>
         
         <button class="btn" onclick="ouvrirFactureEtImprimer()">
@@ -99,7 +99,7 @@
                 <ul>
                     <li>Sélectionnez "Enregistrer au format PDF" ou "Microsoft Print to PDF"</li>
                     <li>Choisissez le dossier de destination</li>
-                    <li>Nommez le fichier : "Facture_HAG_2025_SpparoW.pdf"</li>
+                    <li>Nommez le fichier : "Facture_HAG_2026_SpparoW.pdf"</li>
                 </ul>
             </div>
             
@@ -117,7 +117,7 @@
     <script>
         function ouvrirFactureEtImprimer() {
             // Ouvrir la facture dans une nouvelle fenêtre
-            const factureWindow = window.open('FACTURE_HAG_2025_PRINT.html', '_blank', 'width=1000,height=800');
+            const factureWindow = window.open('FACTURE_HAG_2026.html', '_blank', 'width=1000,height=800');
             
             // Attendre que la page soit chargée puis ouvrir l'impression
             factureWindow.onload = function() {
@@ -129,7 +129,7 @@
         
         function ouvrirFactureSimple() {
             // Ouvrir la facture dans une nouvelle fenêtre pour consultation
-            window.open('FACTURE_HAG_2025_PRINT.html', '_blank');
+            window.open('FACTURE_HAG_2026.html', '_blank');
         }
         
         // Message d'aide
