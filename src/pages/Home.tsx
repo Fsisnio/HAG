@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Star, Award, Users, Calendar } from 'lucide-react';
 import Countdown from '../components/Countdown';
@@ -7,19 +7,6 @@ import FirstEditionGallery from '../components/FirstEditionGallery';
 import { EVENT_YEAR, SLOGAN, CALENDAR, TICKETS, formatGnf, GALA_VENUE, APPLICATION_PERIOD_LABEL } from '../data/event';
 
 const Home: React.FC = () => {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
   const stats = [
     { icon: Award, value: getTotalCategoriesCount().toString(), label: 'Récompenses officielles' },
     { icon: Star, value: getGroupsCount().toString(), label: 'Catégories principales' },
@@ -48,57 +35,23 @@ const Home: React.FC = () => {
   return (
     <div className="Home">
       {/* Section Héros */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-screen flex items-end justify-center overflow-hidden">
         {/* Image de couverture en arrière-plan */}
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: 'url(/couverture-hag.png)',
-            backgroundAttachment: isMobile ? 'scroll' : 'fixed'
-          }}
+          style={{ backgroundImage: 'url(/couverture-hag-2026.jpg)' }}
+          role="img"
+          aria-label="Logo Hospitality Awards Guinée"
         ></div>
-        
-        {/* Overlay sombre pour améliorer la lisibilité */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-dark/55 via-blue-deep/45 to-blue-dark/65"></div>
-        
-        {/* Motif de grille subtil */}
-        <div className="absolute inset-0 opacity-3">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `linear-gradient(rgba(212, 175, 55, 0.1) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(212, 175, 55, 0.1) 1px, transparent 1px)`,
-            backgroundSize: '50px 50px'
-          }}></div>
-        </div>
-        
-        <div className="container relative z-10 text-center">
-          {/* Logo et titre principal */}
-          <div className="mb-8">
-            <div className="w-48 h-48 rounded-full flex items-center justify-center mx-auto mb-6 overflow-hidden">
-              <img 
-                src="/Logo HAG.png" 
-                alt="Logo HAG" 
-                className="w-full h-full object-contain"
-                onError={(e) => {
-                  // Fallback vers l'icône Award si l'image ne charge pas
-                  e.currentTarget.style.display = 'none';
-                  const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
-                  if (nextElement) {
-                    nextElement.style.display = 'flex';
-                  }
-                }}
-              />
-              <div className="w-full h-full bg-gold rounded-full flex items-center justify-center" style={{display: 'none'}}>
-                <Award className="w-32 h-32 text-blue-dark" />
-              </div>
-            </div>
-            <h1 className="text-white mb-4">
-              HOSPITALITY AWARDS
-              <span className="block text-gold">GUINÉE</span>
-            </h1>
-            <p className="text-xl text-white/90 max-w-2xl mx-auto leading-relaxed">
-              {SLOGAN} — {getTotalCategoriesCount()} prix en {getGroupsCount()} catégories
-            </p>
-          </div>
+
+        {/* Overlay léger : le logo de la bannière reste visible, le texte reste lisible */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/10"></div>
+
+        <div className="container relative z-10 text-center pb-16 pt-40">
+          <h1 className="sr-only">Hospitality Awards Guinée</h1>
+          <p className="text-xl md:text-2xl text-white/95 max-w-2xl mx-auto leading-relaxed drop-shadow mb-8">
+            {SLOGAN} — {getTotalCategoriesCount()} prix en {getGroupsCount()} catégories
+          </p>
 
           {/* Compte à rebours */}
           <div className="mb-12">
