@@ -110,24 +110,19 @@ const Home: React.FC = () => {
                 CÉLÉBRONS L’<span className="text-gold">EXCELLENCE</span> DE L'HOSPITALITÉ GUINÉENNE
               </h2>
               <p className="text-lg mb-4">
-                Les Hospitality Awards Guinée sont une initiative qui vise à célébrer, reconnaître
-                et encourager l’excellence dans les métiers de l’hospitalité.
-              </p>
-              <p className="mb-4">
-                Quand nous parlons d’hospitalité, nous parlons de toutes les activités liées à l’art
-                d’accueillir et de servir : les hôtels, les restaurants, les agences de voyages, les
-                guides touristiques, les centres de loisirs, les professionnels de l’accueil et toutes
-                les personnes qui contribuent à offrir une expérience mémorable aux clients et aux visiteurs.
-              </p>
-              <p className="mb-4">
-                Concrètement, les Hospitality Awards Guinée sont une grande plateforme de reconnaissance
-                qui met en lumière les professionnels, les entreprises et les initiatives qui contribuent
-                au développement du secteur.
+                Les <strong>Hospitality Awards Guinée</strong> sont bien plus qu’une cérémonie de remise de prix.
+                C’est une initiative qui vise à{' '}
+                <strong>
+                  mettre en lumière, valoriser et célébrer les talents, les entreprises et les initiatives
+                  qui contribuent chaque jour au développement de l’hospitalité en Guinée.
+                </strong>
               </p>
               <p className="mb-8">
-                Ce n’est donc pas seulement une cérémonie de remise de trophées. C’est un rendez-vous
-                qui rassemble les acteurs du secteur autour de la qualité, du professionnalisme et de
-                l’innovation.
+                Hôtellerie, restauration, tourisme, formation, culture, artisanat, innovation et expérience client :
+                les Hospitality Awards Guinée créent un espace où{' '}
+                <strong>
+                  l’excellence, le savoir-faire et l’innovation sont reconnus et récompensés.
+                </strong>
               </p>
               <Link to="/a-propos" className="btn btn-primary">
                 En savoir plus
