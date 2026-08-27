@@ -5,7 +5,7 @@ import VoteButton from '../components/VoteButton';
 import { officialCategories, getCategoriesGrouped } from '../data/categories';
 import { getAllOfficialCandidates, getCandidatesByCategory } from '../data/officialCandidates';
 import votePaymentHandler from '../services/votePaymentHandler';
-import { formatGnf, isVotingOpen, FEDAPAY_PAYMENT_URL, VOTE_AMOUNT_GNF, VOTES_END, VOTES_START } from '../data/event';
+import { formatGnf, isVotingOpen, VOTE_AMOUNT_GNF, VOTES_END, VOTES_START } from '../data/event';
 import { fetchVoteTotals } from '../services/adminData';
 
 interface Candidate {
@@ -29,9 +29,10 @@ const VotePage: React.FC = () => {
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const result = votePaymentHandler.handlePaymentReturn(urlParams);
+    let cancelled = false;
 
-    if (result.message) {
+    votePaymentHandler.handlePaymentReturn(urlParams).then((result) => {
+      if (cancelled || !result.message) return;
       setPaymentMessage(result.message);
       setPaymentMessageType(result.success ? 'success' : 'error');
       window.history.replaceState({}, document.title, window.location.pathname);
@@ -39,7 +40,11 @@ const VotePage: React.FC = () => {
         setPaymentMessage('');
         setPaymentMessageType('');
       }, 6000);
-    }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -102,7 +107,7 @@ const VotePage: React.FC = () => {
           <p className="text-gold font-semibold uppercase tracking-wide mb-3">Hospitality Awards Guinée 2026</p>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Votez pour l’excellence</h1>
           <p className="text-lg text-blue-100 max-w-3xl mx-auto">
-            Chaque vote coûte {formatGnf(VOTE_AMOUNT_GNF)} et n’est validé qu’après un paiement FedaPay.
+            Chaque vote coûte {formatGnf(VOTE_AMOUNT_GNF)} et n’est validé qu’après un paiement Chap Chap Pay.
             Votes ouverts du {VOTES_START.split('-').reverse().join('/')} au {VOTES_END.split('-').reverse().join('/')}.
           </p>
           {!isVotingOpen() && (
@@ -111,10 +116,7 @@ const VotePage: React.FC = () => {
             </p>
           )}
           <p className="mt-4 text-sm text-blue-100">
-            Paiement sécurisé :{' '}
-            <a href={FEDAPAY_PAYMENT_URL} className="underline text-gold" target="_blank" rel="noreferrer">
-              me.fedapay.com/HAG-Award
-            </a>
+            Paiement sécurisé via Chap Chap Pay (Orange Money, MTN MoMo, PayCard, cartes bancaires).
           </p>
         </div>
       </div>
@@ -280,7 +282,7 @@ const VotePage: React.FC = () => {
                 <VoteIcon className="w-7 h-7 text-blue-600" />
               </div>
               <h3 className="font-semibold text-blue-900 mb-1">2. Payez</h3>
-              <p className="text-blue-700 text-sm">Payez {formatGnf(VOTE_AMOUNT_GNF)} sur FedaPay. Le vote n’est compté qu’après paiement.</p>
+              <p className="text-blue-700 text-sm">Payez {formatGnf(VOTE_AMOUNT_GNF)} via Chap Chap Pay. Le vote n’est compté qu’après paiement.</p>
             </div>
             <div className="text-center">
               <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm">

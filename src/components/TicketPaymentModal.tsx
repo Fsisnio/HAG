@@ -1,34 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { X, CreditCard, AlertCircle, ExternalLink, Loader2 } from 'lucide-react';
-import { CHAPCHAP_RETURN_PATH, formatGnf, VOTE_AMOUNT_GNF } from '../data/event';
-import { voteStore } from '../services/voteStore';
-import { createChapChapCheckout, persistPendingVote } from '../services/chapchapClient';
+import { CHAPCHAP_TICKET_RETURN_PATH, formatGnf, getTicketByName } from '../data/event';
+import { createChapChapCheckout } from '../services/chapchapClient';
+import { ticketStore } from '../services/ticketStore';
 
-interface PaymentModalProps {
+interface TicketPaymentModalProps {
   isOpen: boolean;
+  ticketName: string | null;
   onClose: () => void;
-  candidateId: number;
-  candidateName: string;
-  candidateCategory: string;
-  voteAmount?: number;
 }
 
-const PaymentModal: React.FC<PaymentModalProps> = ({
-  isOpen,
-  onClose,
-  candidateId,
-  candidateName,
-  candidateCategory,
-  voteAmount = VOTE_AMOUNT_GNF
-}) => {
+const TicketPaymentModal: React.FC<TicketPaymentModalProps> = ({ isOpen, ticketName, onClose }) => {
+  const ticket = ticketName ? getTicketByName(ticketName) : undefined;
   const [lastName, setLastName] = useState('');
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [quantity, setQuantity] = useState(1);
   const [error, setError] = useState('');
   const [isPaying, setIsPaying] = useState(false);
 
+  useEffect(() => {
+    setQuantity(1);
+    setError('');
+  }, [ticketName]);
+
+  const total = useMemo(() => (ticket ? ticket.price * quantity : 0), [ticket, quantity]);
+  const unitLabel = ticket?.unit === 'table' ? 'table' : 'ticket';
+
   const handlePay = async () => {
+    if (!ticket) return;
     if (!lastName.trim() || !firstName.trim() || !email.trim() || !phone.trim()) {
       setError('Renseignez nom, prénom, e-mail et téléphone pour continuer.');
       return;
@@ -37,44 +38,34 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     setError('');
     setIsPaying(true);
 
-    const vote = voteStore.createPendingVote({
-      candidateId,
-      candidateName,
-      candidateCategory,
-      voterLastName: lastName,
-      voterFirstName: firstName,
-      voterEmail: email,
-      voterPhone: phone
+    const order = ticketStore.createPending({
+      ticketName: ticket.name,
+      quantity,
+      unitPrice: ticket.price,
+      amount: ticket.price * quantity,
+      buyerLastName: lastName.trim(),
+      buyerFirstName: firstName.trim(),
+      buyerEmail: email.trim(),
+      buyerPhone: phone.trim()
     });
 
     try {
-      const returnUrl = `${window.location.origin}${CHAPCHAP_RETURN_PATH}?order_id=${encodeURIComponent(vote.id)}`;
+      const returnUrl = `${window.location.origin}${CHAPCHAP_TICKET_RETURN_PATH}?order_id=${encodeURIComponent(order.id)}`;
       const checkout = await createChapChapCheckout({
-        orderId: vote.id,
-        description: `Vote HAG — ${candidateName} — ${firstName.trim()} ${lastName.trim()}`,
-        kind: 'vote',
+        orderId: order.id,
+        kind: 'ticket',
+        ticketName: ticket.name,
+        quantity,
+        description: `Ticket HAG ${ticket.name} x${quantity} — ${firstName.trim()} ${lastName.trim()}`,
         returnUrl,
         cancelUrl: `${returnUrl}&status=canceled`
       });
 
-      voteStore.attachOperation(vote.id, checkout.operationId);
-      sessionStorage.setItem('hag_awaiting_chapchap', '1');
-      void persistPendingVote({
-        candidateId,
-        candidateName,
-        candidateCategory,
-        voterLastName: lastName.trim(),
-        voterFirstName: firstName.trim(),
-        voterEmail: email.trim(),
-        voterPhone: phone.trim(),
-        amount: voteAmount,
-        orderId: vote.id,
-        operationId: checkout.operationId
-      });
-
+      ticketStore.attachOperation(order.id, checkout.operationId);
+      sessionStorage.setItem('hag_awaiting_chapchap_ticket', '1');
       window.location.href = checkout.paymentUrl;
     } catch (payError) {
-      voteStore.markStatus(vote.id, 'failed');
+      ticketStore.markStatus(order.id, 'failed');
       setIsPaying(false);
       setError(
         payError instanceof Error
@@ -84,32 +75,48 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !ticket) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl max-w-md w-full mx-auto shadow-2xl">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-blue-dark">Payer pour voter</h2>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors" disabled={isPaying}>
+          <h2 className="text-xl font-bold text-blue-dark">Payer un ticket</h2>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full" disabled={isPaying}>
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="p-6 space-y-5">
           <div className="bg-gradient-to-r from-gold/10 to-yellow-400/10 p-4 rounded-xl border border-gold/20">
-            <h3 className="font-semibold text-blue-dark mb-1">{candidateName}</h3>
-            <p className="text-sm text-gray-600">{candidateCategory}</p>
+            <h3 className="font-semibold text-blue-dark mb-1">{ticket.name}</h3>
+            <p className="text-sm text-gray-600">{ticket.description}</p>
             <div className="mt-3 flex items-center justify-between">
-              <span className="text-sm font-medium text-blue-dark">Montant du vote</span>
-              <span className="text-lg font-bold text-gold">{formatGnf(voteAmount)}</span>
+              <span className="text-sm font-medium text-blue-dark">Prix unitaire</span>
+              <span className="text-lg font-bold text-gold">{formatGnf(ticket.price)}</span>
             </div>
           </div>
 
           <p className="text-sm text-gray-600">
-            Un vote n’est valide que lorsque le paiement Chap Chap Pay est effectif.
-            Orange Money, MTN MoMo, PayCard, cartes bancaires et autres wallets guinéens sont acceptés.
+            Paiement sécurisé Chap Chap Pay. Le montant envoyé est celui du tarif officiel, multiplié par la quantité.
           </p>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Nombre de {unitLabel}s *
+            </label>
+            <select
+              value={quantity}
+              onChange={(e) => setQuantity(Number(e.target.value))}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+            >
+              {Array.from({ length: ticket.maxQuantity }, (_, index) => index + 1).map((value) => (
+                <option key={value} value={value}>
+                  {value} — {formatGnf(ticket.price * value)}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <div className="space-y-3">
             <div>
@@ -173,7 +180,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
             className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-gold text-blue-dark rounded-lg hover:bg-yellow-400 font-semibold disabled:opacity-70"
           >
             {isPaying ? <Loader2 className="w-5 h-5 animate-spin" /> : <CreditCard className="w-5 h-5" />}
-            <span>{isPaying ? 'Redirection…' : `Payer ${formatGnf(voteAmount)}`}</span>
+            <span>{isPaying ? 'Redirection…' : `Payer ${formatGnf(total)}`}</span>
             {!isPaying && <ExternalLink className="w-4 h-4" />}
           </button>
         </div>
@@ -182,4 +189,4 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   );
 };
 
-export default PaymentModal;
+export default TicketPaymentModal;

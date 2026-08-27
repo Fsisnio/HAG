@@ -1,0 +1,7 @@
+project_id = "ymxdaxngbllarnbaojqu"
+
+[functions.chapchap]
+verify_jwt = false
+
+[functions.chapchap-webhook]
+verify_jwt = false

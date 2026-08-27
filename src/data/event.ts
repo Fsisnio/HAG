@@ -17,8 +17,8 @@ export const GALA_VENUE = 'Hôtel Kaloum, Conakry – Guinée';
 export const GALA_ISO = '2026-12-11T17:00:00+00:00';
 
 export const VOTE_AMOUNT_GNF = 5000;
-export const FEDAPAY_PAYMENT_URL = 'https://me.fedapay.com/HAG-Award';
-export const FEDAPAY_RETURN_PATH = '/voter';
+export const CHAPCHAP_RETURN_PATH = '/voter';
+export const CHAPCHAP_TICKET_RETURN_PATH = '/tickets';
 
 export const CONTACT = {
   email: 'groupelmcontact@gmail.com',
@@ -30,12 +30,14 @@ export const CONTACT = {
 };
 
 export const TICKETS = [
-  { name: 'Standard', price: 500000, description: 'Accès à la cérémonie' },
-  { name: 'VIP', price: 1000000, description: 'Meilleure visibilité + espace VIP' },
-  { name: 'VVIP', price: 2000000, description: 'Espace premium + traitement privilégié' },
-  { name: 'Table entreprise', price: 10000000, description: 'Table de 10 personnes' },
-  { name: 'Table Prestige', price: 20000000, description: 'Table premium de 10 personnes' }
+  { name: 'Standard', price: 500000, description: 'Accès à la cérémonie', unit: 'ticket' as const, maxQuantity: 10 },
+  { name: 'VIP', price: 1000000, description: 'Meilleure visibilité + espace VIP', unit: 'ticket' as const, maxQuantity: 10 },
+  { name: 'VVIP', price: 2000000, description: 'Espace premium + traitement privilégié', unit: 'ticket' as const, maxQuantity: 10 },
+  { name: 'Table entreprise', price: 10000000, description: 'Table de 10 personnes', unit: 'table' as const, maxQuantity: 5 },
+  { name: 'Table Prestige', price: 20000000, description: 'Table premium de 10 personnes', unit: 'table' as const, maxQuantity: 5 }
 ];
+
+export const getTicketByName = (name: string) => TICKETS.find((ticket) => ticket.name === name);
 
 export const CALENDAR = [
   { label: 'Ouverture des inscriptions', date: '25 août 2026' },
@@ -49,26 +51,6 @@ export const CALENDAR = [
 
 export const formatGnf = (amount: number): string =>
   `${amount.toLocaleString('fr-FR')} GNF`;
-
-export const buildFedaPayCheckoutUrl = (voter: {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  callbackUrl?: string;
-}): string => {
-  const url = new URL(FEDAPAY_PAYMENT_URL);
-  url.searchParams.set('firstname', voter.firstName);
-  url.searchParams.set('lastname', voter.lastName);
-  url.searchParams.set('email', voter.email);
-  url.searchParams.set('phone', voter.phone);
-  url.searchParams.set('amount', String(VOTE_AMOUNT_GNF));
-  if (voter.callbackUrl) {
-    url.searchParams.set('callback_url', voter.callbackUrl);
-    url.searchParams.set('return_url', voter.callbackUrl);
-  }
-  return url.toString();
-};
 
 const startOfDay = (isoDate: string) => new Date(`${isoDate}T00:00:00+00:00`);
 const endOfDay = (isoDate: string) => new Date(`${isoDate}T23:59:59+00:00`);

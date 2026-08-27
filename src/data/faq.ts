@@ -22,7 +22,7 @@ export const faqItems: FaqItem[] = [
   {
     question: 'La candidature est-elle gratuite ?',
     answer:
-      'L’inscription aux Hospitality Awards Guinée 2026 se fait via le formulaire officiel. Aucun frais de dossier n’est demandé pour candidater. Le vote du public, lorsqu’il est ouvert, est un paiement distinct de 5 000 GNF par vote, validé uniquement après paiement FedaPay.'
+      'L’inscription aux Hospitality Awards Guinée 2026 se fait via le formulaire officiel. Aucun frais de dossier n’est demandé pour candidater. Le vote du public, lorsqu’il est ouvert, est un paiement distinct de 5 000 GNF par vote, validé uniquement après paiement Chap Chap Pay.'
   },
   {
     question: 'Comment les candidats sont-ils évalués ?',

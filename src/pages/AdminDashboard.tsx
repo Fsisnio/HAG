@@ -541,7 +541,7 @@ const AdminDashboard: React.FC = () => {
                   <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
                     <p className="text-sm font-medium text-gray-600">Votes payés</p>
                     <p className="text-3xl font-bold text-green-600 mt-1">{stats.totalVotes}</p>
-                    <p className="text-xs text-gray-500 mt-1">Après paiement FedaPay</p>
+                    <p className="text-xs text-gray-500 mt-1">Après paiement Chap Chap Pay</p>
                   </div>
                   <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
                     <p className="text-sm font-medium text-gray-600">Nominés officiels</p>
@@ -1180,7 +1180,7 @@ const AdminDashboard: React.FC = () => {
                       <div className="text-center py-12">
                         <Inbox className="w-10 h-10 text-gray-300 mx-auto mb-3" />
                         <p className="text-sm font-medium text-gray-600">Aucun vote payé pour l’instant</p>
-                        <p className="text-xs text-gray-500 mt-1">Le classement apparaîtra dès le premier paiement FedaPay validé.</p>
+                        <p className="text-xs text-gray-500 mt-1">Le classement apparaîtra dès le premier paiement Chap Chap Pay validé.</p>
                       </div>
                     ) : (
                       <div className="space-y-3">

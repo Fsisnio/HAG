@@ -147,11 +147,11 @@ export const fetchAdminPaidVotes = async (): Promise<AdminPaidVote[]> => {
     id: row.id,
     candidate: row.candidate_name,
     category: row.candidate_category,
-    voter: [row.voter_first_name, row.voter_last_name].filter(Boolean).join(' ') || 'Paiement FedaPay',
+    voter: [row.voter_first_name, row.voter_last_name].filter(Boolean).join(' ') || 'Paiement Chap Chap Pay',
     voteType: 'online' as const,
     amount: row.amount,
     status: 'approved' as const,
     submittedAt: row.paid_at || row.created_at,
-    transactionId: row.fedapay_transaction_id
+    transactionId: row.chapchap_operation_id || row.fedapay_transaction_id
   }));
 };

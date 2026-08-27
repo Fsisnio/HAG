@@ -70,7 +70,7 @@ export const voteStore = {
       voterPhone: input.voterPhone.trim(),
       amount: VOTE_AMOUNT_GNF,
       currency: 'GNF',
-      paymentProvider: 'fedapay',
+      paymentProvider: 'chapchap',
       status: 'pending_payment',
       createdAt: new Date().toISOString()
     };
@@ -80,10 +80,21 @@ export const voteStore = {
     return vote;
   },
 
-  markPaid(voteId: string, fedapayTransactionId: string): VoteRecord | null {
+  attachOperation(voteId: string, chapchapOperationId: string): VoteRecord | null {
+    const votes = readVotes();
+    const index = votes.findIndex((vote) => vote.id === voteId);
+    if (index === -1) return null;
+    votes[index] = { ...votes[index], chapchapOperationId };
+    writeVotes(votes);
+    return votes[index];
+  },
+
+  markPaid(voteId: string, transactionId: string): VoteRecord | null {
     const votes = readVotes();
     const alreadyPaid = votes.find(
-      (vote) => vote.fedapayTransactionId === fedapayTransactionId && vote.status === 'paid'
+      (vote) =>
+        vote.status === 'paid' &&
+        (vote.chapchapOperationId === transactionId || vote.fedapayTransactionId === transactionId)
     );
     if (alreadyPaid) {
       sessionStorage.removeItem(PENDING_VOTE_ID_KEY);
@@ -96,7 +107,7 @@ export const voteStore = {
     const updated: VoteRecord = {
       ...votes[index],
       status: 'paid',
-      fedapayTransactionId,
+      chapchapOperationId: transactionId,
       paidAt: new Date().toISOString()
     };
     votes[index] = updated;

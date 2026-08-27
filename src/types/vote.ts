@@ -1,4 +1,5 @@
 export type VotePaymentStatus = 'pending_payment' | 'paid' | 'cancelled' | 'failed';
+export type VotePaymentProvider = 'chapchap' | 'fedapay';
 
 export interface VoteRecord {
   id: string;
@@ -11,7 +12,8 @@ export interface VoteRecord {
   voterPhone: string;
   amount: number;
   currency: 'GNF';
-  paymentProvider: 'fedapay';
+  paymentProvider: VotePaymentProvider;
+  chapchapOperationId?: string;
   fedapayTransactionId?: string;
   status: VotePaymentStatus;
   createdAt: string;
