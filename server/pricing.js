@@ -32,12 +32,19 @@ const resolvePaymentAmount = ({ kind, ticketName, quantity } = {}) => {
     };
   }
 
+  const qty = Math.floor(Number(quantity) || 1);
+  if (!Number.isFinite(qty) || qty < 1 || !Number.isSafeInteger(VOTE_AMOUNT_GNF * qty)) {
+    const error = new Error('Nombre de votes invalide');
+    error.statusCode = 400;
+    throw error;
+  }
+
   return {
     kind: 'vote',
     ticketName: null,
-    quantity: 1,
+    quantity: qty,
     unitPrice: VOTE_AMOUNT_GNF,
-    amount: VOTE_AMOUNT_GNF,
+    amount: VOTE_AMOUNT_GNF * qty,
     unit: 'vote'
   };
 };

@@ -24,7 +24,14 @@ const resolvePaymentAmount = (body: Record<string, any>) => {
     }
     return { amount: ticket.price * qty, description: body.description || `Ticket HAG ${ticket.name} x${qty}` };
   }
-  return { amount: VOTE_AMOUNT_GNF, description: body.description || 'Vote Hospitality Awards Guinée' };
+  const qty = Math.floor(Number(body.quantity) || 1);
+  if (!Number.isFinite(qty) || qty < 1 || !Number.isSafeInteger(VOTE_AMOUNT_GNF * qty)) {
+    throw new Error('Nombre de votes invalide');
+  }
+  return {
+    amount: VOTE_AMOUNT_GNF * qty,
+    description: body.description || `Vote Hospitality Awards Guinée x${qty}`
+  };
 };
 
 const json = (status: number, payload: unknown) =>

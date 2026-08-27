@@ -107,7 +107,8 @@ const VotePage: React.FC = () => {
           <p className="text-gold font-semibold uppercase tracking-wide mb-3">Hospitality Awards Guinée 2026</p>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Votez pour l’excellence</h1>
           <p className="text-lg text-blue-100 max-w-3xl mx-auto">
-            Chaque vote coûte {formatGnf(VOTE_AMOUNT_GNF)} et n’est validé qu’après un paiement Chap Chap Pay.
+            Chaque vote coûte {formatGnf(VOTE_AMOUNT_GNF)}. Vous pouvez en acheter plusieurs d’un coup : 4 votes = {formatGnf(VOTE_AMOUNT_GNF * 4)}.
+            Un vote n’est validé qu’après un paiement Chap Chap Pay.
             Votes ouverts du {VOTES_START.split('-').reverse().join('/')} au {VOTES_END.split('-').reverse().join('/')}.
           </p>
           {!isVotingOpen() && (
@@ -282,7 +283,7 @@ const VotePage: React.FC = () => {
                 <VoteIcon className="w-7 h-7 text-blue-600" />
               </div>
               <h3 className="font-semibold text-blue-900 mb-1">2. Payez</h3>
-              <p className="text-blue-700 text-sm">Payez {formatGnf(VOTE_AMOUNT_GNF)} via Chap Chap Pay. Le vote n’est compté qu’après paiement.</p>
+              <p className="text-blue-700 text-sm">Choisissez le nombre de votes. Vous payez {formatGnf(VOTE_AMOUNT_GNF)} × ce nombre via Chap Chap Pay.</p>
             </div>
             <div className="text-center">
               <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm">

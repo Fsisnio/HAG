@@ -1,4 +1,5 @@
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { VOTE_AMOUNT_GNF } from '../data/event';
 
 const localProxy = process.env.NODE_ENV === 'development';
 const supabaseFunctionsUrl = process.env.REACT_APP_SUPABASE_URL
@@ -105,9 +106,11 @@ export const persistPendingVote = async (vote: {
   amount: number;
   orderId: string;
   operationId?: string;
+  quantity?: number;
 }) => {
   if (!isSupabaseConfigured || !supabase) return;
-  const { error } = await supabase.from('hag_votes').insert({
+  const quantity = Math.max(1, Math.floor(vote.quantity || 1));
+  const rows = Array.from({ length: quantity }, () => ({
     candidate_id: vote.candidateId,
     candidate_name: vote.candidateName,
     candidate_category: vote.candidateCategory,
@@ -115,13 +118,14 @@ export const persistPendingVote = async (vote: {
     voter_first_name: vote.voterFirstName,
     voter_email: vote.voterEmail,
     voter_phone: vote.voterPhone,
-    amount: vote.amount,
+    amount: VOTE_AMOUNT_GNF,
     currency: 'GNF',
     payment_provider: 'chapchap',
     status: 'pending_payment',
     chapchap_order_id: vote.orderId,
     chapchap_operation_id: vote.operationId || null
-  });
+  }));
+  const { error } = await supabase.from('hag_votes').insert(rows);
   if (error) {
     console.warn('Vote pending non enregistré côté serveur:', error.message);
   }

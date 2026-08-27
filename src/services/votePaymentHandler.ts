@@ -1,7 +1,6 @@
 import { voteStore } from './voteStore';
 import { VoteRecord } from '../types/vote';
 import { fetchChapChapStatus } from './chapchapClient';
-import { VOTE_AMOUNT_GNF } from '../data/event';
 
 const CANCELLED_STATUSES = new Set(['canceled', 'cancelled', 'declined', 'failed', 'expired', 'cancel']);
 
@@ -56,21 +55,23 @@ class VotePaymentHandler {
         };
       }
 
-      if (!result.paid || result.amount !== VOTE_AMOUNT_GNF) {
-        return {
-          success: false,
-          cancelled: false,
-          vote: pending,
-          message: 'Le paiement n’est pas encore confirmé. Un vote n’est valide qu’après un paiement Chap Chap Pay effectif.'
-        };
-      }
-
       if (!pending) {
         return {
           success: false,
           cancelled: false,
           vote: null,
-          message: 'Paiement reçu, mais aucun vote en attente n’a été trouvé sur cet appareil.'
+          message: result.paid
+            ? 'Paiement reçu, mais aucun vote en attente n’a été trouvé sur cet appareil.'
+            : ''
+        };
+      }
+
+      if (!result.paid || result.amount !== pending.amount) {
+        return {
+          success: false,
+          cancelled: false,
+          vote: pending,
+          message: 'Le paiement n’est pas encore confirmé. Un vote n’est valide qu’après un paiement Chap Chap Pay effectif.'
         };
       }
 
@@ -88,7 +89,7 @@ class VotePaymentHandler {
         success: true,
         cancelled: false,
         vote: paidVote,
-        message: `Paiement confirmé. Votre vote pour ${paidVote.candidateName} a été enregistré.`
+        message: `Paiement confirmé. ${paidVote.quantity} vote${paidVote.quantity > 1 ? 's' : ''} pour ${paidVote.candidateName} ${paidVote.quantity > 1 ? 'ont' : 'a'} été enregistré${paidVote.quantity > 1 ? 's' : ''}.`
       };
     } catch {
       return {

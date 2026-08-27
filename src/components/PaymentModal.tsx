@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { X, CreditCard, AlertCircle, ExternalLink, Loader2 } from 'lucide-react';
 import { CHAPCHAP_RETURN_PATH, formatGnf, VOTE_AMOUNT_GNF } from '../data/event';
 import { voteStore } from '../services/voteStore';
@@ -25,8 +25,18 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [quantity, setQuantity] = useState(1);
   const [error, setError] = useState('');
   const [isPaying, setIsPaying] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setQuantity(1);
+      setError('');
+    }
+  }, [isOpen, candidateId]);
+
+  const total = useMemo(() => voteAmount * quantity, [voteAmount, quantity]);
 
   const handlePay = async () => {
     if (!lastName.trim() || !firstName.trim() || !email.trim() || !phone.trim()) {
@@ -44,15 +54,17 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
       voterLastName: lastName,
       voterFirstName: firstName,
       voterEmail: email,
-      voterPhone: phone
+      voterPhone: phone,
+      quantity
     });
 
     try {
       const returnUrl = `${window.location.origin}${CHAPCHAP_RETURN_PATH}?order_id=${encodeURIComponent(vote.id)}`;
       const checkout = await createChapChapCheckout({
         orderId: vote.id,
-        description: `Vote HAG — ${candidateName} — ${firstName.trim()} ${lastName.trim()}`,
+        description: `Vote HAG x${quantity} — ${candidateName} — ${firstName.trim()} ${lastName.trim()}`,
         kind: 'vote',
+        quantity,
         returnUrl,
         cancelUrl: `${returnUrl}&status=canceled`
       });
@@ -67,7 +79,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         voterFirstName: firstName.trim(),
         voterEmail: email.trim(),
         voterPhone: phone.trim(),
-        amount: voteAmount,
+        amount: vote.amount,
+        quantity,
         orderId: vote.id,
         operationId: checkout.operationId
       });
@@ -101,15 +114,44 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
             <h3 className="font-semibold text-blue-dark mb-1">{candidateName}</h3>
             <p className="text-sm text-gray-600">{candidateCategory}</p>
             <div className="mt-3 flex items-center justify-between">
-              <span className="text-sm font-medium text-blue-dark">Montant du vote</span>
+              <span className="text-sm font-medium text-blue-dark">Prix d’un vote</span>
               <span className="text-lg font-bold text-gold">{formatGnf(voteAmount)}</span>
             </div>
+            {quantity > 1 && (
+              <div className="mt-1 flex items-center justify-between">
+                <span className="text-sm font-medium text-blue-dark">Total ({quantity} votes)</span>
+                <span className="text-lg font-bold text-gold">{formatGnf(total)}</span>
+              </div>
+            )}
           </div>
 
           <p className="text-sm text-gray-600">
-            Un vote n’est valide que lorsque le paiement Chap Chap Pay est effectif.
-            Orange Money, MTN MoMo, PayCard, cartes bancaires et autres wallets guinéens sont acceptés.
+            Vous pouvez voter plusieurs fois en une seule fois. Le montant est {formatGnf(voteAmount)} multiplié par le nombre de votes.
+            Le paiement se fait via Chap Chap Pay.
           </p>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Nombre de votes *</label>
+            <input
+              type="number"
+              min={1}
+              step={1}
+              inputMode="numeric"
+              value={quantity}
+              onChange={(e) => {
+                const next = Math.floor(Number(e.target.value));
+                if (!Number.isFinite(next) || next < 1) {
+                  setQuantity(1);
+                  return;
+                }
+                setQuantity(next);
+              }}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+            />
+            <p className="text-sm text-gray-500 mt-2">
+              {quantity} vote{quantity > 1 ? 's' : ''} = {formatGnf(total)}
+            </p>
+          </div>
 
           <div className="space-y-3">
             <div>
@@ -173,7 +215,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
             className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-gold text-blue-dark rounded-lg hover:bg-yellow-400 font-semibold disabled:opacity-70"
           >
             {isPaying ? <Loader2 className="w-5 h-5 animate-spin" /> : <CreditCard className="w-5 h-5" />}
-            <span>{isPaying ? 'Redirection…' : `Payer ${formatGnf(voteAmount)}`}</span>
+            <span>{isPaying ? 'Redirection…' : `Payer ${formatGnf(total)}`}</span>
             {!isPaying && <ExternalLink className="w-4 h-4" />}
           </button>
         </div>

@@ -11,6 +11,7 @@ export interface VoteRecord {
   voterEmail: string;
   voterPhone: string;
   amount: number;
+  quantity: number;
   currency: 'GNF';
   paymentProvider: VotePaymentProvider;
   chapchapOperationId?: string;

@@ -30,12 +30,15 @@ export const voteStore = {
   },
 
   getPaidCountForCandidate(candidateId: number): number {
-    return this.getPaidVotes().filter((vote) => vote.candidateId === candidateId).length;
+    return this.getPaidVotes().reduce((sum, vote) => {
+      if (vote.candidateId !== candidateId) return sum;
+      return sum + (vote.quantity || 1);
+    }, 0);
   },
 
   getPaidCountsByCandidate(): Record<number, number> {
     return this.getPaidVotes().reduce<Record<number, number>>((counts, vote) => {
-      counts[vote.candidateId] = (counts[vote.candidateId] || 0) + 1;
+      counts[vote.candidateId] = (counts[vote.candidateId] || 0) + (vote.quantity || 1);
       return counts;
     }, {});
   },
@@ -58,7 +61,9 @@ export const voteStore = {
     voterFirstName: string;
     voterEmail: string;
     voterPhone: string;
+    quantity?: number;
   }): VoteRecord {
+    const quantity = Math.max(1, Math.floor(input.quantity || 1));
     const vote: VoteRecord = {
       id: createId(),
       candidateId: input.candidateId,
@@ -68,7 +73,8 @@ export const voteStore = {
       voterFirstName: input.voterFirstName.trim(),
       voterEmail: input.voterEmail.trim().toLowerCase(),
       voterPhone: input.voterPhone.trim(),
-      amount: VOTE_AMOUNT_GNF,
+      quantity,
+      amount: VOTE_AMOUNT_GNF * quantity,
       currency: 'GNF',
       paymentProvider: 'chapchap',
       status: 'pending_payment',
