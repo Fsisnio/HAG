@@ -30,7 +30,7 @@ import {
   AdminPaidVote,
   VoteTotal
 } from '../services/adminData';
-import { confirmChapChapVote } from '../services/chapchapClient';
+import { confirmChapChapVote, registerPaidChapChapVote } from '../services/chapchapClient';
 
 const formatRelativeTime = (iso: string) => {
   const then = new Date(iso).getTime();
@@ -104,6 +104,7 @@ const AdminDashboard: React.FC = () => {
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
   const [exportNotice, setExportNotice] = useState('');
   const [syncOperationId, setSyncOperationId] = useState('');
+  const [syncCandidateId, setSyncCandidateId] = useState('');
   const [syncingVote, setSyncingVote] = useState(false);
   const [syncVoteMessage, setSyncVoteMessage] = useState('');
 
@@ -392,28 +393,51 @@ const AdminDashboard: React.FC = () => {
     loadDashboardData();
   };
 
-  const handleSyncPaidVote = async () => {
+  const handleSyncPaidVote = async (manual = false) => {
     const operationId = syncOperationId.trim();
     if (!operationId) {
-      setSyncVoteMessage('Saisissez l’identifiant d’opération Chap Chap Pay.');
+      setSyncVoteMessage('Saisissez la référence Chap Chap (reçu CO…, UUID, ou vote_…).');
       return;
     }
     setSyncingVote(true);
     setSyncVoteMessage('');
     try {
-      const result = await confirmChapChapVote({
-        operationId,
-        orderId: operationId.startsWith('vote_') ? operationId : undefined
-      });
-      if (!result.paid) {
-        setSyncVoteMessage('Ce paiement n’est pas encore confirmé chez Chap Chap Pay.');
+      if (!manual) {
+        const result = await confirmChapChapVote({
+          operationId,
+          orderId: operationId.startsWith('vote_') ? operationId : undefined
+        });
+        if (!result.paid) {
+          setSyncVoteMessage('Ce paiement n’est pas encore confirmé chez Chap Chap Pay.');
+          return;
+        }
+        const recorded = (result.updated || 0) + (result.inserted || 0);
+        setSyncVoteMessage(
+          recorded > 0
+            ? `${recorded} vote(s) enregistré(s) sur le tableau de bord.`
+            : 'Paiement confirmé, mais le vote n’a pas pu être rattaché à un candidat. Choisissez le candidat puis enregistrez manuellement.'
+        );
+        if (recorded > 0) {
+          setSyncOperationId('');
+          await loadDashboardData();
+        }
         return;
       }
+
+      const candidateId = Number(syncCandidateId);
+      if (!candidateId) {
+        setSyncVoteMessage('Choisissez le candidat qui a reçu ce vote, puis enregistrez manuellement.');
+        return;
+      }
+      const result = await registerPaidChapChapVote({
+        candidateId,
+        paymentReference: operationId
+      });
       const recorded = (result.updated || 0) + (result.inserted || 0);
       setSyncVoteMessage(
         recorded > 0
-          ? `${recorded} vote(s) enregistré(s) sur le tableau de bord.`
-          : 'Paiement confirmé, mais le vote n’a pas pu être rattaché à un candidat. Vérifiez la description Chap Chap.'
+          ? `${recorded} vote(s) enregistré(s) pour la référence ${operationId}.`
+          : 'Aucun vote enregistré.'
       );
       setSyncOperationId('');
       await loadDashboardData();
@@ -1119,24 +1143,47 @@ const AdminDashboard: React.FC = () => {
                    <div className="mb-6 p-4 bg-amber-50 rounded-lg border border-amber-200">
                      <h4 className="text-sm font-medium text-amber-900 mb-2">Rattraper un vote déjà payé</h4>
                      <p className="text-sm text-amber-800 mb-3">
-                       Si Chap Chap a encaissé un paiement qui n’apparaît pas ici, collez l’ID d’opération (ou l’order_id du type vote_…).
+                       Une référence du type <strong>CO260830.0905.B73131</strong> est un reçu ChapChap, pas l’UUID d’opération.
+                       Pour ce cas : choisissez le candidat, puis <strong>Enregistrer manuellement</strong>.
                      </p>
-                     <div className="flex flex-col sm:flex-row gap-2">
+                     <div className="flex flex-col gap-2">
                        <input
                          type="text"
                          value={syncOperationId}
                          onChange={(e) => setSyncOperationId(e.target.value)}
-                         placeholder="operation_id Chap Chap"
-                         className="flex-1 px-4 py-2 border border-amber-200 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+                         placeholder="Reçu CO…, UUID, ou vote_…"
+                         className="w-full px-4 py-2 border border-amber-200 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
                        />
-                       <button
-                         type="button"
-                         onClick={handleSyncPaidVote}
-                         disabled={syncingVote}
-                         className="px-4 py-2 bg-gold text-blue-dark rounded-lg font-semibold disabled:opacity-60"
+                       <select
+                         value={syncCandidateId}
+                         onChange={(e) => setSyncCandidateId(e.target.value)}
+                         className="w-full px-4 py-2 border border-amber-200 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent bg-white"
                        >
-                         {syncingVote ? 'Vérification…' : 'Enregistrer le vote'}
-                       </button>
+                         <option value="">Candidat concerné (obligatoire pour un reçu CO…)</option>
+                         {getAllOfficialCandidates().map((candidate) => (
+                           <option key={candidate.id} value={candidate.id}>
+                             {candidate.name} — {candidate.category}
+                           </option>
+                         ))}
+                       </select>
+                       <div className="flex flex-col sm:flex-row gap-2">
+                         <button
+                           type="button"
+                           onClick={() => handleSyncPaidVote(false)}
+                           disabled={syncingVote}
+                           className="px-4 py-2 bg-white border border-amber-300 text-amber-900 rounded-lg font-semibold disabled:opacity-60"
+                         >
+                           {syncingVote ? 'Vérification…' : 'Vérifier chez ChapChap'}
+                         </button>
+                         <button
+                           type="button"
+                           onClick={() => handleSyncPaidVote(true)}
+                           disabled={syncingVote}
+                           className="px-4 py-2 bg-gold text-blue-dark rounded-lg font-semibold disabled:opacity-60"
+                         >
+                           {syncingVote ? 'Enregistrement…' : 'Enregistrer manuellement'}
+                         </button>
+                       </div>
                      </div>
                      {syncVoteMessage && (
                        <p className="text-sm text-amber-900 mt-2">{syncVoteMessage}</p>

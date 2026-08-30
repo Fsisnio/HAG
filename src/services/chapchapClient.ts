@@ -125,6 +125,32 @@ export const confirmChapChapVote = async (query: {
   return response.json();
 };
 
+export const registerPaidChapChapVote = async (input: {
+  candidateId: number;
+  paymentReference: string;
+  quantity?: number;
+  voterFirstName?: string;
+  voterLastName?: string;
+}): Promise<ChapChapStatusResult & { updated?: number; inserted?: number }> => {
+  if (!supabaseFunctionsUrl) {
+    throw new Error('Supabase n’est pas configuré');
+  }
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (supabaseAnonKey) {
+    headers.Authorization = `Bearer ${supabaseAnonKey}`;
+    headers.apikey = supabaseAnonKey;
+  }
+  const response = await fetch(`${supabaseFunctionsUrl}/chapchap`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ action: 'register-paid', ...input })
+  });
+  if (!response.ok) {
+    throw new Error(await readError(response));
+  }
+  return response.json();
+};
+
 export const persistPendingVote = async (vote: {
   candidateId: number;
   candidateName: string;

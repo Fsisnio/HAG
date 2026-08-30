@@ -182,3 +182,65 @@ export const applyChapChapVoteStatus = async (
   if (inserted.error) throw new Error(inserted.error.message);
   return { updated: 0, inserted: inserted.data?.length || 0, status: nextStatus };
 };
+
+export const insertPaidVoteByCandidate = async (
+  createClient: any,
+  input: {
+    candidateId: number;
+    paymentReference: string;
+    quantity?: number;
+    voterFirstName?: string;
+    voterLastName?: string;
+  }
+) => {
+  const supabase = supabaseAdmin(createClient);
+  const reference = String(input.paymentReference || '').trim();
+  const quantity = Math.max(1, Math.floor(Number(input.quantity) || 1));
+  if (!reference) throw new Error('Référence de paiement manquante');
+
+  const { data: existing, error: existingError } = await supabase
+    .from('hag_votes')
+    .select('id')
+    .eq('chapchap_operation_id', reference)
+    .eq('status', 'paid');
+  if (existingError) throw new Error(existingError.message);
+  if (existing && existing.length > 0) {
+    return { updated: existing.length, inserted: 0, status: 'paid' };
+  }
+
+  const { data: candidate, error: candidateError } = await supabase
+    .from('hag_candidates')
+    .select('id, name, category_id')
+    .eq('id', input.candidateId)
+    .maybeSingle();
+  if (candidateError) throw new Error(candidateError.message);
+  if (!candidate) throw new Error('Candidat introuvable');
+
+  const { data: category } = await supabase
+    .from('hag_categories')
+    .select('title')
+    .eq('id', candidate.category_id)
+    .maybeSingle();
+
+  const rows = Array.from({ length: quantity }, () => ({
+    candidate_id: candidate.id,
+    candidate_name: candidate.name,
+    candidate_category: category?.title || candidate.name,
+    voter_last_name: (input.voterLastName || 'ChapChap').trim(),
+    voter_first_name: (input.voterFirstName || 'Votant').trim(),
+    voter_email: 'vote@chapchap.local',
+    voter_phone: '000000000',
+    amount: VOTE_AMOUNT_GNF,
+    currency: 'GNF',
+    payment_provider: 'chapchap',
+    status: 'paid',
+    chapchap_order_id: reference,
+    chapchap_operation_id: reference,
+    paid_at: new Date().toISOString()
+  }));
+
+  const inserted = await supabase.from('hag_votes').insert(rows).select('id');
+  if (inserted.error) throw new Error(inserted.error.message);
+  return { updated: 0, inserted: inserted.data?.length || 0, status: 'paid' };
+};
+

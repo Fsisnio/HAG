@@ -1,6 +1,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
 import {
   applyChapChapVoteStatus,
+  insertPaidVoteByCandidate,
   insertPendingVotes,
   isPaidCode,
   normalizeStatus,
@@ -69,16 +70,43 @@ const fetchChapChapOperation = async (
   operationId: string,
   orderId: string
 ) => {
-  const path = operationId
-    ? `/ecommerce/${encodeURIComponent(operationId)}`
-    : `/ecommerce/order/${encodeURIComponent(orderId)}`;
-  const response = await fetch(`${baseUrl}${path}`, {
-    headers: { 'CCP-Api-Key': apiKey }
-  });
-  const payload = await response.json();
-  if (!response.ok) {
-    throw new Error('Impossible de vérifier le paiement Chap Chap Pay');
+  const paths = Array.from(
+    new Set(
+      [
+        operationId ? `/ecommerce/${encodeURIComponent(operationId)}` : '',
+        operationId && !operationId.startsWith('vote_')
+          ? `/ecommerce/order/${encodeURIComponent(operationId)}`
+          : '',
+        orderId ? `/ecommerce/order/${encodeURIComponent(orderId)}` : '',
+        orderId ? `/ecommerce/${encodeURIComponent(orderId)}` : ''
+      ].filter(Boolean)
+    )
+  );
+
+  let lastStatus = 0;
+  let payload: Record<string, any> | null = null;
+  for (const path of paths) {
+    const response = await fetch(`${baseUrl}${path}`, {
+      headers: { 'CCP-Api-Key': apiKey }
+    });
+    lastStatus = response.status;
+    const json = await response.json().catch(() => null);
+    if (response.ok && json) {
+      payload = json;
+      break;
+    }
   }
+
+  if (!payload) {
+    const raw = operationId || orderId;
+    const looksLikeReceipt = /^CO[\d.]/i.test(raw) || /\.\d{4}\./.test(raw);
+    throw new Error(
+      looksLikeReceipt
+        ? `« ${raw} » est une référence de reçu ChapChap, pas l’operation_id. Choisissez le candidat ci-dessous puis cliquez sur Enregistrer manuellement.`
+        : `Impossible de vérifier le paiement Chap Chap Pay (${lastStatus || 'inconnu'}). Utilisez l’UUID d’opération ou l’order_id vote_…`
+    );
+  }
+
   const code = statusCodeOf(payload);
   const normalized = normalizeStatus(code);
   return {
@@ -113,6 +141,22 @@ Deno.serve(async (req) => {
   try {
     const body = await req.json();
     const action = body.action || 'checkout';
+
+    if (action === 'register-paid') {
+      const applied = await insertPaidVoteByCandidate(createClient, {
+        candidateId: Number(body.candidateId),
+        paymentReference: String(body.paymentReference || body.operationId || '').trim(),
+        quantity: body.quantity,
+        voterFirstName: body.voterFirstName,
+        voterLastName: body.voterLastName
+      });
+      return json(200, {
+        paid: true,
+        operationId: String(body.paymentReference || body.operationId || ''),
+        orderId: String(body.paymentReference || body.operationId || ''),
+        ...applied
+      });
+    }
 
     if (action === 'status' || action === 'confirm') {
       const operationId = body.operationId || '';
