@@ -25,21 +25,27 @@ const VotePage: React.FC = () => {
   const [paymentMessageType, setPaymentMessageType] = useState<'success' | 'error' | ''>('');
   const [sortBy, setSortBy] = useState<'votes' | 'name'>('votes');
   const [isLoadingVotes, setIsLoadingVotes] = useState(true);
+  const [voteRefresh, setVoteRefresh] = useState(0);
   const groupedCategories = getCategoriesGrouped();
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     let cancelled = false;
 
-    votePaymentHandler.handlePaymentReturn(urlParams).then((result) => {
-      if (cancelled || !result.message) return;
-      setPaymentMessage(result.message);
-      setPaymentMessageType(result.success ? 'success' : 'error');
-      window.history.replaceState({}, document.title, window.location.pathname);
-      setTimeout(() => {
-        setPaymentMessage('');
-        setPaymentMessageType('');
-      }, 6000);
+    votePaymentHandler.handlePaymentReturn(urlParams).then(async (result) => {
+      if (cancelled) return;
+      await votePaymentHandler.syncPaidVotesToServer();
+      if (cancelled) return;
+      setVoteRefresh((value) => value + 1);
+      if (result.message) {
+        setPaymentMessage(result.message);
+        setPaymentMessageType(result.success ? 'success' : 'error');
+        window.history.replaceState({}, document.title, window.location.pathname);
+        setTimeout(() => {
+          setPaymentMessage('');
+          setPaymentMessageType('');
+        }, 6000);
+      }
     });
 
     return () => {
@@ -76,7 +82,7 @@ const VotePage: React.FC = () => {
     };
 
     loadCandidates();
-  }, []);
+  }, [voteRefresh]);
 
   const handleCategorySelect = (category: string) => {
     setSelectedCategory(category);

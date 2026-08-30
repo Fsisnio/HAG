@@ -30,6 +30,7 @@ import {
   AdminPaidVote,
   VoteTotal
 } from '../services/adminData';
+import { confirmChapChapVote } from '../services/chapchapClient';
 
 const formatRelativeTime = (iso: string) => {
   const then = new Date(iso).getTime();
@@ -102,6 +103,9 @@ const AdminDashboard: React.FC = () => {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
   const [exportNotice, setExportNotice] = useState('');
+  const [syncOperationId, setSyncOperationId] = useState('');
+  const [syncingVote, setSyncingVote] = useState(false);
+  const [syncVoteMessage, setSyncVoteMessage] = useState('');
 
   const [applicationFilter, setApplicationFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
 
@@ -120,7 +124,7 @@ const AdminDashboard: React.FC = () => {
     setIsLoading(true);
     setLoadError('');
     try {
-      const [appsResult, paidVotes, totals] = await Promise.all([
+      const [appsResult, votesResult, totals] = await Promise.all([
         fetchAdminApplications().then(
           (apps) => ({ apps, error: '' }),
           (error) => ({
@@ -128,12 +132,21 @@ const AdminDashboard: React.FC = () => {
             error: error instanceof Error ? error.message : 'Impossible de charger les candidatures.'
           })
         ),
-        fetchAdminPaidVotes(),
+        fetchAdminPaidVotes().then(
+          (votes) => ({ votes, error: '' }),
+          (error) => ({
+            votes: [] as AdminPaidVote[],
+            error: error instanceof Error ? error.message : 'Impossible de charger les votes payés.'
+          })
+        ),
         fetchVoteTotals()
       ]);
 
       const apps = appsResult.apps;
-      if (appsResult.error) setLoadError(appsResult.error);
+      const paidVotes = votesResult.votes;
+      if (appsResult.error || votesResult.error) {
+        setLoadError([appsResult.error, votesResult.error].filter(Boolean).join(' '));
+      }
 
       const pending = apps.filter((app) => app.status === 'pending').length;
       const approved = apps.filter((app) => app.status === 'approved');
@@ -377,6 +390,38 @@ const AdminDashboard: React.FC = () => {
 
   const refreshData = () => {
     loadDashboardData();
+  };
+
+  const handleSyncPaidVote = async () => {
+    const operationId = syncOperationId.trim();
+    if (!operationId) {
+      setSyncVoteMessage('Saisissez l’identifiant d’opération Chap Chap Pay.');
+      return;
+    }
+    setSyncingVote(true);
+    setSyncVoteMessage('');
+    try {
+      const result = await confirmChapChapVote({
+        operationId,
+        orderId: operationId.startsWith('vote_') ? operationId : undefined
+      });
+      if (!result.paid) {
+        setSyncVoteMessage('Ce paiement n’est pas encore confirmé chez Chap Chap Pay.');
+        return;
+      }
+      const recorded = (result.updated || 0) + (result.inserted || 0);
+      setSyncVoteMessage(
+        recorded > 0
+          ? `${recorded} vote(s) enregistré(s) sur le tableau de bord.`
+          : 'Paiement confirmé, mais le vote n’a pas pu être rattaché à un candidat. Vérifiez la description Chap Chap.'
+      );
+      setSyncOperationId('');
+      await loadDashboardData();
+    } catch (error) {
+      setSyncVoteMessage(error instanceof Error ? error.message : 'Impossible de rattraper ce vote.');
+    } finally {
+      setSyncingVote(false);
+    }
   };
 
   // Gérer la réinitialisation des votes
@@ -1069,6 +1114,33 @@ const AdminDashboard: React.FC = () => {
                          <option key={cat.id} value={cat.title}>{cat.title}</option>
                        ))}
                      </select>
+                   </div>
+
+                   <div className="mb-6 p-4 bg-amber-50 rounded-lg border border-amber-200">
+                     <h4 className="text-sm font-medium text-amber-900 mb-2">Rattraper un vote déjà payé</h4>
+                     <p className="text-sm text-amber-800 mb-3">
+                       Si Chap Chap a encaissé un paiement qui n’apparaît pas ici, collez l’ID d’opération (ou l’order_id du type vote_…).
+                     </p>
+                     <div className="flex flex-col sm:flex-row gap-2">
+                       <input
+                         type="text"
+                         value={syncOperationId}
+                         onChange={(e) => setSyncOperationId(e.target.value)}
+                         placeholder="operation_id Chap Chap"
+                         className="flex-1 px-4 py-2 border border-amber-200 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+                       />
+                       <button
+                         type="button"
+                         onClick={handleSyncPaidVote}
+                         disabled={syncingVote}
+                         className="px-4 py-2 bg-gold text-blue-dark rounded-lg font-semibold disabled:opacity-60"
+                       >
+                         {syncingVote ? 'Vérification…' : 'Enregistrer le vote'}
+                       </button>
+                     </div>
+                     {syncVoteMessage && (
+                       <p className="text-sm text-amber-900 mt-2">{syncVoteMessage}</p>
+                     )}
                    </div>
 
                    {/* Liste des candidats approuvés */}

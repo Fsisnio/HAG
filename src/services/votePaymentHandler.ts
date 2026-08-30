@@ -1,6 +1,6 @@
 import { voteStore } from './voteStore';
 import { VoteRecord } from '../types/vote';
-import { fetchChapChapStatus } from './chapchapClient';
+import { confirmChapChapVote, fetchChapChapStatus } from './chapchapClient';
 
 const CANCELLED_STATUSES = new Set(['canceled', 'cancelled', 'declined', 'failed', 'expired', 'cancel']);
 
@@ -56,23 +56,42 @@ class VotePaymentHandler {
       }
 
       if (!pending) {
+        if (result.paid) {
+          try {
+            await confirmChapChapVote({
+              operationId: result.operationId || operationId,
+              orderId: result.orderId || orderId
+            });
+          } catch {
+            /* dashboard recovery can retry */
+          }
+        }
         return {
-          success: false,
+          success: result.paid,
           cancelled: false,
           vote: null,
           message: result.paid
-            ? 'Paiement reçu, mais aucun vote en attente n’a été trouvé sur cet appareil.'
+            ? 'Paiement reçu. Le vote est en cours d’enregistrement sur le tableau de bord.'
             : ''
         };
       }
 
-      if (!result.paid || result.amount !== pending.amount) {
+      if (!result.paid || Number(result.amount) !== Number(pending.amount)) {
         return {
           success: false,
           cancelled: false,
           vote: pending,
           message: 'Le paiement n’est pas encore confirmé. Un vote n’est valide qu’après un paiement Chap Chap Pay effectif.'
         };
+      }
+
+      try {
+        await confirmChapChapVote({
+          operationId: result.operationId || operationId,
+          orderId: result.orderId || orderId
+        });
+      } catch {
+        // The payment is confirmed at Chap Chap; dashboard sync can retry from /voter.
       }
 
       const paidVote = voteStore.markPaid(pending.id, result.operationId);
@@ -99,6 +118,26 @@ class VotePaymentHandler {
         message: 'Impossible de vérifier le paiement Chap Chap Pay pour le moment.'
       };
     }
+  }
+
+  async syncPaidVotesToServer(): Promise<number> {
+    const paid = voteStore.getPaidVotes();
+    let synced = 0;
+    for (const vote of paid) {
+      if (!vote.chapchapOperationId && !vote.id) continue;
+      try {
+        const result = await confirmChapChapVote({
+          operationId: vote.chapchapOperationId,
+          orderId: vote.id
+        });
+        if ((result.updated || 0) + (result.inserted || 0) > 0 || result.paid) {
+          synced += 1;
+        }
+      } catch {
+        /* keep going */
+      }
+    }
+    return synced;
   }
 }
 

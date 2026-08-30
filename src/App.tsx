@@ -24,6 +24,8 @@ import Tickets from './pages/Tickets';
 import Souvenirs from './pages/Souvenirs';
 import PourquoiParticiper from './pages/PourquoiParticiper';
 import Calendrier from './pages/Calendrier';
+import LegalDocumentPage from './pages/LegalDocument';
+import { getLegalDocument } from './data/legal';
 
 const App: React.FC = () => {
   const location = useLocation();
@@ -46,6 +48,9 @@ const App: React.FC = () => {
           <Route path="/jury" element={<Jury />} />
           <Route path="/galerie" element={<Galerie />} />
           <Route path="/reglement" element={<Reglement />} />
+          <Route path="/cgu" element={<LegalDocumentPage document={getLegalDocument('cgu')} />} />
+          <Route path="/cgv" element={<LegalDocumentPage document={getLegalDocument('cgv')} />} />
+          <Route path="/confidentialite" element={<LegalDocumentPage document={getLegalDocument('confidentialite')} />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/tickets" element={<Tickets />} />
           <Route path="/contact" element={<Contact />} />

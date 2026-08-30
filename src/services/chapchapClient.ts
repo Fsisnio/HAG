@@ -52,6 +52,13 @@ export const createChapChapCheckout = async (input: {
   kind?: 'vote' | 'ticket';
   ticketName?: string;
   quantity?: number;
+  candidateId?: number;
+  candidateName?: string;
+  candidateCategory?: string;
+  voterLastName?: string;
+  voterFirstName?: string;
+  voterEmail?: string;
+  voterPhone?: string;
 }): Promise<ChapChapCheckoutResult> => {
   const url = localProxy ? '/api/chapchap/checkout' : `${supabaseFunctionsUrl}/chapchap`;
   const response = await fetch(url, {
@@ -88,6 +95,29 @@ export const fetchChapChapStatus = async (query: {
     method: 'POST',
     headers: jsonHeaders(),
     body: JSON.stringify({ action: 'status', ...query })
+  });
+  if (!response.ok) {
+    throw new Error(await readError(response));
+  }
+  return response.json();
+};
+
+export const confirmChapChapVote = async (query: {
+  operationId?: string;
+  orderId?: string;
+}): Promise<ChapChapStatusResult & { updated?: number; inserted?: number }> => {
+  if (!supabaseFunctionsUrl) {
+    throw new Error('Supabase n’est pas configuré');
+  }
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (supabaseAnonKey) {
+    headers.Authorization = `Bearer ${supabaseAnonKey}`;
+    headers.apikey = supabaseAnonKey;
+  }
+  const response = await fetch(`${supabaseFunctionsUrl}/chapchap`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ action: 'confirm', ...query })
   });
   if (!response.ok) {
     throw new Error(await readError(response));

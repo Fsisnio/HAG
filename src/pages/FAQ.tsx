@@ -46,6 +46,18 @@ const FAQ: React.FC = () => {
             <Link to="/reglement" className="text-blue-700 underline">
               règlement officiel
             </Link>
+            , les{' '}
+            <Link to="/cgu" className="text-blue-700 underline">
+              CGU
+            </Link>
+            , les{' '}
+            <Link to="/cgv" className="text-blue-700 underline">
+              CGV
+            </Link>
+            {' '}et la{' '}
+            <Link to="/confidentialite" className="text-blue-700 underline">
+              Politique de confidentialité
+            </Link>
             .
           </p>
         </div>

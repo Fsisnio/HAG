@@ -25,6 +25,10 @@ export interface ApplicationPayload {
   socialMedia: string;
   documents: File[];
   authorization: boolean;
+  acceptsPrivacy: boolean;
+  acceptsRules: boolean;
+  acceptsPaymentTerms: boolean;
+  acceptsMarketing: boolean;
   declarationName: string;
   declarationFunction: string;
   declarationPlace: string;

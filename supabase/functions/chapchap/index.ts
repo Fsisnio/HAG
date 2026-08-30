@@ -1,3 +1,12 @@
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
+import {
+  applyChapChapVoteStatus,
+  insertPendingVotes,
+  isPaidCode,
+  normalizeStatus,
+  statusCodeOf
+} from '../_shared/hagVotes.ts';
+
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, ccp-hmac-signature',
@@ -22,7 +31,7 @@ const resolvePaymentAmount = (body: Record<string, any>) => {
     if (!Number.isFinite(qty) || qty < 1 || qty > ticket.maxQuantity) {
       throw new Error(`Quantité invalide (1 à ${ticket.maxQuantity})`);
     }
-    return { amount: ticket.price * qty, description: body.description || `Ticket HAG ${ticket.name} x${qty}` };
+    return { amount: ticket.price * qty, description: body.description || `Ticket HAG ${ticket.name} x${qty}`, quantity: qty };
   }
   const qty = Math.floor(Number(body.quantity) || 1);
   if (!Number.isFinite(qty) || qty < 1 || !Number.isSafeInteger(VOTE_AMOUNT_GNF * qty)) {
@@ -30,6 +39,7 @@ const resolvePaymentAmount = (body: Record<string, any>) => {
   }
   return {
     amount: VOTE_AMOUNT_GNF * qty,
+    quantity: qty,
     description: body.description || `Vote Hospitality Awards Guinée x${qty}`
   };
 };
@@ -53,19 +63,35 @@ const signBody = async (key: string, body: string) => {
   return Array.from(new Uint8Array(signature)).map((b) => b.toString(16).padStart(2, '0')).join('');
 };
 
-const statusCodeOf = (payload: Record<string, any>) => {
-  if (typeof payload.status === 'string') return payload.status.toLowerCase();
-  if (payload.status && typeof payload.status.code === 'string') return payload.status.code.toLowerCase();
-  return '';
-};
-
-const normalizeStatus = (code: string) => {
-  const value = (code || '').toLowerCase();
-  if (['created', 'new'].includes(value)) return 'created';
-  if (['pending', 'processing'].includes(value)) return 'processing';
-  if (['success', 'completed', 'paid'].includes(value)) return 'success';
-  if (['cancel', 'canceled', 'cancelled', 'expired', 'failed', 'error'].includes(value)) return 'cancel';
-  return value || 'unknown';
+const fetchChapChapOperation = async (
+  apiKey: string,
+  baseUrl: string,
+  operationId: string,
+  orderId: string
+) => {
+  const path = operationId
+    ? `/ecommerce/${encodeURIComponent(operationId)}`
+    : `/ecommerce/order/${encodeURIComponent(orderId)}`;
+  const response = await fetch(`${baseUrl}${path}`, {
+    headers: { 'CCP-Api-Key': apiKey }
+  });
+  const payload = await response.json();
+  if (!response.ok) {
+    throw new Error('Impossible de vérifier le paiement Chap Chap Pay');
+  }
+  const code = statusCodeOf(payload);
+  const normalized = normalizeStatus(code);
+  return {
+    operationId: payload.operation_id || operationId,
+    orderId: payload.order_id || orderId,
+    amount: Number(payload.amount) || 0,
+    status: normalized,
+    rawStatus: code,
+    description: payload.description || '',
+    paid: isPaidCode(code) && Number(payload.amount) > 0,
+    cancelled: normalized === 'cancel',
+    paymentUrl: payload.payment_url || null
+  };
 };
 
 Deno.serve(async (req) => {
@@ -76,7 +102,9 @@ Deno.serve(async (req) => {
   const apiKey = (Deno.env.get('CHAPCHAP_API_KEY') || '').trim();
   const encryptKey = (Deno.env.get('CHAPCHAP_ENCRYPT_KEY') || '').trim();
   const baseUrl = (Deno.env.get('CHAPCHAP_BASE_URL') || DEFAULT_BASE_URL).replace(/\/+$/, '');
-  const notifyUrl = (Deno.env.get('CHAPCHAP_NOTIFY_URL') || '').trim();
+  const supabaseUrl = (Deno.env.get('SUPABASE_URL') || '').replace(/\/+$/, '');
+  const configuredNotify = (Deno.env.get('CHAPCHAP_NOTIFY_URL') || '').trim();
+  const notifyUrl = configuredNotify || (supabaseUrl ? `${supabaseUrl}/functions/v1/chapchap-webhook` : '');
 
   if (!apiKey) {
     return json(500, { error: 'CHAPCHAP_API_KEY manquante côté serveur' });
@@ -86,40 +114,50 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const action = body.action || 'checkout';
 
-    if (action === 'status') {
+    if (action === 'status' || action === 'confirm') {
       const operationId = body.operationId || '';
       const orderId = body.orderId || '';
       if (!operationId && !orderId) {
         return json(400, { error: 'operationId ou orderId requis' });
       }
-      const path = operationId
-        ? `/ecommerce/${encodeURIComponent(operationId)}`
-        : `/ecommerce/order/${encodeURIComponent(orderId)}`;
-      const response = await fetch(`${baseUrl}${path}`, {
-        headers: { 'CCP-Api-Key': apiKey }
-      });
-      const payload = await response.json();
-      if (!response.ok) {
-        return json(502, { error: 'Impossible de vérifier le paiement Chap Chap Pay' });
+      const result = await fetchChapChapOperation(apiKey, baseUrl, operationId, orderId);
+      if (action === 'confirm' && (result.paid || result.cancelled)) {
+        const applied = await applyChapChapVoteStatus(createClient, {
+          operationId: result.operationId,
+          orderId: result.orderId,
+          paid: result.paid,
+          cancelled: result.cancelled,
+          description: result.description
+        });
+        return json(200, { ...result, ...applied });
       }
-      const code = statusCodeOf(payload);
-      const normalized = normalizeStatus(code);
-      return json(200, {
-        operationId: payload.operation_id,
-        orderId: payload.order_id,
-        amount: Number(payload.amount) || 0,
-        status: normalized,
-        rawStatus: code,
-        paid: normalized === 'success' && Number(payload.amount) > 0,
-        cancelled: normalized === 'cancel',
-        paymentUrl: payload.payment_url || null
-      });
+      return json(200, result);
     }
 
     const orderId = body.orderId;
     if (!orderId) return json(400, { error: 'order_id manquant' });
 
     const priced = resolvePaymentAmount(body);
+    const canPersistVote = body.kind !== 'ticket'
+      && body.candidateId
+      && body.voterLastName
+      && body.voterFirstName
+      && body.voterEmail
+      && body.voterPhone;
+    if (canPersistVote) {
+      await insertPendingVotes(createClient, {
+        orderId: String(orderId),
+        quantity: priced.quantity,
+        candidateId: Number(body.candidateId),
+        candidateName: String(body.candidateName || ''),
+        candidateCategory: String(body.candidateCategory || ''),
+        voterLastName: String(body.voterLastName),
+        voterFirstName: String(body.voterFirstName),
+        voterEmail: String(body.voterEmail),
+        voterPhone: String(body.voterPhone)
+      });
+    }
+
     const payload = {
       amount: priced.amount,
       description: priced.description,
@@ -146,6 +184,21 @@ Deno.serve(async (req) => {
     const created = await response.json();
     if (response.status !== 201 || !created.payment_url) {
       return json(502, { error: created.message || created.error || 'Création du paiement refusée' });
+    }
+
+    if (canPersistVote && created.operation_id) {
+      await insertPendingVotes(createClient, {
+        orderId: String(created.order_id || orderId),
+        operationId: created.operation_id,
+        quantity: priced.quantity,
+        candidateId: Number(body.candidateId),
+        candidateName: String(body.candidateName || ''),
+        candidateCategory: String(body.candidateCategory || ''),
+        voterLastName: String(body.voterLastName),
+        voterFirstName: String(body.voterFirstName),
+        voterEmail: String(body.voterEmail),
+        voterPhone: String(body.voterPhone)
+      });
     }
 
     return json(201, {

@@ -1,10 +1,10 @@
 import React, { useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Send, CheckCircle, AlertCircle, Upload, FileText, Calendar } from 'lucide-react';
 import { officialCategories, categoryGroups } from '../data/categories';
 import { EVENT_YEAR, EVENT_EDITION, SLOGAN, APPLICATION_START, APPLICATION_END, VOTES_START, VOTES_END, GALA_VENUE, CALENDAR, isApplicationOpen } from '../data/event';
 import { submitApplication } from '../services/applications';
-import { APPLICATION_FORM_ACCEPTANCE } from '../data/reglement';
+import LegalConsent from '../components/LegalConsent';
 
 interface FormData {
   organizationName: string;
@@ -30,15 +30,20 @@ interface FormData {
   socialMedia: string;
   documents: File[];
   authorization: boolean;
+  acceptsPrivacy: boolean;
   acceptsRules: boolean;
+  acceptsPaymentTerms: boolean;
+  acceptsMarketing: boolean;
   declarationName: string;
   declarationFunction: string;
   declarationPlace: string;
 }
 
-type FormErrors = Partial<Record<keyof Omit<FormData, 'documents' | 'authorization' | 'acceptsRules'>, string>> & {
+type FormErrors = Partial<Record<keyof Omit<FormData, 'documents' | 'authorization' | 'acceptsPrivacy' | 'acceptsRules' | 'acceptsPaymentTerms' | 'acceptsMarketing'>, string>> & {
   authorization?: string;
+  acceptsPrivacy?: string;
   acceptsRules?: string;
+  acceptsPaymentTerms?: string;
 };
 
 const emptyForm: FormData = {
@@ -65,7 +70,10 @@ const emptyForm: FormData = {
   socialMedia: '',
   documents: [],
   authorization: false,
+  acceptsPrivacy: false,
   acceptsRules: false,
+  acceptsPaymentTerms: false,
+  acceptsMarketing: false,
   declarationName: '',
   declarationFunction: '',
   declarationPlace: ''
@@ -130,8 +138,14 @@ const ApplicationForm: React.FC = () => {
     if (!formData.authorization) {
       newErrors.authorization = 'Vous devez autoriser l’utilisation des éléments de communication';
     }
+    if (!formData.acceptsPrivacy) {
+      newErrors.acceptsPrivacy = 'Vous devez accepter la Politique de confidentialité';
+    }
     if (!formData.acceptsRules) {
       newErrors.acceptsRules = 'Vous devez accepter le règlement officiel des HAG 2026';
+    }
+    if (!formData.acceptsPaymentTerms) {
+      newErrors.acceptsPaymentTerms = 'Vous devez accepter les Conditions du vote et des paiements';
     }
     if (!formData.declarationName.trim()) newErrors.declarationName = 'Le nom du déclarant est requis';
 
@@ -623,31 +637,39 @@ const ApplicationForm: React.FC = () => {
               </div>
 
               <div className="mb-10">
-                <h2 className="text-2xl font-bold text-blue-dark mb-4">7. Acceptation du règlement</h2>
-                <label className="flex items-start space-x-3">
-                  <input
-                    type="checkbox"
-                    name="acceptsRules"
-                    checked={formData.acceptsRules}
-                    onChange={handleInputChange}
-                    className="mt-1"
-                  />
-                  <span className="text-sm text-gray-700">
-                    {APPLICATION_FORM_ACCEPTANCE}{' '}
-                    <Link to="/reglement" className="text-blue-700 underline" target="_blank" rel="noreferrer">
-                      Lire le règlement
-                    </Link>
-                    {' '}*
-                  </span>
-                </label>
-                <ErrorText message={errors.acceptsRules} />
+                <h2 className="text-2xl font-bold text-blue-dark mb-4">7. Acceptation des conditions</h2>
+                <p className="text-sm text-gray-600 mb-4">
+                  Les trois premières cases sont obligatoires pour déposer une candidature. La dernière est
+                  facultative et n’empêche pas l’inscription si elle n’est pas cochée.
+                </p>
+                <LegalConsent
+                  values={{
+                    acceptsPrivacy: formData.acceptsPrivacy,
+                    acceptsRules: formData.acceptsRules,
+                    acceptsPaymentTerms: formData.acceptsPaymentTerms,
+                    acceptsMarketing: formData.acceptsMarketing
+                  }}
+                  onChange={(next) => {
+                    setFormData((prev) => ({ ...prev, ...next }));
+                    setErrors((prev) => ({
+                      ...prev,
+                      acceptsPrivacy: undefined,
+                      acceptsRules: undefined,
+                      acceptsPaymentTerms: undefined
+                    }));
+                  }}
+                  errors={{
+                    acceptsPrivacy: errors.acceptsPrivacy,
+                    acceptsRules: errors.acceptsRules,
+                    acceptsPaymentTerms: errors.acceptsPaymentTerms
+                  }}
+                />
               </div>
 
               <div className="mb-10">
                 <h2 className="text-2xl font-bold text-blue-dark mb-6">8. Déclaration du candidat</h2>
                 <p className="text-sm text-gray-600 mb-4">
-                  Je certifie l’exactitude des informations communiquées et j’accepte le règlement ainsi que
-                  les conditions de participation aux Hospitality Awards Guinée {EVENT_YEAR}.
+                  Je certifie l’exactitude des informations communiquées.
                 </p>
                 <div className="grid grid-2 gap-6">
                   <div>

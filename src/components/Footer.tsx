@@ -9,7 +9,7 @@ const Footer: React.FC = () => {
     <footer className="bg-blue-dark text-white">
       <div className="container">
         {/* Section principale du footer */}
-        <div className="grid grid-4 py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 py-12 gap-8">
           {/* Logo et description */}
           <div className="space-y-4">
             <div className="flex items-center space-x-3 group">
@@ -70,6 +70,19 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
+          {/* Légal */}
+          <div className="space-y-4">
+            <h4 className="font-heading font-semibold text-white tracking-wide flex items-center gap-3">
+              <span className="w-6 h-0.5 bg-gold rounded-full" aria-hidden="true" />
+              LÉGAL
+            </h4>
+            <ul className="space-y-2">
+              <li><Link to="/cgu" className="text-gray-300 hover:text-gold transition-colors">CGU</Link></li>
+              <li><Link to="/cgv" className="text-gray-300 hover:text-gold transition-colors">CGV</Link></li>
+              <li><Link to="/confidentialite" className="text-gray-300 hover:text-gold transition-colors">Confidentialité</Link></li>
+            </ul>
+          </div>
+
           {/* Contact et réseaux sociaux */}
           <div className="space-y-4">
             <h4 className="font-heading font-semibold text-gold">Contact</h4>
@@ -121,7 +134,10 @@ const Footer: React.FC = () => {
           <div className="text-gray-300 text-sm">
             © {currentYear} Hospitality Awards Guinée - HAG. Tous droits réservés.
           </div>
-          <div className="flex space-x-6 text-sm">
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm">
+            <Link to="/cgu" className="text-gray-300 hover:text-gold transition-colors">CGU</Link>
+            <Link to="/cgv" className="text-gray-300 hover:text-gold transition-colors">CGV</Link>
+            <Link to="/confidentialite" className="text-gray-300 hover:text-gold transition-colors">Confidentialité</Link>
             <Link to="/reglement" className="text-gray-300 hover:text-gold transition-colors">
               Règlement officiel
             </Link>

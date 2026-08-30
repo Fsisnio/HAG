@@ -141,7 +141,9 @@ export const fetchAdminPaidVotes = async (): Promise<AdminPaidVote[]> => {
   if (!isSupabaseConfigured || !supabase) return [];
 
   const { data, error } = await supabase.rpc('hag_admin_list_paid_votes');
-  if (error || !data) return [];
+  if (error) {
+    throw new Error(error.message || 'Impossible de charger les votes payés.');
+  }
 
   return ((data as Record<string, any>[]) || []).map((row) => ({
     id: row.id,

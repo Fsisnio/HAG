@@ -2,7 +2,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { X, CreditCard, AlertCircle, ExternalLink, Loader2 } from 'lucide-react';
 import { CHAPCHAP_RETURN_PATH, formatGnf, VOTE_AMOUNT_GNF } from '../data/event';
 import { voteStore } from '../services/voteStore';
-import { createChapChapCheckout, persistPendingVote } from '../services/chapchapClient';
+import { createChapChapCheckout } from '../services/chapchapClient';
+import LegalConsent, {
+  emptyLegalConsents,
+  hasRequiredLegalConsents,
+  REQUIRED_LEGAL_CONSENT_ERROR
+} from './LegalConsent';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -26,12 +31,14 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [quantity, setQuantity] = useState(1);
+  const [consents, setConsents] = useState(emptyLegalConsents());
   const [error, setError] = useState('');
   const [isPaying, setIsPaying] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       setQuantity(1);
+      setConsents(emptyLegalConsents());
       setError('');
     }
   }, [isOpen, candidateId]);
@@ -50,6 +57,10 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   const handlePay = async () => {
     if (!lastName.trim() || !firstName.trim() || !email.trim() || !phone.trim()) {
       setError('Renseignez nom, prénom, e-mail et téléphone pour continuer.');
+      return;
+    }
+    if (!hasRequiredLegalConsents(consents)) {
+      setError(REQUIRED_LEGAL_CONSENT_ERROR);
       return;
     }
 
@@ -74,13 +85,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         description: `Vote HAG x${quantity} — ${candidateName} — ${firstName.trim()} ${lastName.trim()}`,
         kind: 'vote',
         quantity,
-        returnUrl,
-        cancelUrl: `${returnUrl}&status=canceled`
-      });
-
-      voteStore.attachOperation(vote.id, checkout.operationId);
-      sessionStorage.setItem('hag_awaiting_chapchap', '1');
-      void persistPendingVote({
         candidateId,
         candidateName,
         candidateCategory,
@@ -88,12 +92,12 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         voterFirstName: firstName.trim(),
         voterEmail: email.trim(),
         voterPhone: phone.trim(),
-        amount: vote.amount,
-        quantity,
-        orderId: vote.id,
-        operationId: checkout.operationId
+        returnUrl,
+        cancelUrl: `${returnUrl}&status=canceled`
       });
 
+      voteStore.attachOperation(vote.id, checkout.operationId);
+      sessionStorage.setItem('hag_awaiting_chapchap', '1');
       window.location.href = checkout.paymentUrl;
     } catch (payError) {
       voteStore.markStatus(vote.id, 'failed');
@@ -206,6 +210,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
               />
             </div>
           </div>
+
+          <LegalConsent compact values={consents} onChange={setConsents} />
 
           {error && (
             <div className="flex items-center space-x-2 p-3 bg-red-50 border border-red-200 rounded-lg">

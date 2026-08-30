@@ -3,6 +3,11 @@ import { X, CreditCard, AlertCircle, ExternalLink, Loader2 } from 'lucide-react'
 import { CHAPCHAP_TICKET_RETURN_PATH, formatGnf, getTicketByName } from '../data/event';
 import { createChapChapCheckout } from '../services/chapchapClient';
 import { ticketStore } from '../services/ticketStore';
+import LegalConsent, {
+  emptyLegalConsents,
+  hasRequiredLegalConsents,
+  REQUIRED_LEGAL_CONSENT_ERROR
+} from './LegalConsent';
 
 interface TicketPaymentModalProps {
   isOpen: boolean;
@@ -17,11 +22,13 @@ const TicketPaymentModal: React.FC<TicketPaymentModalProps> = ({ isOpen, ticketN
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [quantity, setQuantity] = useState(1);
+  const [consents, setConsents] = useState(emptyLegalConsents());
   const [error, setError] = useState('');
   const [isPaying, setIsPaying] = useState(false);
 
   useEffect(() => {
     setQuantity(1);
+    setConsents(emptyLegalConsents());
     setError('');
   }, [ticketName]);
 
@@ -41,6 +48,10 @@ const TicketPaymentModal: React.FC<TicketPaymentModalProps> = ({ isOpen, ticketN
     if (!ticket) return;
     if (!lastName.trim() || !firstName.trim() || !email.trim() || !phone.trim()) {
       setError('Renseignez nom, prénom, e-mail et téléphone pour continuer.');
+      return;
+    }
+    if (!hasRequiredLegalConsents(consents)) {
+      setError(REQUIRED_LEGAL_CONSENT_ERROR);
       return;
     }
 
@@ -171,6 +182,8 @@ const TicketPaymentModal: React.FC<TicketPaymentModalProps> = ({ isOpen, ticketN
               />
             </div>
           </div>
+
+          <LegalConsent compact values={consents} onChange={setConsents} />
 
           {error && (
             <div className="flex items-center space-x-2 p-3 bg-red-50 border border-red-200 rounded-lg">
