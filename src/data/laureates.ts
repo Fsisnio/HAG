@@ -10,6 +10,7 @@ export interface LaureateEdition {
   year: number;
   title: string;
   status: 'published' | 'upcoming' | 'future';
+  hidden?: boolean;
   summary: string;
   laureates: Laureate[];
 }
@@ -48,6 +49,7 @@ export const laureateEditions: LaureateEdition[] = [
     year: 2027,
     title: 'Troisième édition',
     status: 'future',
+    hidden: true,
     summary:
       'Cette rubrique conservera, édition après édition, la mémoire officielle de l’excellence de l’hospitalité guinéenne.',
     laureates: []

@@ -380,8 +380,6 @@ insert into public.hag_candidates (id, category_id, name, description) values
 (2, 1, 'Institut de Formation Professionnelle Amadou Dieng (IFPAD)', 'Institut de formation professionnelle'),
 (3, 1, 'ISTHOG', 'Institut supérieur de tourisme et d''hôtellerie'),
 (4, 1, 'Nako Diabaté', 'Établissement de formation professionnelle'),
-(5, 1, 'Billy Ecole', 'École de formation professionnelle'),
-(6, 1, 'CENFORTH', 'Centre de formation en tourisme et hôtellerie'),
 (7, 3, 'École Supérieure de Tourisme et de l''Hotellerie (ESTH)', 'École supérieure spécialisée tourisme et hôtellerie'),
 (8, 3, 'Université Koffi', 'Établissement d''enseignement supérieur'),
 (9, 4, 'M. Hassan Bah', 'Guide touristique'),
@@ -418,10 +416,9 @@ insert into public.hag_candidates (id, category_id, name, description) values
 (40, 12, 'Heroes Coffee', 'Chaîne de restauration'),
 (41, 12, 'RFC', 'Chaîne de restauration'),
 (42, 12, 'SLM', 'Chaîne de restauration'),
-(43, 13, 'G. BARISTA', 'Restaurant'),
-(44, 13, 'Avenue', 'Restaurant'),
-(45, 13, 'Aquarium', 'Restaurant'),
-(46, 13, 'Istanbul', 'Restaurant'),
+(43, 13, 'Barista Groupe', 'Restaurant'),
+(44, 13, 'Avenue Group GN', 'Restaurant'),
+(45, 13, 'Aquarium Restaurant et Lounge', 'Restaurant'),
 (47, 16, 'Plage Camayenne', 'Expérience de divertissement'),
 (48, 16, 'Iles de Los', 'Expérience de divertissement'),
 (49, 16, 'Plage de Tayaki', 'Expérience de divertissement'),
@@ -437,6 +434,13 @@ on conflict (id) do update set
   category_id = excluded.category_id,
   name = excluded.name,
   description = excluded.description;
+
+update public.hag_candidates
+set is_active = false
+where id in (5, 6)
+   or name ilike 'Billy Ecole'
+   or name ilike 'Billy École'
+   or name ilike 'CENFORTH';
 
 insert into public.hag_team_members (id, name, role, photo_url, sort_order) values
 (1, 'M. Maurice Millimouno', 'Président du comité d''organisation', '/equipe/maurice-millimouno.png', 1),

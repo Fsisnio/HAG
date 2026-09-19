@@ -10,6 +10,7 @@ import About from './pages/About';
 import Categories from './pages/Categories';
 import Laureates from './pages/Laureates';
 import Partners from './pages/Partners';
+import Sponsoring from './pages/Sponsoring';
 import Team from './pages/Team';
 import Contact from './pages/Contact';
 import ApplicationForm from './pages/ApplicationForm';
@@ -44,6 +45,7 @@ const App: React.FC = () => {
           <Route path="/categories" element={<Categories />} />
           <Route path="/laureats" element={<Laureates />} />
           <Route path="/partenaires" element={<Partners />} />
+          <Route path="/sponsoring" element={<Sponsoring />} />
           <Route path="/equipe" element={<Team />} />
           <Route path="/jury" element={<Jury />} />
           <Route path="/galerie" element={<Galerie />} />

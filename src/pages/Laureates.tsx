@@ -4,9 +4,11 @@ import { Award, Calendar } from 'lucide-react';
 import { laureateEditions } from '../data/laureates';
 import FirstEditionGallery from '../components/FirstEditionGallery';
 
+const visibleEditions = laureateEditions.filter((item) => !item.hidden);
+
 const Laureates: React.FC = () => {
   const [activeYear, setActiveYear] = useState(2025);
-  const edition = laureateEditions.find((item) => item.year === activeYear) || laureateEditions[0];
+  const edition = visibleEditions.find((item) => item.year === activeYear) || visibleEditions[0];
 
   return (
     <div className="pt-20">
@@ -25,7 +27,7 @@ const Laureates: React.FC = () => {
       <section className="section">
         <div className="container">
           <div className="flex flex-wrap justify-center gap-3 mb-10">
-            {laureateEditions.map((item) => (
+            {visibleEditions.map((item) => (
               <button
                 key={item.year}
                 type="button"

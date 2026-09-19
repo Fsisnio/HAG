@@ -14,6 +14,7 @@ interface Candidate {
   organization: string;
   category: string;
   description: string;
+  image?: string;
   votes: number;
 }
 
@@ -75,6 +76,7 @@ const VotePage: React.FC = () => {
           organization: candidate.name,
           category: candidate.category,
           description: candidate.description || 'Nominé officiel des Hospitality Awards Guinée',
+          image: candidate.image,
           votes: counts[candidate.id] || 0
         }))
       );
@@ -239,16 +241,24 @@ const VotePage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {sortedCandidates.map((candidate, index) => (
                   <div key={candidate.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow">
-                    <div className="h-36 bg-gradient-to-br from-blue-dark to-blue-deep flex items-center justify-center relative">
-                      <span className="absolute top-3 left-3 bg-white/90 text-blue-dark text-xs font-bold px-2 py-1 rounded-full">
+                    <div className="h-40 bg-white flex items-center justify-center relative border-b border-gray-100">
+                      <span className="absolute top-3 left-3 bg-blue-dark/90 text-white text-xs font-bold px-2 py-1 rounded-full z-10">
                         #{index + 1}
                       </span>
-                      <div className="text-white text-center px-4">
-                        <Award className="w-8 h-8 mx-auto mb-2 text-gold" />
-                        <p className="text-sm font-medium leading-snug">{candidate.name}</p>
-                      </div>
+                      {candidate.image ? (
+                        <img
+                          src={candidate.image}
+                          alt={`Logo ${candidate.name}`}
+                          className="max-h-32 max-w-[80%] object-contain p-3"
+                        />
+                      ) : (
+                        <div className="h-full w-full bg-gradient-to-br from-blue-dark to-blue-deep flex items-center justify-center">
+                          <Award className="w-8 h-8 text-gold" />
+                        </div>
+                      )}
                     </div>
                     <div className="p-6">
+                      <h3 className="font-semibold text-blue-dark mb-2 leading-snug">{candidate.name}</h3>
                       <p className="text-gray-600 text-sm mb-4">{candidate.description}</p>
                       <div className="flex items-center justify-between mb-4 text-sm">
                         <span className="inline-flex items-center space-x-1 text-gray-700 font-medium">

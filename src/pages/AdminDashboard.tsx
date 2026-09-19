@@ -1036,6 +1036,13 @@ const AdminDashboard: React.FC = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                               {categoryCandidates.map(candidate => (
                                 <div key={candidate.id} className="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                                  {candidate.image && (
+                                    <img
+                                      src={candidate.image}
+                                      alt=""
+                                      className="h-16 w-full object-contain mb-3 bg-white rounded-md p-2"
+                                    />
+                                  )}
                                   <div className="flex items-start justify-between mb-2">
                                     <h4 className="font-medium text-gray-900">{candidate.name}</h4>
                                     <div className="flex items-center space-x-1">

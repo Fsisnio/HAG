@@ -3,29 +3,7 @@ import { Link } from 'react-router-dom';
 import { Award, Building2, Mail, Phone, Star } from 'lucide-react';
 import { partnerGroups, partnersWithLogos } from '../data/partners';
 import { CONTACT } from '../data/event';
-
-const sponsorshipLevels = [
-  {
-    name: 'Diamant',
-    amount: '50 000 000 GNF',
-    color: 'from-purple-500 to-pink-500'
-  },
-  {
-    name: 'Platine',
-    amount: '30 000 000 GNF',
-    color: 'from-gray-400 to-gray-600'
-  },
-  {
-    name: 'Or',
-    amount: '20 000 000 GNF',
-    color: 'from-yellow-400 to-yellow-600'
-  },
-  {
-    name: 'Argent',
-    amount: '10 000 000 GNF',
-    color: 'from-gray-300 to-gray-500'
-  }
-];
+import { sponsorshipPacks } from '../data/sponsoring';
 
 const Partners: React.FC = () => {
   return (
@@ -147,21 +125,28 @@ const Partners: React.FC = () => {
 
       <section className="section section-alt">
         <div className="container">
-          <h2 className="text-center mb-10">
-            Niveaux de <span className="text-gold">sponsoring</span>
+          <h2 className="text-center mb-4">
+            Offres de <span className="text-gold">sponsoring</span>
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {sponsorshipLevels.map((level) => (
-              <div key={level.name} className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
-                <div className={`h-20 bg-gradient-to-r ${level.color} flex items-center justify-center`}>
-                  <h3 className="text-xl font-bold text-white">{level.name}</h3>
-                </div>
-                <div className="p-5 text-center">
-                  <p className="text-2xl font-bold text-blue-dark">{level.amount}</p>
-                  <p className="text-sm text-gray-500 mt-1">Investissement indicatif</p>
-                </div>
-              </div>
+          <p className="text-center text-gray-600 max-w-2xl mx-auto mb-10">
+            Packs Platinum, Diamant, Or, Argent, Bronze, partenaires techniques et institutionnels.
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+            {sponsorshipPacks.map((pack) => (
+              <Link
+                key={pack.id}
+                to="/sponsoring"
+                className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 text-center hover:shadow-md hover:-translate-y-0.5 transition-all"
+              >
+                <h3 className="font-bold text-blue-dark text-sm md:text-base">{pack.name.replace('Sponsor ', '')}</h3>
+                <p className="text-gold font-semibold text-sm mt-2">{pack.amountLabel}</p>
+              </Link>
             ))}
+          </div>
+          <div className="text-center">
+            <Link to="/sponsoring" className="btn btn-primary">
+              Voir les packs et avantages
+            </Link>
           </div>
         </div>
       </section>

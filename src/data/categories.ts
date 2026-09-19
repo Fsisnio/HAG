@@ -47,7 +47,7 @@ export const officialCategories: Category[] = [
   {
     id: 1,
     icon: GraduationCap,
-    title: 'Prix du Meilleur Etablissement de Formation aux métiers de l’hospitalité',
+    title: 'Prix du Meilleur Établissement de Formation aux Métiers de l’Hospitalité de l’Année',
     description: 'Récompense l’établissement qui forme le mieux aux métiers de l’hospitalité.',
     criteria: [
       'Qualité de la formation et des programmes',
@@ -61,7 +61,7 @@ export const officialCategories: Category[] = [
   {
     id: 2,
     icon: Lightbulb,
-    title: 'Prix de la Meilleure Initiative de Developpement des Compétences',
+    title: 'Prix Meilleure Initiative de Développement des Compétences de l’Année',
     description: 'Récompense une initiative qui développe concrètement les compétences du secteur.',
     criteria: [
       'Pertinence de l’initiative',
@@ -75,7 +75,7 @@ export const officialCategories: Category[] = [
   {
     id: 3,
     icon: BookOpen,
-    title: 'Prix du Meilleur Etablissement d’Enseignement Supérieur',
+    title: 'Prix du Meilleur Établissement d’Enseignement Supérieur',
     description: 'Récompense l’établissement d’enseignement supérieur qui forme les futurs cadres de l’hospitalité et du tourisme.',
     criteria: [
       'Excellence académique',
@@ -131,7 +131,7 @@ export const officialCategories: Category[] = [
   {
     id: 7,
     icon: Smartphone,
-    title: 'Prix de l’Innovation Digitale dans les métiers de l’Hospitalité',
+    title: 'Prix de l’Innovation Digitale dans l’Hospitalité de l’Année',
     description: 'Récompense une solution digitale qui transforme les métiers de l’hospitalité.',
     criteria: [
       'Innovation technologique',
@@ -145,7 +145,7 @@ export const officialCategories: Category[] = [
   {
     id: 8,
     icon: Leaf,
-    title: 'Prix de la Meilleure Initiative Eco-Responsable',
+    title: 'Prix de la Meilleure Initiative Éco-Responsable de l’Année',
     description: 'Récompense une initiative exemplaire en matière d’écologie et de tourisme durable.',
     criteria: [
       'Impact environnemental positif',
@@ -159,7 +159,7 @@ export const officialCategories: Category[] = [
   {
     id: 9,
     icon: Headphones,
-    title: 'Prix d’Excellence en Accueil, Service et Expérience Client',
+    title: 'Prix d’Excellence en Accueil, Service et Expérience Client de l’Année',
     description: 'Récompense l’établissement qui offre un accueil, un service et une expérience client d’exception.',
     criteria: [
       'Qualité de l’accueil',
@@ -187,7 +187,7 @@ export const officialCategories: Category[] = [
   {
     id: 11,
     icon: ChefHat,
-    title: 'Prix de la Création Culinaire Guinéenne',
+    title: 'Prix de la Création Culinaire de l’Année',
     description: 'Récompense une création qui sublime et modernise la gastronomie guinéenne.',
     criteria: [
       'Créativité et identité guinéenne',
@@ -201,7 +201,7 @@ export const officialCategories: Category[] = [
   {
     id: 12,
     icon: Store,
-    title: 'Prix de la Meilleure Chaîne de Restauration',
+    title: 'Prix Meilleure Chaîne de Restaurants de l’Année',
     description: 'Récompense la chaîne qui allie qualité, consistance et développement.',
     criteria: [
       'Qualité et constance de l’offre',
@@ -215,7 +215,7 @@ export const officialCategories: Category[] = [
   {
     id: 13,
     icon: Coffee,
-    title: 'Prix du Meilleur Restaurant de l’année',
+    title: 'Prix du Meilleur Restaurant de l’Année',
     description: 'Récompense le restaurant qui offre la meilleure expérience gastronomique de l’année.',
     criteria: [
       'Excellence culinaire',
@@ -257,7 +257,7 @@ export const officialCategories: Category[] = [
   {
     id: 16,
     icon: Music,
-    title: 'Prix de la Meilleure Experience de divertissement',
+    title: 'Prix Meilleure Expérience de Divertissement de l’Année',
     description: 'Récompense le lieu ou l’expérience qui offre le meilleur divertissement.',
     criteria: [
       'Qualité de l’expérience',
@@ -271,7 +271,7 @@ export const officialCategories: Category[] = [
   {
     id: 17,
     icon: Palmtree,
-    title: 'Prix de la Meilleure Experience de Loisirs',
+    title: 'Prix Meilleure Expérience de Loisirs de l’Année',
     description: 'Récompense l’expérience de loisirs la plus mémorable et qualitative.',
     criteria: [
       'Diversité et qualité des activités',
@@ -285,7 +285,7 @@ export const officialCategories: Category[] = [
   {
     id: 18,
     icon: Heart,
-    title: 'Prix Coup de Cœur du Public – Hôtel & performance globale',
+    title: 'Prix Coup de Cœur du Public de l’Année – Hôtel et performance globale',
     description: 'Récompense l’hôtel plébiscité par le public. Attribution 100 % par vote du public.',
     criteria: [
       'Nombre de votes du public',
