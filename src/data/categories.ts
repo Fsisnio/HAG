@@ -89,7 +89,7 @@ export const officialCategories: Category[] = [
   {
     id: 4,
     icon: User,
-    title: 'Prix du Meilleur Guide Touristique',
+    title: 'Prix Meilleur Guide Touristique de l’Année',
     description: 'Récompense le guide qui incarne la passion, le savoir et l’art de transmettre la destination Guinée.',
     criteria: [
       'Maîtrise du patrimoine culturel et naturel',
@@ -103,7 +103,7 @@ export const officialCategories: Category[] = [
   {
     id: 5,
     icon: Plane,
-    title: 'Prix de la Meilleure Agence de Voyage',
+    title: 'Prix Meilleure Agence de Voyages de l’Année',
     description: 'Récompense l’agence qui se distingue par la qualité de son offre et de son accompagnement.',
     criteria: [
       'Qualité et originalité des offres',
@@ -173,7 +173,7 @@ export const officialCategories: Category[] = [
   {
     id: 10,
     icon: Wine,
-    title: 'Prix du Bartender de l’Année',
+    title: 'Prix du Meilleur Bartender de l’Année',
     description: 'Récompense le bartender qui se distingue par sa créativité, sa technique et son sens du service.',
     criteria: [
       'Maîtrise technique',
@@ -187,7 +187,7 @@ export const officialCategories: Category[] = [
   {
     id: 11,
     icon: ChefHat,
-    title: 'Prix de la Création Culinaire de l’Année',
+    title: 'Prix de la Création Culinaire Guinéenne de l’Année',
     description: 'Récompense une création qui sublime et modernise la gastronomie guinéenne.',
     criteria: [
       'Créativité et identité guinéenne',
@@ -229,7 +229,7 @@ export const officialCategories: Category[] = [
   {
     id: 14,
     icon: Star,
-    title: 'Prix du jeune Talent de l’Hospitalité',
+    title: 'Prix du Jeune Talent de l’Hospitalité',
     description: 'Récompense un jeune professionnel prometteur du secteur de l’hospitalité.',
     criteria: [
       'Potentiel et parcours',

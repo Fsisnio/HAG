@@ -37,16 +37,18 @@ const FORMATION =
 const INITIATIVE =
   'Prix Meilleure Initiative de Développement des Compétences de l’Année';
 const SUPERIEUR = 'Prix du Meilleur Établissement d’Enseignement Supérieur';
-const GUIDE = 'Prix du Meilleur Guide Touristique';
-const AGENCE = 'Prix de la Meilleure Agence de Voyage';
+const GUIDE = 'Prix Meilleur Guide Touristique de l’Année';
+const AGENCE = 'Prix Meilleure Agence de Voyages de l’Année';
 const AMBASSADEUR = 'Prix Meilleur(e) Ambassadeur (rice) de la Destination Guinée';
 const INNOVATION = 'Prix de l’Innovation Digitale dans l’Hospitalité de l’Année';
 const ECO = 'Prix de la Meilleure Initiative Éco-Responsable de l’Année';
 const ACCUEIL = 'Prix d’Excellence en Accueil, Service et Expérience Client de l’Année';
-const BARTENDER = 'Prix du Bartender de l’Année';
-const CULINAIRE = 'Prix de la Création Culinaire de l’Année';
+const BARTENDER = 'Prix du Meilleur Bartender de l’Année';
+const CULINAIRE = 'Prix de la Création Culinaire Guinéenne de l’Année';
 const CHAINE = 'Prix Meilleure Chaîne de Restaurants de l’Année';
 const RESTAURANT = 'Prix du Meilleur Restaurant de l’Année';
+const JEUNE = 'Prix du Jeune Talent de l’Hospitalité';
+const MANAGER = 'Prix du Meilleur Manager Hôtelier de l’Année';
 const DIVERTISSEMENT = 'Prix Meilleure Expérience de Divertissement de l’Année';
 const LOISIRS = 'Prix Meilleure Expérience de Loisirs de l’Année';
 const COUP_DE_COEUR = 'Prix Coup de Cœur du Public de l’Année – Hôtel et performance globale';
@@ -103,6 +105,13 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       INITIATIVE,
       'Initiative de formation et de services — nominée au Prix Meilleure Initiative de Développement des Compétences de l’Année',
       '/candidats/touma-multi-services.png'
+    ),
+    candidate(
+      77,
+      'Master Management',
+      INITIATIVE,
+      'Initiative de formation — nominée au Prix Meilleure Initiative de Développement des Compétences de l’Année',
+      '/candidats/master-management.png'
     )
   ],
   [SUPERIEUR]: [
@@ -122,16 +131,62 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
     )
   ],
   [GUIDE]: [
-    candidate(9, 'M. Hassan Bah', GUIDE, 'Guide touristique'),
-    candidate(10, 'M. Taibou', GUIDE, 'Guide touristique'),
+    candidate(
+      9,
+      'M. Hassan BAH',
+      GUIDE,
+      'Guide touristique — nominé au Prix Meilleur Guide Touristique de l’Année',
+      '/candidats/hassan-bah.png'
+    ),
+    candidate(
+      10,
+      'M. Tabou BAH',
+      GUIDE,
+      'Guide touristique — nominé au Prix Meilleur Guide Touristique de l’Année',
+      '/candidats/tabou-bah.jpg'
+    ),
     candidate(11, 'M. Oumar', GUIDE, 'Guide touristique'),
     candidate(12, 'M. Kolié', GUIDE, 'Guide touristique'),
-    candidate(13, 'M. Fernand Léno', GUIDE, 'Guide touristique')
+    candidate(13, 'M. Fernand Léno', GUIDE, 'Guide touristique'),
+    candidate(
+      78,
+      'M. Mohamed Sanoussi GASSAMA',
+      GUIDE,
+      'Guide touristique — nominé au Prix Meilleur Guide Touristique de l’Année',
+      '/candidats/mohamed-sanoussi-gassama.jpg'
+    ),
+    candidate(
+      79,
+      'M. Mamadou Diallo',
+      GUIDE,
+      'Guide touristique — nominé au Prix Meilleur Guide Touristique de l’Année',
+      '/candidats/mamadou-diallo.jpg'
+    )
   ],
   [AGENCE]: [
-    candidate(14, 'Mondial Express', AGENCE, 'Agence de voyage'),
+    candidate(
+      14,
+      'Mondial Express',
+      AGENCE,
+      'Agence de voyage — nominée au Prix Meilleure Agence de Voyages de l’Année',
+      '/candidats/mondial-express.png'
+    ),
     candidate(15, 'Dounia Voyage', AGENCE, 'Agence de voyage'),
-    candidate(16, 'Mondial Tour', AGENCE, 'Agence de voyage')
+    candidate(16, 'Mondial Tour', AGENCE, 'Agence de voyage'),
+    candidate(
+      75,
+      'ABV Agence Barry Voyages',
+      AGENCE,
+      'Agence de voyage — nominée au Prix Meilleure Agence de Voyages de l’Année',
+      '/candidats/abv-agence-barry-voyages.png'
+    ),
+    candidate(
+      76,
+      'LCOMLOISIRS',
+      AGENCE,
+      'Agence de voyages et de tourisme — nominée au Prix Meilleure Agence de Voyages de l’Année',
+      '/candidats/lcomloisirs.png'
+    )
   ],
   [AMBASSADEUR]: [
     candidate(17, 'Abdoulaye M’baye', AMBASSADEUR, 'Ambassadeur de la destination Guinée'),
@@ -228,28 +283,48 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
   ],
   [BARTENDER]: [
     candidate(36, 'Jean Sivily Koivogui', BARTENDER, 'Bartender'),
-    candidate(37, 'Emmanuel Koivogui', BARTENDER, 'Bartender')
+    candidate(
+      37,
+      'M. Emmanuel Woïwo GUILAVOGUI',
+      BARTENDER,
+      'Bartender — nominé au Prix du Meilleur Bartender de l’Année',
+      '/candidats/emmanuel-woiwo-guilavogui.png'
+    ),
+    candidate(
+      81,
+      'M. Djanfamara Bangaly CISSÉ',
+      BARTENDER,
+      'Bartender — nominé au Prix du Meilleur Bartender de l’Année',
+      '/candidats/djanfamara-bangaly-cisse.png'
+    ),
+    candidate(
+      84,
+      'M. Ahmed Tidiane Cisse',
+      BARTENDER,
+      'Bartender — nominé au Prix du Meilleur Bartender de l’Année',
+      '/candidats/ahmed-tidiane-cisse.png'
+    )
   ],
   [CULINAIRE]: [
     candidate(
       38,
       'Le Jacquier',
       CULINAIRE,
-      'Restaurant-traiteur — nominé au Prix de la Création Culinaire de l’Année',
+      'Restaurant-traiteur — nominé au Prix de la Création Culinaire Guinéenne de l’Année',
       '/candidats/le-jacquier.png'
     ),
     candidate(
       62,
       'OKLM Grill Chez Poupina',
       CULINAIRE,
-      'Restaurant — nominé au Prix de la Création Culinaire de l’Année',
+      'Restaurant — nominé au Prix de la Création Culinaire Guinéenne de l’Année',
       '/candidats/oklm-grill.png'
     ),
     candidate(
       63,
       'Restaurant Le Baobab de Bamba',
       CULINAIRE,
-      'Restaurant — nominé au Prix de la Création Culinaire de l’Année',
+      'Restaurant — nominé au Prix de la Création Culinaire Guinéenne de l’Année',
       '/candidats/baobab-de-bamba.png'
     )
   ],
@@ -304,6 +379,80 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       RESTAURANT,
       'Restaurant — nominé au Prix du Meilleur Restaurant de l’Année',
       '/candidats/aquarium.png'
+    ),
+    candidate(
+      69,
+      'UMIÏ Resto & Bar',
+      RESTAURANT,
+      'Restaurant — nominé au Prix du Meilleur Restaurant de l’Année',
+      '/candidats/umii-resto-bar.png'
+    ),
+    candidate(
+      70,
+      'Restaurant Ajami',
+      RESTAURANT,
+      'Restaurant — nominé au Prix du Meilleur Restaurant de l’Année',
+      '/candidats/restaurant-ajami.png'
+    )
+  ],
+  [JEUNE]: [
+    candidate(
+      71,
+      'M. Ézéckiel Saoromou',
+      JEUNE,
+      'DG Palmeraie Lodge — nominé au Prix du Jeune Talent de l’Hospitalité',
+      '/candidats/ezeckiel-saoromou.png'
+    ),
+    candidate(
+      72,
+      'M. Jean Pierre Tolno',
+      JEUNE,
+      'PDG Institut Gastronomique Le Chef — nominé au Prix du Jeune Talent de l’Hospitalité',
+      '/candidats/jean-pierre-tolno.png'
+    ),
+    candidate(
+      73,
+      'M. Mamadou DIABY',
+      JEUNE,
+      'Maître d’hôtel — nominé au Prix du Jeune Talent de l’Hospitalité',
+      '/candidats/mamadou-diaby.png'
+    ),
+    candidate(
+      74,
+      'M. Aboubacar CONTÉ',
+      JEUNE,
+      'DG Complexe Hôtelier — nominé au Prix du Jeune Talent de l’Hospitalité',
+      '/candidats/aboubacar-conte.png'
+    ),
+    candidate(
+      85,
+      'M. Mamadou Saidou DIALLO',
+      JEUNE,
+      'Gestionnaire hôtelier — nominé au Prix du Jeune Talent de l’Hospitalité',
+      '/candidats/mamadou-saidou-diallo.png'
+    )
+  ],
+  [MANAGER]: [
+    candidate(
+      80,
+      'M. Marco Rabbia',
+      MANAGER,
+      'DG Radisson Blu Hotel Conakry — nominé au Prix du Meilleur Manager Hôtelier de l’Année',
+      '/candidats/marco-rabbia.png'
+    ),
+    candidate(
+      82,
+      'M. Serge NDONO',
+      MANAGER,
+      'DG Hôtel le Bonheur — nominé au Prix du Meilleur Manager Hôtelier de l’Année',
+      '/candidats/serge-ndono.png'
+    ),
+    candidate(
+      83,
+      'M. Charlie Yang',
+      MANAGER,
+      'DG Hôtel Kaloum — nominé au Prix du Meilleur Manager Hôtelier de l’Année',
+      '/candidats/charlie-yang.png'
     )
   ],
   [DIVERTISSEMENT]: [
@@ -341,6 +490,13 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       DIVERTISSEMENT,
       'Lieu de divertissement — nominé au Prix Meilleure Expérience de Divertissement de l’Année',
       '/candidats/group-barista.png'
+    ),
+    candidate(
+      68,
+      '3 by 3 Club',
+      DIVERTISSEMENT,
+      'Lieu de divertissement — nominé au Prix Meilleure Expérience de Divertissement de l’Année',
+      '/candidats/3-by-3-club.png'
     )
   ],
   [LOISIRS]: [
