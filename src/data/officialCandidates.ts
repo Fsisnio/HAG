@@ -430,6 +430,13 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       JEUNE,
       'Gestionnaire hôtelier — nominé au Prix du Jeune Talent de l’Hospitalité',
       '/candidats/mamadou-saidou-diallo.png'
+    ),
+    candidate(
+      86,
+      'M. Firas Mohamed Chaloub',
+      JEUNE,
+      'Nominé au Prix du Jeune Talent de l’Hospitalité',
+      '/candidats/firas-mohamed-chaloub.png'
     )
   ],
   [MANAGER]: [

@@ -433,6 +433,7 @@ insert into public.hag_candidates (id, category_id, name, description) values
 (73, 14, 'M. Mamadou DIABY', 'Maître d''hôtel'),
 (74, 14, 'M. Aboubacar CONTÉ', 'DG Complexe Hôtelier'),
 (85, 14, 'M. Mamadou Saidou DIALLO', 'Gestionnaire hôtelier'),
+(86, 14, 'M. Firas Mohamed CHALOUB', 'Jeune talent de l''hospitalité'),
 (80, 15, 'M. Marco Rabbia', 'DG Radisson Blu Hotel Conakry'),
 (82, 15, 'M. Serge NDONO', 'DG Hôtel le Bonheur'),
 (83, 15, 'M. Charlie Yang', 'DG Hôtel Kaloum'),
