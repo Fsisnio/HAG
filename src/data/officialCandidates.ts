@@ -561,14 +561,21 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
   ]
 };
 
+const isVisibleNominee = (nominee: OfficialCandidate): boolean => {
+  if (nominee.image) return true;
+  return nominee.id === 20; // Jupiter Davibe remains listed without a portrait
+};
+
 export const getAllOfficialCandidates = (): OfficialCandidate[] => {
-  return Object.values(officialCandidatesByCategory).flat();
+  return Object.values(officialCandidatesByCategory).flat().filter(isVisibleNominee);
 };
 
 export const getCandidatesByCategory = (category: string): OfficialCandidate[] => {
-  return officialCandidatesByCategory[category] || [];
+  return (officialCandidatesByCategory[category] || []).filter(isVisibleNominee);
 };
 
 export const getCategoriesWithCandidates = (): string[] => {
-  return Object.keys(officialCandidatesByCategory);
+  return Object.keys(officialCandidatesByCategory).filter(
+    (category) => getCandidatesByCategory(category).length > 0
+  );
 };

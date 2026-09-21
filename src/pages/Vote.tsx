@@ -28,6 +28,12 @@ const VotePage: React.FC = () => {
   const [isLoadingVotes, setIsLoadingVotes] = useState(true);
   const [voteRefresh, setVoteRefresh] = useState(0);
   const groupedCategories = getCategoriesGrouped();
+  const visiblePrizeCount = officialCategories.filter(
+    (category) => getCandidatesByCategory(category.title).length > 0
+  ).length;
+  const visibleGroupCount = Object.values(groupedCategories).filter((prizes) =>
+    prizes.some((category) => getCandidatesByCategory(category.title).length > 0)
+  ).length;
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -144,7 +150,7 @@ const VotePage: React.FC = () => {
       <VoteStats
         totalVotes={candidates.reduce((sum, candidate) => sum + candidate.votes, 0)}
         totalCandidates={candidates.length}
-        totalPrizes={officialCategories.length}
+        totalPrizes={visiblePrizeCount}
         topCategory={topCategory}
       />
 
@@ -154,17 +160,23 @@ const VotePage: React.FC = () => {
             <div className="text-center">
               <h2 className="text-3xl font-bold text-gray-900 mb-3">Choisissez un prix</h2>
               <p className="text-lg text-gray-600">
-                {officialCategories.length} prix, regroupés en {Object.keys(groupedCategories).length} catégories officielles
+                {visiblePrizeCount} prix, regroupés en {visibleGroupCount} catégories officielles
               </p>
             </div>
 
-            {Object.entries(groupedCategories).map(([group, prizes]) => (
-              <section key={group}>
+            {Object.entries(groupedCategories).map(([group, prizes]) => {
+              const visiblePrizes = prizes.filter(
+                (category) => getCandidatesByCategory(category.title).length > 0
+              );
+              if (visiblePrizes.length === 0) return null;
+
+              return (
+                <section key={group}>
                 <h3 className="text-xl font-semibold text-blue-dark mb-4 pb-2 border-b border-gray-200">
                   {group}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                  {prizes.map((category) => {
+                  {visiblePrizes.map((category) => {
                     const IconComponent = category.icon;
                     const nominees = getCandidatesByCategory(category.title);
                     const prizeVotes = candidates
@@ -202,7 +214,8 @@ const VotePage: React.FC = () => {
                   })}
                 </div>
               </section>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div>
