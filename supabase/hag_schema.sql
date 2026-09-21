@@ -398,7 +398,7 @@ insert into public.hag_candidates (id, category_id, name, description) values
 (17, 6, 'Abdoulaye M''baye', 'Ambassadeur de la destination Guinée'),
 (18, 6, 'Takana Zion', 'Ambassadeur de la destination Guinée'),
 (19, 6, 'Serhou Guirassy', 'Ambassadeur de la destination Guinée'),
-(20, 6, 'Jupiter Devibe', 'Ambassadeur de la destination Guinée'),
+(20, 6, 'Jupiter Davibe', 'Ambassadeur de la destination Guinée'),
 (21, 6, 'Naby Keita', 'Ambassadeur de la destination Guinée'),
 (22, 6, 'Djelikaba Bintou', 'Ambassadrice de la destination Guinée'),
 (23, 6, 'Iya Traoré', 'Ambassadeur de la destination Guinée'),

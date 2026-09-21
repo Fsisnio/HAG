@@ -192,7 +192,7 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
     candidate(17, 'Abdoulaye M’baye', AMBASSADEUR, 'Ambassadeur de la destination Guinée'),
     candidate(18, 'Takana Zion', AMBASSADEUR, 'Ambassadeur de la destination Guinée'),
     candidate(19, 'Serhou Guirassy', AMBASSADEUR, 'Ambassadeur de la destination Guinée'),
-    candidate(20, 'Jupiter Devibe', AMBASSADEUR, 'Ambassadeur de la destination Guinée'),
+    candidate(20, 'Jupiter Davibe', AMBASSADEUR, 'Ambassadeur de la destination Guinée'),
     candidate(21, 'Naby Keita', AMBASSADEUR, 'Ambassadeur de la destination Guinée'),
     candidate(22, 'Djelikaba Bintou', AMBASSADEUR, 'Ambassadrice de la destination Guinée'),
     candidate(23, 'Iya Traoré', AMBASSADEUR, 'Ambassadeur de la destination Guinée'),
