@@ -117,7 +117,7 @@ export const officialCategories: Category[] = [
   {
     id: 6,
     icon: Globe,
-    title: 'Prix Meilleur(e) Ambassadeur (rice) de la Destination Guinée',
+    title: 'Prix Meilleur Ambassadeur de la Destination Guinée de l’Année',
     description: 'Récompense une personnalité qui promeut et rayonne pour la destination Guinée.',
     criteria: [
       'Rayonnement national et international',

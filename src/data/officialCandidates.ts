@@ -39,7 +39,7 @@ const INITIATIVE =
 const SUPERIEUR = 'Prix du Meilleur Établissement d’Enseignement Supérieur';
 const GUIDE = 'Prix Meilleur Guide Touristique de l’Année';
 const AGENCE = 'Prix Meilleure Agence de Voyages de l’Année';
-const AMBASSADEUR = 'Prix Meilleur(e) Ambassadeur (rice) de la Destination Guinée';
+const AMBASSADEUR = 'Prix Meilleur Ambassadeur de la Destination Guinée de l’Année';
 const INNOVATION = 'Prix de l’Innovation Digitale dans l’Hospitalité de l’Année';
 const ECO = 'Prix de la Meilleure Initiative Éco-Responsable de l’Année';
 const ACCUEIL = 'Prix d’Excellence en Accueil, Service et Expérience Client de l’Année';
@@ -186,6 +186,13 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       AGENCE,
       'Agence de voyages et de tourisme — nominée au Prix Meilleure Agence de Voyages de l’Année',
       '/candidats/lcomloisirs.png'
+    ),
+    candidate(
+      87,
+      'Confort Airlines',
+      AGENCE,
+      'Agence de voyage — nominée au Prix Meilleure Agence de Voyages de l’Année',
+      '/candidats/confort-airlines.png'
     )
   ],
   [AMBASSADEUR]: [
@@ -195,7 +202,13 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
     candidate(20, 'Jupiter Davibe', AMBASSADEUR, 'Ambassadeur de la destination Guinée'),
     candidate(21, 'Naby Keita', AMBASSADEUR, 'Ambassadeur de la destination Guinée'),
     candidate(22, 'Djelikaba Bintou', AMBASSADEUR, 'Ambassadrice de la destination Guinée'),
-    candidate(23, 'Iya Traoré', AMBASSADEUR, 'Ambassadeur de la destination Guinée'),
+    candidate(
+      23,
+      'M. Iya TRAORE',
+      AMBASSADEUR,
+      'Ambassadeur de la destination Guinée — nominé au Prix Meilleur Ambassadeur de la Destination Guinée de l’Année',
+      '/candidats/iya-traore.png'
+    ),
     candidate(24, 'Saïfon Baldé', AMBASSADEUR, 'Ambassadeur de la destination Guinée')
   ],
   [INNOVATION]: [
