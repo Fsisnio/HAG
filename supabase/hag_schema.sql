@@ -318,7 +318,7 @@ insert into public.hag_categories (id, title, description, category_group, crite
  'Accueil, Service & Expérience Client',
  '["Qualité de l''accueil","Personnalisation du service","Réactivité et professionnalisme","Satisfaction client","Constante dans l''excellence"]'::jsonb,
  false, 9),
-(10, 'Prix du Meilleur Bartender de l''Année',
+(10, 'Prix du Meilleur Barman de l''Année',
  'Récompense le bartender qui se distingue par sa créativité, sa technique et son sens du service.',
  'Accueil, Service & Expérience Client',
  '["Maîtrise technique","Créativité des cocktails","Relation client et mise en scène","Hygiène et professionnalisme","Contribution à l''expérience de l''établissement"]'::jsonb,
@@ -384,7 +384,7 @@ insert into public.hag_candidates (id, category_id, name, description) values
 (7, 3, 'École Supérieure de Tourisme et de l''Hotellerie (ESTH)', 'École supérieure spécialisée tourisme et hôtellerie'),
 (8, 3, 'Université Koffi', 'Établissement d''enseignement supérieur'),
 (9, 4, 'M. Hassan BAH', 'Guide touristique'),
-(10, 4, 'M. Tabou BAH', 'Guide touristique'),
+(10, 4, 'M. Tibou BAH', 'Guide touristique'),
 (11, 4, 'M. Oumar', 'Guide touristique'),
 (12, 4, 'M. Kolié', 'Guide touristique'),
 (13, 4, 'M. Fernand Léno', 'Guide touristique'),
@@ -427,7 +427,7 @@ insert into public.hag_candidates (id, category_id, name, description) values
 (43, 13, 'Barista Groupe', 'Restaurant'),
 (44, 13, 'Avenue Group GN', 'Restaurant'),
 (45, 13, 'Aquarium Restaurant et Lounge', 'Restaurant'),
-(69, 13, 'UMIÏ Resto & Bar', 'Restaurant'),
+(69, 11, 'UMIÏ Resto & Bar', 'Création culinaire guinéenne'),
 (70, 13, 'Restaurant Ajami', 'Restaurant'),
 (71, 14, 'M. Ézéckiel Saoromou', 'DG Palmeraie Lodge'),
 (72, 14, 'M. Jean Pierre Tolno', 'PDG Institut Gastronomique Le Chef'),
@@ -457,10 +457,11 @@ on conflict (id) do update set
 
 update public.hag_candidates
 set is_active = false
-where id in (5, 6)
+where id in (5, 6, 82)
    or name ilike 'Billy Ecole'
    or name ilike 'Billy École'
-   or name ilike 'CENFORTH';
+   or name ilike 'CENFORTH'
+   or name ilike 'M. Serge NDONO';
 
 insert into public.hag_team_members (id, name, role, photo_url, sort_order) values
 (1, 'M. Maurice Millimouno', 'Président du comité d''organisation', '/equipe/maurice-millimouno.png', 1),

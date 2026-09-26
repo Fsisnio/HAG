@@ -173,8 +173,8 @@ export const officialCategories: Category[] = [
   {
     id: 10,
     icon: Wine,
-    title: 'Prix du Meilleur Bartender de l’Année',
-    description: 'Récompense le bartender qui se distingue par sa créativité, sa technique et son sens du service.',
+    title: 'Prix du Meilleur Barman de l’Année',
+    description: 'Récompense le barman qui se distingue par sa créativité, sa technique et son sens du service.',
     criteria: [
       'Maîtrise technique',
       'Créativité des cocktails',

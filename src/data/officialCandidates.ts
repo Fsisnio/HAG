@@ -43,7 +43,7 @@ const AMBASSADEUR = 'Prix Meilleur Ambassadeur de la Destination Guinée de l’
 const INNOVATION = 'Prix de l’Innovation Digitale dans l’Hospitalité de l’Année';
 const ECO = 'Prix de la Meilleure Initiative Éco-Responsable de l’Année';
 const ACCUEIL = 'Prix d’Excellence en Accueil, Service et Expérience Client de l’Année';
-const BARTENDER = 'Prix du Meilleur Bartender de l’Année';
+const BARTENDER = 'Prix du Meilleur Barman de l’Année';
 const CULINAIRE = 'Prix de la Création Culinaire Guinéenne de l’Année';
 const CHAINE = 'Prix Meilleure Chaîne de Restaurants de l’Année';
 const RESTAURANT = 'Prix du Meilleur Restaurant de l’Année';
@@ -140,7 +140,7 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
     ),
     candidate(
       10,
-      'M. Tabou BAH',
+      'M. Tibou BAH',
       GUIDE,
       'Guide touristique — nominé au Prix Meilleur Guide Touristique de l’Année',
       '/candidats/tabou-bah.jpg'
@@ -198,10 +198,28 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
   [AMBASSADEUR]: [
     candidate(17, 'Abdoulaye M’baye', AMBASSADEUR, 'Ambassadeur de la destination Guinée'),
     candidate(18, 'Takana Zion', AMBASSADEUR, 'Ambassadeur de la destination Guinée'),
-    candidate(19, 'Serhou Guirassy', AMBASSADEUR, 'Ambassadeur de la destination Guinée'),
-    candidate(20, 'Jupiter Davibe', AMBASSADEUR, 'Ambassadeur de la destination Guinée'),
+    candidate(
+      19,
+      'Serhou Guirassy',
+      AMBASSADEUR,
+      'Ambassadeur de la destination Guinée — nominé au Prix Meilleur Ambassadeur de la Destination Guinée de l’Année',
+      '/candidats/serhou-guirassy.png'
+    ),
+    candidate(
+      20,
+      'Jupiter Davibe',
+      AMBASSADEUR,
+      'Ambassadeur de la destination Guinée — nominé au Prix Meilleur Ambassadeur de la Destination Guinée de l’Année',
+      '/candidats/jupiter-davibe.png'
+    ),
     candidate(21, 'Naby Keita', AMBASSADEUR, 'Ambassadeur de la destination Guinée'),
-    candidate(22, 'Djelikaba Bintou', AMBASSADEUR, 'Ambassadrice de la destination Guinée'),
+    candidate(
+      22,
+      'Djelikaba Bintou',
+      AMBASSADEUR,
+      'Ambassadrice de la destination Guinée — nominée au Prix Meilleur Ambassadeur de la Destination Guinée de l’Année',
+      '/candidats/djelikaba-bintou.png'
+    ),
     candidate(
       23,
       'M. Iya TRAORE',
@@ -295,26 +313,32 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
     )
   ],
   [BARTENDER]: [
-    candidate(36, 'Jean Sivily Koivogui', BARTENDER, 'Bartender'),
+    candidate(
+      36,
+      'Jean Sivily Koivogui',
+      BARTENDER,
+      'Barman — nominé au Prix du Meilleur Barman de l’Année',
+      '/candidats/jean-sivily-koivogui.jpg'
+    ),
     candidate(
       37,
       'M. Emmanuel Woïwo GUILAVOGUI',
       BARTENDER,
-      'Bartender — nominé au Prix du Meilleur Bartender de l’Année',
+      'Barman — nominé au Prix du Meilleur Barman de l’Année',
       '/candidats/emmanuel-woiwo-guilavogui.png'
     ),
     candidate(
       81,
       'M. Djanfamara Bangaly CISSÉ',
       BARTENDER,
-      'Bartender — nominé au Prix du Meilleur Bartender de l’Année',
+      'Barman — nominé au Prix du Meilleur Barman de l’Année',
       '/candidats/djanfamara-bangaly-cisse.png'
     ),
     candidate(
       84,
       'M. Ahmed Tidiane Cisse',
       BARTENDER,
-      'Bartender — nominé au Prix du Meilleur Bartender de l’Année',
+      'Barman — nominé au Prix du Meilleur Barman de l’Année',
       '/candidats/ahmed-tidiane-cisse.png'
     )
   ],
@@ -339,6 +363,13 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       CULINAIRE,
       'Restaurant — nominé au Prix de la Création Culinaire Guinéenne de l’Année',
       '/candidats/baobab-de-bamba.png'
+    ),
+    candidate(
+      69,
+      'UMIÏ Resto & Bar',
+      CULINAIRE,
+      'Restaurant — nominé au Prix de la Création Culinaire Guinéenne de l’Année',
+      '/candidats/umii-resto-bar.png'
     )
   ],
   [CHAINE]: [
@@ -392,13 +423,6 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       RESTAURANT,
       'Restaurant — nominé au Prix du Meilleur Restaurant de l’Année',
       '/candidats/aquarium.png'
-    ),
-    candidate(
-      69,
-      'UMIÏ Resto & Bar',
-      RESTAURANT,
-      'Restaurant — nominé au Prix du Meilleur Restaurant de l’Année',
-      '/candidats/umii-resto-bar.png'
     ),
     candidate(
       70,
@@ -459,13 +483,6 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       MANAGER,
       'DG Radisson Blu Hotel Conakry — nominé au Prix du Meilleur Manager Hôtelier de l’Année',
       '/candidats/marco-rabbia.png'
-    ),
-    candidate(
-      82,
-      'M. Serge NDONO',
-      MANAGER,
-      'DG Hôtel le Bonheur — nominé au Prix du Meilleur Manager Hôtelier de l’Année',
-      '/candidats/serge-ndono.png'
     ),
     candidate(
       83,
@@ -574,10 +591,7 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
   ]
 };
 
-const isVisibleNominee = (nominee: OfficialCandidate): boolean => {
-  if (nominee.image) return true;
-  return nominee.id === 20; // Jupiter Davibe remains listed without a portrait
-};
+const isVisibleNominee = (nominee: OfficialCandidate): boolean => Boolean(nominee.image);
 
 export const getAllOfficialCandidates = (): OfficialCandidate[] => {
   return Object.values(officialCandidatesByCategory).flat().filter(isVisibleNominee);
