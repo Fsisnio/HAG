@@ -15,7 +15,7 @@ values
 (1, $$Prix du Meilleur Établissement de Formation aux Métiers de l’Hospitalité de l’Année$$, $$Récompense l’établissement qui forme le mieux aux métiers de l’hospitalité.$$, $$Formation & Développement des Compétences$$, '["Qualité de la formation et des programmes","Insertion professionnelle des diplômés","Infrastructures et encadrement","Partenariats avec le secteur","Impact sur les compétences du métier"]'::jsonb, false, 1),
 (2, $$Prix Meilleure Initiative de Développement des Compétences de l’Année$$, $$Récompense une initiative qui développe concrètement les compétences du secteur.$$, $$Formation & Développement des Compétences$$, '["Pertinence de l’initiative","Nombre de personnes formées ou accompagnées","Qualité pédagogique","Partenariats et ancrage local","Résultats mesurables"]'::jsonb, false, 2),
 (3, $$Prix du Meilleur Établissement d’Enseignement Supérieur$$, $$Récompense l’établissement d’enseignement supérieur qui forme les futurs cadres de l’hospitalité et du tourisme.$$, $$Formation & Développement des Compétences$$, '["Excellence académique","Pertinence des filières tourisme et hôtellerie","Recherche et innovation pédagogique","Ouverture internationale","Employabilité des diplômés"]'::jsonb, false, 3),
-(4, $$Prix Meilleur Guide Touristique de l’Année$$, $$Récompense le guide qui incarne la passion, le savoir et l’art de transmettre la destination Guinée.$$, $$Tourisme & Destination Guinée$$, '["Maîtrise du patrimoine culturel et naturel","Capacité pédagogique et storytelling","Accueil et relation avec les visiteurs","Sécurité et organisation des visites","Retours positifs des voyageurs"]'::jsonb, false, 4),
+(4, $$Prix du Meilleur Guide de Tourisme de l’Année$$, $$Récompense le guide qui incarne la passion, le savoir et l’art de transmettre la destination Guinée.$$, $$Tourisme & Destination Guinée$$, '["Maîtrise du patrimoine culturel et naturel","Capacité pédagogique et storytelling","Accueil et relation avec les visiteurs","Sécurité et organisation des visites","Retours positifs des voyageurs"]'::jsonb, false, 4),
 (5, $$Prix Meilleure Agence de Voyages de l’Année$$, $$Récompense l’agence qui se distingue par la qualité de son offre et de son accompagnement.$$, $$Tourisme & Destination Guinée$$, '["Qualité et originalité des offres","Service client et réactivité","Organisation et fiabilité","Promotion de la destination Guinée","Satisfaction des voyageurs"]'::jsonb, false, 5),
 (6, $$Prix Meilleur Ambassadeur de la Destination Guinée de l’Année$$, $$Récompense une personnalité qui promeut et rayonne pour la destination Guinée.$$, $$Tourisme & Destination Guinée$$, '["Rayonnement national et international","Promotion de l’image de la Guinée","Engagement pour le tourisme et la culture","Influence et capacité d’inspiration","Contribution à l’attractivité du pays"]'::jsonb, false, 6),
 (7, $$Prix de l’Innovation Digitale dans l’Hospitalité de l’Année$$, $$Récompense une solution digitale qui transforme les métiers de l’hospitalité.$$, $$Innovation & Développement Durable$$, '["Innovation technologique","Utilité pour les professionnels ou les voyageurs","Qualité de l’expérience utilisateur","Impact mesurable","Potentiel de déploiement"]'::jsonb, false, 7),
@@ -52,13 +52,14 @@ values
 (77, 2, $$Master Management$$, $$Initiative de formation — nominée au Prix Meilleure Initiative de Développement des Compétences de l’Année$$, $$/candidats/master-management.png$$, true),
 (7, 3, $$École Supérieure du Tourisme et de l’Hôtellerie (ESTH)$$, $$École supérieure spécialisée tourisme et hôtellerie — nominée au Prix du Meilleur Établissement d’Enseignement Supérieur$$, $$/candidats/esth.png$$, true),
 (8, 3, $$Université Kofi Annan de Guinée$$, $$Université — nominée au Prix du Meilleur Établissement d’Enseignement Supérieur$$, $$/candidats/universite-kofi-annan.png$$, true),
-(9, 4, $$M. Hassan BAH$$, $$Guide touristique — nominé au Prix Meilleur Guide Touristique de l’Année$$, $$/candidats/hassan-bah.png$$, true),
-(10, 4, $$M. Tibou BAH$$, $$Guide touristique — nominé au Prix Meilleur Guide Touristique de l’Année$$, $$/candidats/tabou-bah.jpg$$, true),
+(9, 4, $$M. Hassan BAH$$, $$Guide touristique — nominé au Prix du Meilleur Guide de Tourisme de l’Année$$, $$/candidats/hassan-bah.png$$, true),
+(10, 4, $$M. Tibou BAH$$, $$Guide touristique — nominé au Prix du Meilleur Guide de Tourisme de l’Année$$, $$/candidats/tabou-bah.jpg$$, true),
 (11, 4, $$M. Oumar$$, $$Guide touristique$$, null, true),
 (12, 4, $$M. Kolié$$, $$Guide touristique$$, null, true),
 (13, 4, $$M. Fernand Léno$$, $$Guide touristique$$, null, true),
-(78, 4, $$M. Mohamed Sanoussi GASSAMA$$, $$Guide touristique — nominé au Prix Meilleur Guide Touristique de l’Année$$, $$/candidats/mohamed-sanoussi-gassama.jpg$$, true),
-(79, 4, $$M. Mamadou Diallo$$, $$Guide touristique — nominé au Prix Meilleur Guide Touristique de l’Année$$, $$/candidats/mamadou-diallo.jpg$$, true),
+(88, 4, $$M. Ibrahim BAH$$, $$Guide touristique — nominé au Prix du Meilleur Guide de Tourisme de l’Année$$, $$/candidats/ibrahim-bah.jpg$$, true),
+(78, 4, $$M. Mohamed Sanoussi GASSAMA$$, $$Guide touristique — nominé au Prix du Meilleur Guide de Tourisme de l’Année$$, $$/candidats/mohamed-sanoussi-gassama.jpg$$, true),
+(79, 4, $$M. Mamadou Diallo$$, $$Guide touristique — nominé au Prix du Meilleur Guide de Tourisme de l’Année$$, $$/candidats/mamadou-diallo.jpg$$, true),
 (14, 5, $$Mondial Express$$, $$Agence de voyage — nominée au Prix Meilleure Agence de Voyages de l’Année$$, $$/candidats/mondial-express.png$$, true),
 (15, 5, $$Dounia Voyage$$, $$Agence de voyage$$, null, true),
 (16, 5, $$Mondial Tour$$, $$Agence de voyage$$, null, true),
@@ -133,7 +134,7 @@ on conflict (id) do update set
 --    Les votes déjà payés restent attachés à l'ID, ils ne sont pas effacés.
 update public.hag_candidates
 set is_active = false
-where id not in (1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 47, 50, 51, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 83, 84, 85, 86, 87);
+where id not in (1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 47, 50, 51, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 83, 84, 85, 86, 87, 88);
 
 -- 4) Harmoniser le libellé stocké sur les votes existants (nom + prix)
 update public.hag_votes v

@@ -89,7 +89,7 @@ export const officialCategories: Category[] = [
   {
     id: 4,
     icon: User,
-    title: 'Prix Meilleur Guide Touristique de l’Année',
+    title: 'Prix du Meilleur Guide de Tourisme de l’Année',
     description: 'Récompense le guide qui incarne la passion, le savoir et l’art de transmettre la destination Guinée.',
     criteria: [
       'Maîtrise du patrimoine culturel et naturel',

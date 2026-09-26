@@ -37,7 +37,7 @@ const FORMATION =
 const INITIATIVE =
   'Prix Meilleure Initiative de Développement des Compétences de l’Année';
 const SUPERIEUR = 'Prix du Meilleur Établissement d’Enseignement Supérieur';
-const GUIDE = 'Prix Meilleur Guide Touristique de l’Année';
+const GUIDE = 'Prix du Meilleur Guide de Tourisme de l’Année';
 const AGENCE = 'Prix Meilleure Agence de Voyages de l’Année';
 const AMBASSADEUR = 'Prix Meilleur Ambassadeur de la Destination Guinée de l’Année';
 const INNOVATION = 'Prix de l’Innovation Digitale dans l’Hospitalité de l’Année';
@@ -135,31 +135,38 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       9,
       'M. Hassan BAH',
       GUIDE,
-      'Guide touristique — nominé au Prix Meilleur Guide Touristique de l’Année',
+      'Guide touristique — nominé au Prix du Meilleur Guide de Tourisme de l’Année',
       '/candidats/hassan-bah.png'
     ),
     candidate(
       10,
       'M. Tibou BAH',
       GUIDE,
-      'Guide touristique — nominé au Prix Meilleur Guide Touristique de l’Année',
+      'Guide touristique — nominé au Prix du Meilleur Guide de Tourisme de l’Année',
       '/candidats/tabou-bah.jpg'
     ),
     candidate(11, 'M. Oumar', GUIDE, 'Guide touristique'),
     candidate(12, 'M. Kolié', GUIDE, 'Guide touristique'),
     candidate(13, 'M. Fernand Léno', GUIDE, 'Guide touristique'),
     candidate(
+      88,
+      'M. Ibrahim BAH',
+      GUIDE,
+      'Guide touristique — nominé au Prix du Meilleur Guide de Tourisme de l’Année',
+      '/candidats/ibrahim-bah.jpg'
+    ),
+    candidate(
       78,
       'M. Mohamed Sanoussi GASSAMA',
       GUIDE,
-      'Guide touristique — nominé au Prix Meilleur Guide Touristique de l’Année',
+      'Guide touristique — nominé au Prix du Meilleur Guide de Tourisme de l’Année',
       '/candidats/mohamed-sanoussi-gassama.jpg'
     ),
     candidate(
       79,
       'M. Mamadou Diallo',
       GUIDE,
-      'Guide touristique — nominé au Prix Meilleur Guide Touristique de l’Année',
+      'Guide touristique — nominé au Prix du Meilleur Guide de Tourisme de l’Année',
       '/candidats/mamadou-diallo.jpg'
     )
   ],
