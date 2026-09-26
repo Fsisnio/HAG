@@ -100,6 +100,7 @@ values
 (43, 13, $$Barista Groupe$$, $$Restaurant — nominé au Prix du Meilleur Restaurant de l’Année$$, $$/candidats/barista-groupe.png$$, true),
 (44, 13, $$Avenue Group GN$$, $$Restaurant — nominé au Prix du Meilleur Restaurant de l’Année$$, $$/candidats/avenue-group.png$$, true),
 (45, 13, $$Aquarium Restaurant et Lounge$$, $$Restaurant — nominé au Prix du Meilleur Restaurant de l’Année$$, $$/candidats/aquarium.png$$, true),
+(89, 13, $$UMIÏ Resto & Bar$$, $$Restaurant — nominé au Prix du Meilleur Restaurant de l’Année$$, $$/candidats/umii-resto-bar.png$$, true),
 (70, 13, $$Restaurant Ajami$$, $$Restaurant — nominé au Prix du Meilleur Restaurant de l’Année$$, $$/candidats/restaurant-ajami.png$$, true),
 (71, 14, $$M. Ézéckiel Saoromou$$, $$DG Palmeraie Lodge — nominé au Prix du Jeune Talent de l’Hospitalité$$, $$/candidats/ezeckiel-saoromou.png$$, true),
 (72, 14, $$M. Jean Pierre Tolno$$, $$PDG Institut Gastronomique Le Chef — nominé au Prix du Jeune Talent de l’Hospitalité$$, $$/candidats/jean-pierre-tolno.png$$, true),
@@ -134,7 +135,7 @@ on conflict (id) do update set
 --    Les votes déjà payés restent attachés à l'ID, ils ne sont pas effacés.
 update public.hag_candidates
 set is_active = false
-where id not in (1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 47, 50, 51, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 83, 84, 85, 86, 87, 88);
+where id not in (1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 47, 50, 51, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 83, 84, 85, 86, 87, 88, 89);
 
 -- 4) Harmoniser le libellé stocké sur les votes existants (nom + prix)
 update public.hag_votes v

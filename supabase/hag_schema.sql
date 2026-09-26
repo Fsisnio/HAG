@@ -429,6 +429,7 @@ insert into public.hag_candidates (id, category_id, name, description) values
 (44, 13, 'Avenue Group GN', 'Restaurant'),
 (45, 13, 'Aquarium Restaurant et Lounge', 'Restaurant'),
 (69, 11, 'UMIÏ Resto & Bar', 'Création culinaire guinéenne'),
+(89, 13, 'UMIÏ Resto & Bar', 'Restaurant'),
 (70, 13, 'Restaurant Ajami', 'Restaurant'),
 (71, 14, 'M. Ézéckiel Saoromou', 'DG Palmeraie Lodge'),
 (72, 14, 'M. Jean Pierre Tolno', 'PDG Institut Gastronomique Le Chef'),

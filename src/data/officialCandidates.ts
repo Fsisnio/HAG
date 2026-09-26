@@ -432,6 +432,13 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       '/candidats/aquarium.png'
     ),
     candidate(
+      89,
+      'UMIÏ Resto & Bar',
+      RESTAURANT,
+      'Restaurant — nominé au Prix du Meilleur Restaurant de l’Année',
+      '/candidats/umii-resto-bar.png'
+    ),
+    candidate(
       70,
       'Restaurant Ajami',
       RESTAURANT,
