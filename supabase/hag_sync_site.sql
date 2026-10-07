@@ -85,6 +85,7 @@ values
 (33, 9, $$ONOMO Conakry$$, $$Hôtel — nominé au Prix d’Excellence en Accueil, Service et Expérience Client de l’Année$$, $$/candidats/onomo-conakry.png$$, true),
 (34, 9, $$Atlantic View Hotel & Resort$$, $$Hôtel — nominé au Prix d’Excellence en Accueil, Service et Expérience Client de l’Année$$, $$/candidats/atlantic-view.png$$, true),
 (35, 9, $$Hôtel Riviera Taouyah$$, $$Hôtel — nominé au Prix d’Excellence en Accueil, Service et Expérience Client de l’Année$$, $$/candidats/riviera-taouyah.png$$, true),
+(90, 9, $$Millénium Suites Conakry$$, $$Hôtel — nominé au Prix d’Excellence en Accueil, Service et Expérience Client de l’Année$$, $$/candidats/millenium-suites-conakry.png$$, true),
 (36, 10, $$Jean Sivily Koivogui$$, $$Barman — nominé au Prix du Meilleur Barman de l’Année$$, $$/candidats/jean-sivily-koivogui.jpg$$, true),
 (37, 10, $$M. Emmanuel Woïwo GUILAVOGUI$$, $$Barman — nominé au Prix du Meilleur Barman de l’Année$$, $$/candidats/emmanuel-woiwo-guilavogui.png$$, true),
 (81, 10, $$M. Djanfamara Bangaly CISSÉ$$, $$Barman — nominé au Prix du Meilleur Barman de l’Année$$, $$/candidats/djanfamara-bangaly-cisse.png$$, true),
@@ -135,7 +136,7 @@ on conflict (id) do update set
 --    Les votes déjà payés restent attachés à l'ID, ils ne sont pas effacés.
 update public.hag_candidates
 set is_active = false
-where id not in (1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 47, 50, 51, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 83, 84, 85, 86, 87, 88, 89);
+where id not in (1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 47, 50, 51, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 83, 84, 85, 86, 87, 88, 89, 90);
 
 -- 4) Harmoniser le libellé stocké sur les votes existants (nom + prix)
 update public.hag_votes v

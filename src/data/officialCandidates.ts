@@ -317,6 +317,13 @@ export const officialCandidatesByCategory: { [key: string]: OfficialCandidate[] 
       ACCUEIL,
       'Hôtel — nominé au Prix d’Excellence en Accueil, Service et Expérience Client de l’Année',
       '/candidats/riviera-taouyah.png'
+    ),
+    candidate(
+      90,
+      'Millénium Suites Conakry',
+      ACCUEIL,
+      'Hôtel — nominé au Prix d’Excellence en Accueil, Service et Expérience Client de l’Année',
+      '/candidats/millenium-suites-conakry.png'
     )
   ],
   [BARTENDER]: [

@@ -416,6 +416,7 @@ insert into public.hag_candidates (id, category_id, name, description) values
 (33, 9, 'Hôtel ONOMO', 'Hôtel – accueil et service client'),
 (34, 9, 'Atlantic View Hôtel', 'Hôtel – accueil et service client'),
 (35, 9, 'Riviera Taouyah', 'Hôtel – accueil et service client'),
+(90, 9, 'Millénium Suites Conakry', 'Hôtel – accueil et service client'),
 (36, 10, 'Jean Sivily Koivogui', 'Bartender'),
 (37, 10, 'M. Emmanuel Woïwo GUILAVOGUI', 'Bartender'),
 (81, 10, 'M. Djanfamara Bangaly CISSÉ', 'Bartender'),
